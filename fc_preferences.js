@@ -1,8 +1,6 @@
 FrozenCookies.preferenceValues = {
     // clicking options
-    clickingOptions: {
-        hint: "Auto clicking:",
-    },
+    clickingOptions: { hint: "Auto clicking:" },
     autoClick: {
         hint: "Auto-click big cookie and set speed.",
         display: ["Autoclick OFF", "Autoclick ON"],
@@ -32,9 +30,7 @@ FrozenCookies.preferenceValues = {
     },
 
     // autobuy options
-    buyingOptions: {
-        hint: "Auto-buying:",
-    },
+    buyingOptions: { hint: "Auto-buying:" },
     autoBuy: {
         hint: "Auto-buy most efficient building/upgrade.",
         display: ["AutoBuy OFF", "AutoBuy ON"],
@@ -80,9 +76,7 @@ FrozenCookies.preferenceValues = {
     },
 
     // other auto options
-    autoOtherOptions: {
-        hint: "Other automation:",
-    },
+    autoOtherOptions: { hint: "Other automation:" },
     autoBulk: {
         hint: "Set bulk buy after ascension.",
         display: ["Auto Bulkbuy OFF", "Auto Bulkbuy x10", "Auto Bulkbuy x100"],
@@ -94,19 +88,53 @@ FrozenCookies.preferenceValues = {
         default: 0,
     },
     autoAscendToggle: {
-        hint: "Auto-ascend at target chips (⚠️ skips upgrade screen).",
+        hint: "Auto-ascend (⚠️ skips upgrade screen).",
         display: ["Auto Ascend OFF", "Auto Ascend ON"],
         default: 0,
     },
+    // SMART ASCEND: added mode 3 (ROI-based) to the display list.
+    // The original modes (fixed amount, prestige doubles) are kept unchanged.
+    // Mode 3 calculates payback time: ascending is triggered only when the extra
+    // CpS from new HCs would recover the cookies-on-screen within the configured
+    // threshold (see ascendROIThreshold and ascendROIMinHC below).
     autoAscend: {
         hint: "Choose auto-ascend method.",
         display: [
             "Auto-ascend OFF",
             "Auto-ascend at SET amount",
             "Auto-ascend when prestige is DOUBLED",
+            "Auto-ascend by ROI (smart ✓)",
         ],
         default: 0,
         extras: '<a class="option" id="chipsToAscend" onclick="updateAscendAmount(\'HCAscendAmount\');">${HCAscendAmount} heavenly chips</a>',
+    },
+    // SMART ASCEND: payback threshold for ROI mode.
+    // How quickly must the new HCs pay back the cookies on screen?
+    // Shorter = ascend less often but only when clearly worth it.
+    // Longer = ascend more aggressively even for marginal gains.
+    ascendROIThreshold: {
+        hint: "ROI mode: ascend only when payback time is under this. Shorter = more selective.",
+        display: [
+            "ROI payback ≤ 1 hour",
+            "ROI payback ≤ 2 hours",
+            "ROI payback ≤ 4 hours",
+            "ROI payback ≤ 8 hours",
+        ],
+        default: 1,
+    },
+    // SMART ASCEND: minimum new HC gate.
+    // Prevents ROI mode from triggering on trivially small gains.
+    // Even if payback is fast, don't ascend for fewer than N new HCs.
+    ascendROIMinHC: {
+        hint: "ROI mode: minimum new HCs required before ascending.",
+        display: [
+            "Min 5 new HCs",
+            "Min 10 new HCs",
+            "Min 25 new HCs",
+            "Min 50 new HCs",
+            "Min 100 new HCs",
+        ],
+        default: 1,
     },
     comboAscend: {
         hint: "Block auto-ascend when you have X Frenzy or higher.",
@@ -179,9 +207,7 @@ FrozenCookies.preferenceValues = {
     },
 
     // Pantheon options
-    worshipOptions: {
-        hint: "Pantheon:",
-    },
+    worshipOptions: { hint: "Pantheon:" },
     autoWorshipToggle: {
         hint: "Auto-slot selected gods (can't select same god twice).",
         display: ["Auto Pantheon OFF", "Auto Pantheon ON"],
@@ -189,53 +215,17 @@ FrozenCookies.preferenceValues = {
     },
     autoWorship0: {
         hint: "Auto-slot god in DIAMOND slot.",
-        display: [
-            "No god",
-            "Vomitrax",
-            "Godzamok",
-            "Cyclius",
-            "Selebrak",
-            "Dotjeiess",
-            "Muridal",
-            "Jeremy",
-            "Mokalsium",
-            "Skruuia",
-            "Rigidel",
-        ],
+        display: ["No god","Vomitrax","Godzamok","Cyclius","Selebrak","Dotjeiess","Muridal","Jeremy","Mokalsium","Skruuia","Rigidel"],
         default: 0,
     },
     autoWorship1: {
         hint: "Auto-slot god in RUBY slot.",
-        display: [
-            "No god",
-            "Vomitrax",
-            "Godzamok",
-            "Cyclius",
-            "Selebrak",
-            "Dotjeiess",
-            "Muridal",
-            "Jeremy",
-            "Mokalsium",
-            "Skruuia",
-            "Rigidel",
-        ],
+        display: ["No god","Vomitrax","Godzamok","Cyclius","Selebrak","Dotjeiess","Muridal","Jeremy","Mokalsium","Skruuia","Rigidel"],
         default: 0,
     },
     autoWorship2: {
         hint: "Auto-slot god in JADE slot.",
-        display: [
-            "No god",
-            "Vomitrax",
-            "Godzamok",
-            "Cyclius",
-            "Selebrak",
-            "Dotjeiess",
-            "Muridal",
-            "Jeremy",
-            "Mokalsium",
-            "Skruuia",
-            "Rigidel",
-        ],
+        display: ["No god","Vomitrax","Godzamok","Cyclius","Selebrak","Dotjeiess","Muridal","Jeremy","Mokalsium","Skruuia","Rigidel"],
         default: 0,
     },
     autoCyclius: {
@@ -249,9 +239,7 @@ FrozenCookies.preferenceValues = {
     },
 
     // Spell options
-    spellOptions: {
-        hint: "Grimoire:",
-    },
+    spellOptions: { hint: "Grimoire:" },
     towerLimit: {
         hint: "Stop buying Wizard Towers at set max mana.",
         display: ["Wizard Tower Cap OFF", "Wizard Tower Cap ON"],
@@ -272,9 +260,7 @@ FrozenCookies.preferenceValues = {
         default: 0,
         extras: '<a class="option" id="minCpSMult" onclick="updateCpSMultMin(\'minCpSMult\');">x${minCpSMult} minimum Frenzy</a>',
     },
-    spellNotes: {
-        hint: "Only one combo can be active at a time. See readme.",
-    },
+    spellNotes: { hint: "Only one combo can be active at a time. See readme." },
     autoFTHOFCombo: {
         hint: "Auto double-cast FTHOF combos (needs enough mana).",
         display: ["Double Cast FTHOF OFF", "Double Cast FTHOF ON"],
@@ -304,10 +290,8 @@ FrozenCookies.preferenceValues = {
         default: 0,
     },
 
-    //Dragon options
-    dragonOptions: {
-        hint: "Dragon:",
-    },
+    // Dragon options
+    dragonOptions: { hint: "Dragon:" },
     autoDragon: {
         hint: "Auto-upgrade dragon.",
         display: ["Dragon Upgrading OFF", "Dragon Upgrading ON"],
@@ -323,62 +307,26 @@ FrozenCookies.preferenceValues = {
         display: ["Dragon Auras OFF", "Dragon Auras ON"],
         default: 0,
     },
-    dragonNotes: {
-        hint: "Set desired auras. Can't set same aura twice.",
-    },
+    dragonNotes: { hint: "Set desired auras. Can't set same aura twice." },
     autoDragonAura0: {
         hint: "Auto-set FIRST dragon aura.",
         display: [
-            "No Aura",
-            "Breath of Milk",
-            "Dragon Cursor",
-            "Elder Battalion",
-            "Reaper of Fields",
-            "Earth Shatterer",
-            "Master of the Armory",
-            "Fierce Hoarder",
-            "Dragon God",
-            "Arcane Aura",
-            "Dragonflight",
-            "Ancestral Metamorphosis",
-            "Unholy Dominion",
-            "Epoch Manipulator",
-            "Mind Over Matter",
-            "Radiant Appetite",
-            "Dragon's Fortune",
-            "Dragon's Curve",
-            "Reality Bending",
-            "Dragon Orbs",
-            "Supreme Intellect",
-            "Dragon Guts",
+            "No Aura","Breath of Milk","Dragon Cursor","Elder Battalion","Reaper of Fields",
+            "Earth Shatterer","Master of the Armory","Fierce Hoarder","Dragon God","Arcane Aura",
+            "Dragonflight","Ancestral Metamorphosis","Unholy Dominion","Epoch Manipulator",
+            "Mind Over Matter","Radiant Appetite","Dragon's Fortune","Dragon's Curve",
+            "Reality Bending","Dragon Orbs","Supreme Intellect","Dragon Guts",
         ],
         default: 0,
     },
     autoDragonAura1: {
         hint: "Auto-set SECOND dragon aura.",
         display: [
-            "No Aura",
-            "Breath of Milk",
-            "Dragon Cursor",
-            "Elder Battalion",
-            "Reaper of Fields",
-            "Earth Shatterer",
-            "Master of the Armory",
-            "Fierce Hoarder",
-            "Dragon God",
-            "Arcane Aura",
-            "Dragonflight",
-            "Ancestral Metamorphosis",
-            "Unholy Dominion",
-            "Epoch Manipulator",
-            "Mind Over Matter",
-            "Radiant Appetite",
-            "Dragon's Fortune",
-            "Dragon's Curve",
-            "Reality Bending",
-            "Dragon Orbs",
-            "Supreme Intellect",
-            "Dragon Guts",
+            "No Aura","Breath of Milk","Dragon Cursor","Elder Battalion","Reaper of Fields",
+            "Earth Shatterer","Master of the Armory","Fierce Hoarder","Dragon God","Arcane Aura",
+            "Dragonflight","Ancestral Metamorphosis","Unholy Dominion","Epoch Manipulator",
+            "Mind Over Matter","Radiant Appetite","Dragon's Fortune","Dragon's Curve",
+            "Reality Bending","Dragon Orbs","Supreme Intellect","Dragon Guts",
         ],
         default: 0,
     },
@@ -395,9 +343,7 @@ FrozenCookies.preferenceValues = {
     },
 
     // Season options
-    seasonOptions: {
-        hint: "Season:",
-    },
+    seasonOptions: { hint: "Season:" },
     defaultSeasonToggle: {
         hint: "Auto-switch to selected season if no upgrades needed.",
         display: ["Autobuy Seasons OFF", "Autobuy Seasons ON"],
@@ -435,10 +381,8 @@ FrozenCookies.preferenceValues = {
         default: 0,
     },
 
-    //Bank options
-    bankOptions: {
-        hint: "Bank: (delays autobuy until bank is full)",
-    },
+    // Bank options
+    bankOptions: { hint: "Bank: (delays autobuy until bank is full)" },
     holdManBank: {
         hint: "Manual minimum bank (minutes of base CpS)",
         display: ["Manual Bank OFF", "Manual Bank ON"],
@@ -453,14 +397,9 @@ FrozenCookies.preferenceValues = {
     setHarvestBankPlant: {
         hint: "Keep bank for harvesting selected plant.",
         display: [
-            "Harvesting Bank OFF",
-            "Harvesting Bank BAKEBERRY",
-            "Harvesting Bank CHOCOROOT",
-            "Harvesting Bank WHITE CHOCOROOT",
-            "Harvesting Bank QUEENBEET",
-            "Harvesting Bank DUKETATER",
-            "Harvesting Bank CRUMBSPORE",
-            "Harvesting Bank DOUGHSHROOM",
+            "Harvesting Bank OFF","Harvesting Bank BAKEBERRY","Harvesting Bank CHOCOROOT",
+            "Harvesting Bank WHITE CHOCOROOT","Harvesting Bank QUEENBEET",
+            "Harvesting Bank DUKETATER","Harvesting Bank CRUMBSPORE","Harvesting Bank DOUGHSHROOM",
         ],
         default: 0,
     },
@@ -477,9 +416,7 @@ FrozenCookies.preferenceValues = {
     },
 
     // Other options
-    otherOptions: {
-        hint: "Other:",
-    },
+    otherOptions: { hint: "Other:" },
     FCshortcuts: {
         hint: "Enable keyboard shortcuts (see readme).",
         display: ["Shortcuts OFF", "Shortcuts ON"],
@@ -491,10 +428,8 @@ FrozenCookies.preferenceValues = {
         default: 1,
     },
 
-    //Display options
-    displayOptions: {
-        hint: "Display:",
-    },
+    // Display options
+    displayOptions: { hint: "Display:" },
     showMissedCookies: {
         hint: "Show missed golden cookies in info panel.",
         display: ["Show Missed GCs OFF", "Show Missed GCs ON"],
@@ -513,12 +448,7 @@ FrozenCookies.preferenceValues = {
     },
     fancyui: {
         hint: "Infobox style (text, wheel, or both).",
-        display: [
-            "Infobox OFF",
-            "Infobox TEXT ONLY",
-            "Infobox WHEEL ONLY",
-            "Infobox WHEEL & TEXT",
-        ],
+        display: ["Infobox OFF","Infobox TEXT ONLY","Infobox WHEEL ONLY","Infobox WHEEL & TEXT"],
         default: 0,
     },
     logging: {
@@ -532,40 +462,22 @@ FrozenCookies.preferenceValues = {
         default: 0,
     },
 
-    slowOptions: {
-        hint: "Warning: These options may slow the game.",
-    },
+    slowOptions: { hint: "Warning: These options may slow the game." },
     fpsModifier: {
         hint: "Set game frame rate (default 30).",
         display: [
-            "Frame Rate 15 fps",
-            "Frame Rate 24 fps",
-            "Frame Rate 30 fps",
-            "Frame Rate 48 fps",
-            "Frame Rate 60 fps",
-            "Frame Rate 72 fps",
-            "Frame Rate 88 fps",
-            "Frame Rate 100 fps",
-            "Frame Rate 120 fps",
-            "Frame Rate 144 fps",
-            "Frame Rate 200 fps",
-            "Frame Rate 240 fps",
-            "Frame Rate 300 fps",
-            "Frame Rate 5 fps",
-            "Frame Rate 10 fps",
+            "Frame Rate 15 fps","Frame Rate 24 fps","Frame Rate 30 fps","Frame Rate 48 fps",
+            "Frame Rate 60 fps","Frame Rate 72 fps","Frame Rate 88 fps","Frame Rate 100 fps",
+            "Frame Rate 120 fps","Frame Rate 144 fps","Frame Rate 200 fps","Frame Rate 240 fps",
+            "Frame Rate 300 fps","Frame Rate 5 fps","Frame Rate 10 fps",
         ],
         default: 2,
     },
     trackStats: {
         hint: "Track CpS/HC for graphs (may slow game).",
         display: [
-            "Tracking OFF",
-            "Tracking EVERY 60s",
-            "Tracking EVERY 30m",
-            "Tracking EVERY 1h",
-            "Tracking EVERY 24h",
-            "Tracking ON UPGRADES",
-            "Tracking SMART TIMING",
+            "Tracking OFF","Tracking EVERY 60s","Tracking EVERY 30m","Tracking EVERY 1h",
+            "Tracking EVERY 24h","Tracking ON UPGRADES","Tracking SMART TIMING",
         ],
         default: 0,
         extras: '<a class="option" id="viewStats" onclick="viewStatGraphs();">View Stat Graphs</a>',
