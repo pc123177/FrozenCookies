@@ -717,6 +717,21 @@ function hasClickBuff() {
     return Game.hasBuff("Cursed finger") || clickBuffBonus() > 1;
 }
 
+// Shortest remaining time (in seconds) among currently active click-multiplier buffs
+// (same buffs clickBuffBonus() multiplies over). Used to avoid triggering buff-timed
+// actions (loans, Godzamok sell/rebuy) right as the buff is about to expire, where the
+// action's cost (interest, sell/rebuy spread) is paid without time left to benefit from it.
+function clickBuffTimeRemaining() {
+    var minTime = Number.POSITIVE_INFINITY;
+    for (var i in Game.buffs) {
+        if (typeof Game.buffs[i].multClick != "undefined" && Game.buffs[i].name != "Devastation") {
+            minTime = Math.min(minTime, Game.buffs[i].time);
+        }
+    }
+    if (Game.hasBuff("Cursed finger")) minTime = Math.min(minTime, Game.hasBuff("Cursed finger").time);
+    return minTime === Number.POSITIVE_INFINITY ? 0 : minTime / Game.fps;
+}
+
 function baseCps() {
     var buffMod = cpsBonus();
     if (buffMod === 0) return FrozenCookies.lastBaseCPS;
@@ -1059,24 +1074,11 @@ function purchaseEfficiency(price, deltaCps, baseDeltaCps, currentCps, purchaseC
 
     var weight = FrozenCookies.efficiencyWeight || 1.15;
 
-    // Synergy boost: reduce cost/cps penalty for high-impact upgrades
-    var synergyBoost = 1.0;
-    if (purchaseContext && purchaseContext.type === "upgrade" && currentCps > 0) {
-        var impactRatio = deltaCps / currentCps; // e.g. 0.5 = this upgrade adds 50% of current CpS
-        if (impactRatio > 0.5) {
-            // Very high-impact (synergy, big multiplier): significantly reduce cost penalty
-            synergyBoost = 0.65;
-        } else if (impactRatio > 0.2) {
-            // Moderate-high impact: mild boost
-            synergyBoost = 0.82;
-        } else if (impactRatio > 0.05) {
-            // Slight boost for anything above 5% CpS gain
-            synergyBoost = 0.93;
-        }
-        // Below 5% impact: no boost (synergyBoost stays 1.0), buildings compete normally
-    }
-
-    efficiency = weight * synergyBoost * divCps(price, currentCps) + divCps(price, deltaCps);
+    // deltaCps already comes from a full Game.CalculateGains() simulation (see
+    // buildingStats/upgradeStats), so any synergy/multiplier effect an upgrade has is
+    // already reflected in it. A separate synergyBoost multiplier on top of that would
+    // double-count the same synergy value, so none is applied here.
+    efficiency = weight * divCps(price, currentCps) + divCps(price, deltaCps);
     return efficiency;
 }
 
@@ -1706,7 +1708,7 @@ function autoGodzamokAction() {
     if (Game.hasGod("ruin") && FrozenCookies.autoGodzamok) {
         var countMine = Game.Objects["Mine"].amount;
         var countFactory = Game.Objects["Factory"].amount;
-        if (!Game.hasBuff("Devastation") && !Game.hasBuff("Cursed finger") && hasClickBuff()) {
+        if (!Game.hasBuff("Devastation") && !Game.hasBuff("Cursed finger") && hasClickBuff() && clickBuffTimeRemaining() >= 5) {
             Game.Objects["Mine"].sell(countMine);
             Game.Objects["Factory"].sell(countFactory);
             if (FrozenCookies.mineLimit) { safeBuy(Game.Objects["Mine"], FrozenCookies.mineMax); logEvent("AutoGodzamok", "Bought " + FrozenCookies.mineMax + " mines"); }
@@ -1772,8 +1774,15 @@ function shouldAscendByROI() {
     var cpsDelta = newCps - currentCps;
     if (cpsDelta <= 0) return false;
 
-    // Time to recover cookies currently on screen using the extra CpS
-    var paybackSecs = Game.cookies / cpsDelta;
+    // Ascending wipes all buildings and upgrades, not just the cookies on screen.
+    // The real cost of ascending now is Game.cookies (forfeited) PLUS the cookies needed
+    // to rebuild back to the current building levels post-reset. rebuildCost is computed
+    // directly from owned buildings' actual cumulative price (same helper the bot uses
+    // elsewhere for cost accounting), not a guessed constant.
+    var rebuildCost = Game.ObjectsById.reduce(function (sum, b) {
+        return sum + cumulativeBuildingCost(b.basePrice, 0, b.amount);
+    }, 0);
+    var paybackSecs = (Game.cookies + rebuildCost) / cpsDelta;
 
     // Threshold from preferences (index 0=1h, 1=2h, 2=4h, 3=8h)
     var thresholdHours = [1, 2, 4, 8];
