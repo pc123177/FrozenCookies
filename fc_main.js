@@ -1168,9 +1168,9 @@ function buildingStats(recalculate) {
             if (FrozenCookies.mineLimit && Game.Objects["Mine"].amount >= FrozenCookies.mineMax) buildingBlacklist.push(3);
             if (FrozenCookies.factoryLimit && Game.Objects["Factory"].amount >= FrozenCookies.factoryMax) buildingBlacklist.push(4);
             if (FrozenCookies.autoDragonOrbs && FrozenCookies.orbLimit && Game.Objects["You"].amount >= FrozenCookies.orbMax) buildingBlacklist.push(19);
+            var currentBank = bestBank(0).cost;
             FrozenCookies.caches.buildings = Game.ObjectsById.map(function (current, index) {
                 if (_.contains(buildingBlacklist, current.id)) return null;
-                var currentBank = bestBank(0).cost;
                 var baseCpsOrig = baseCps();
                 var cpsOrig = effectiveCps(Math.min(Game.cookies, currentBank));
                 var existingAchievements = Object.values(Game.AchievementsById).map(function (item, i) { return item.won; });
@@ -1195,10 +1195,10 @@ function upgradeStats(recalculate) {
             FrozenCookies.caches.upgrades = [];
         } else {
             var upgradeBlacklist = blacklist[FrozenCookies.blacklist].upgrades;
+            var currentBank = bestBank(0).cost;
             FrozenCookies.caches.upgrades = Object.values(Game.UpgradesById).map(function (current) {
                 if (!current.bought) {
                     if (isUnavailable(current, upgradeBlacklist)) return null;
-                    var currentBank = bestBank(0).cost;
                     var cost = upgradePrereqCost(current);
                     var baseCpsOrig = baseCps();
                     var cpsOrig = effectiveCps(Math.min(Game.cookies, currentBank));
