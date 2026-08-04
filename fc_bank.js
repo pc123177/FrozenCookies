@@ -48,7 +48,8 @@ function autoLoanBuy() {
     if (
         hasClickBuff() &&
         !Game.hasBuff("Cursed finger") &&
-        cpsBonus() >= FrozenCookies.minLoanMult
+        cpsBonus() >= FrozenCookies.minLoanMult &&
+        clickBuffTimeRemaining() >= 5
     ) {
         if (B.officeLevel >= 2) B.takeLoan(1);
         if (B.officeLevel >= 4) B.takeLoan(2);
