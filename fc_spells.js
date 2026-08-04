@@ -644,8 +644,8 @@ function autoFTHOFComboAction() {
             ((FrozenCookies.towerLimit && M.magic >= M.magicM) ||
                 (!FrozenCookies.towerLimit && M.magic >= M.magicM - 1)) &&
             !Game.hasBuff("Click frenzy") &&
-            !nextSpellName(0) == "Click Frenzy" &&
-            !nextSpellName(1) == "Click Frenzy")
+            nextSpellName(0) != "Click Frenzy" &&
+            nextSpellName(1) != "Click Frenzy")
     ) {
         if (autoFTHOFComboAction.autobuyyes == 1) {
             FrozenCookies.autoBuy = 1;
@@ -704,8 +704,8 @@ function autoFTHOFComboAction() {
             return;
         case 1:
             if (
-                !nextSpellName(0) == "Click Frenzy" &&
-                !nextSpellName(1) == "Click Frenzy"
+                nextSpellName(0) != "Click Frenzy" &&
+                nextSpellName(1) != "Click Frenzy"
             ) {
                 autoFTHOFComboAction.state = 0;
                 return;
@@ -745,8 +745,8 @@ function autoFTHOFComboAction() {
             return;
         case 2:
             if (
-                !nextSpellName(0) == "Building Special" &&
-                !nextSpellName(1) == "Building Special"
+                nextSpellName(0) != "Building Special" &&
+                nextSpellName(1) != "Building Special"
             ) {
                 autoFTHOFComboAction.state = 0;
                 return;
@@ -860,6 +860,8 @@ function auto100ConsistencyComboAction() {
         auto100ConsistencyComboAction.countAlchemy = 0;
     if (typeof auto100ConsistencyComboAction.countTimeMach == "undefined")
         auto100ConsistencyComboAction.countTimeMach = 0;
+    if (typeof auto100ConsistencyComboAction.countAntiMatter == "undefined")
+        auto100ConsistencyComboAction.countAntiMatter = 0;
 
     if (
         auto100ConsistencyComboAction.state > 20 ||
@@ -906,6 +908,7 @@ function auto100ConsistencyComboAction() {
     auto100ConsistencyComboAction.countShipment = Game.Objects["Shipment"].amount;
     auto100ConsistencyComboAction.countAlchemy = Game.Objects["Alchemy lab"].amount;
     auto100ConsistencyComboAction.countTimeMach = Game.Objects["Time machine"].amount;
+    auto100ConsistencyComboAction.countAntiMatter = Game.Objects["Antimatter condenser"].amount;
 
     if (
         !auto100ConsistencyComboAction.state &&
@@ -1055,8 +1058,7 @@ function auto100ConsistencyComboAction() {
             return;
 
         case 12:
-            Game.shimmers[0].pop();
-            Game.shimmers[0].pop();
+            while (Game.shimmers.length) Game.shimmers[0].pop();
             auto100ConsistencyComboAction.state = 13;
             return;
 

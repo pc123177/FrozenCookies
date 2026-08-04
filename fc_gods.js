@@ -57,7 +57,7 @@ function autoWorship1Action() {
     }
 
     if (T.slot[0] == FrozenCookies.autoWorship1) {
-        FrozenCookies.autoworship1 = 0;
+        FrozenCookies.autoWorship1 = 0;
         logEvent(
             "autoWorship",
             "Can't worship the same god in Diamond and Ruby slots!"
@@ -240,7 +240,7 @@ function autoCycliusAction() {
             swapIfNeeded(FrozenCookies.autoWorship0, 1, "RUBY");
             swapIfNeeded(FrozenCookies.autoWorship1, 2, "JADE");
         } else if (
-            // 12:00 UTC to 13:12 UTC, RUBY
+            // 12:00 UTC to 13:12 UTC, JADE
             T.slot[2] !== 3 &&
             currentTime >= times.Jade2 &&
             currentTime < times.Diamond3
@@ -338,7 +338,7 @@ function autoCycliusAction() {
                 swapIfNeeded(FrozenCookies.autoWorship1, 2, "JADE");
             } else if (
                 // 7:30 UTC to 12:00 UTC, no Cyclius
-                currentTime >= times.SI730 &&
+                currentTime >= times.SIRuby &&
                 currentTime < times.Diamond2
             ) {
                 swapIfNeeded(FrozenCookies.autoWorship0, 0, "DIAMOND (SI)");
