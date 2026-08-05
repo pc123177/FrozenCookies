@@ -856,6 +856,51 @@ function FCMenu() {
         }
         menu.append(subsection);
 
+        // --- ASCEND ROI INFO SECTION ---
+        var roi = ascendROIStats();
+        if (roi) {
+            subsection = $("<div>").addClass("subsection");
+            subsection.append(
+                $("<div>").addClass("title").text("Ascend ROI Information")
+            );
+            subsection.append(
+                buildListing(
+                    "ROI ascend mode",
+                    FrozenCookies.autoAscendROI ? "ON" : "OFF"
+                )
+            );
+            subsection.append(
+                buildListing("New HCs if ascend now", Beautify(Math.max(0, roi.newHC)))
+            );
+            subsection.append(
+                buildListing(
+                    "Minimum HC required",
+                    Beautify(roi.minHC) + (roi.meetsMinHC ? " (met)" : " (not met)")
+                )
+            );
+            subsection.append(
+                buildListing("Rebuild cost (current buildings)", Beautify(roi.rebuildCost))
+            );
+            subsection.append(
+                buildListing(
+                    "Payback time",
+                    roi.paybackSecs == Number.POSITIVE_INFINITY
+                        ? "never (no CpS gain)"
+                        : timeDisplay(roi.paybackSecs)
+                )
+            );
+            subsection.append(
+                buildListing("Payback threshold", roi.thresholdHours + "h")
+            );
+            subsection.append(
+                buildListing(
+                    "Would ascend now?",
+                    roi.wouldAscend ? "YES" : "no"
+                )
+            );
+            menu.append(subsection);
+        }
+
         // --- HARVESTING (BANK) INFO SECTION ---
         if (FrozenCookies.setHarvestBankPlant) {
             subsection = $("<div>").addClass("subsection");

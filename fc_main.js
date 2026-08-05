@@ -1747,32 +1747,28 @@ function fcClickCookie() {
 // add X% to CpS. The time to recover the cookies-on-screen with that extra CpS
 // tells you exactly whether ascending is worth it right now. Short payback = ascend.
 // The threshold and minimum HCs are user-configurable in the new ROI preferences.
-function shouldAscendByROI() {
-    if (!FrozenCookies.autoAscendROI) return false;
-    if (Game.OnAscend || Game.AscendTimer) return false;
-    if (Game.prestige < 1) return false;
-
-    // Don't ascend mid-combo
-    if (FrozenCookies.comboAscend == 1 && cpsBonus() >= FrozenCookies.minCpSMult) return false;
+// Computes the current ROI ascend numbers without side effects (no logging, no
+// preference gating beyond what's needed to produce a value), so both the automation
+// (shouldAscendByROI) and the UI (fc_button.js ROI display) read from one source of truth.
+// Returns null only when there isn't enough prestige yet to ascend at all.
+function ascendROIStats() {
+    if (Game.prestige < 1) return null;
 
     var cookiesBaked = Game.cookiesEarned + Game.cookiesReset + wrinklerValue() + chocolateValue();
     var resetPrestige = Game.HowMuchPrestige(cookiesBaked);
     var newHC = Math.floor(resetPrestige) - Game.prestige;
-    if (newHC < 1) return false;
 
     // Minimum HC threshold from preferences (index 0=5, 1=10, 2=25, 3=50, 4=100)
     var minHCValues = [5, 10, 25, 50, 100];
     var minHC = minHCValues[FrozenCookies.ascendROIMinHC] || 10;
-    if (newHC < minHC) return false;
 
     // Each HC gives +1% CpS base (or +2% with Persistent Memory heavenly upgrade)
     var bonusPerHC = Game.Has("Persistent memory") ? 0.02 : 0.01;
-    var newBonus = newHC * bonusPerHC;
+    var newBonus = Math.max(0, newHC) * bonusPerHC;
 
     var currentCps = baseCps();
     var newCps = currentCps * (1 + newBonus);
     var cpsDelta = newCps - currentCps;
-    if (cpsDelta <= 0) return false;
 
     // Ascending wipes all buildings and upgrades, not just the cookies on screen.
     // The real cost of ascending now is Game.cookies (forfeited) PLUS the cookies needed
@@ -1782,18 +1778,38 @@ function shouldAscendByROI() {
     var rebuildCost = Game.ObjectsById.reduce(function (sum, b) {
         return sum + cumulativeBuildingCost(b.basePrice, 0, b.amount);
     }, 0);
-    var paybackSecs = (Game.cookies + rebuildCost) / cpsDelta;
+    var paybackSecs = cpsDelta > 0 ? (Game.cookies + rebuildCost) / cpsDelta : Number.POSITIVE_INFINITY;
 
     // Threshold from preferences (index 0=1h, 1=2h, 2=4h, 3=8h)
     var thresholdHours = [1, 2, 4, 8];
     var thresholdSecs = (thresholdHours[FrozenCookies.ascendROIThreshold] || 2) * 3600;
 
-    if (paybackSecs <= thresholdSecs) {
-        logEvent("autoAscend", "ROI ascend triggered: " + newHC + " new HCs, payback " +
-            Math.round(paybackSecs / 60) + "min (threshold " + thresholdHours[FrozenCookies.ascendROIThreshold] + "h)");
-        return true;
-    }
-    return false;
+    return {
+        newHC: newHC,
+        minHC: minHC,
+        rebuildCost: rebuildCost,
+        paybackSecs: paybackSecs,
+        thresholdHours: thresholdHours[FrozenCookies.ascendROIThreshold] || 2,
+        thresholdSecs: thresholdSecs,
+        meetsMinHC: newHC >= minHC,
+        meetsPayback: paybackSecs <= thresholdSecs,
+        wouldAscend: newHC >= minHC && paybackSecs <= thresholdSecs,
+    };
+}
+
+function shouldAscendByROI() {
+    if (!FrozenCookies.autoAscendROI) return false;
+    if (Game.OnAscend || Game.AscendTimer) return false;
+
+    // Don't ascend mid-combo
+    if (FrozenCookies.comboAscend == 1 && cpsBonus() >= FrozenCookies.minCpSMult) return false;
+
+    var stats = ascendROIStats();
+    if (!stats || !stats.wouldAscend) return false;
+
+    logEvent("autoAscend", "ROI ascend triggered: " + stats.newHC + " new HCs, payback " +
+        Math.round(stats.paybackSecs / 60) + "min (threshold " + stats.thresholdHours + "h)");
+    return true;
 }
 
 function autoCookie() {
