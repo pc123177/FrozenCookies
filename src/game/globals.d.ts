@@ -30,6 +30,7 @@ interface CCGame {
     OnAscend: number;
     AscendTimer: number;
     heavenlyChips: number;
+    dragonLevel: number;
     ObjectsById: CCBuilding[];
     Objects: Record<string, CCBuilding>;
     UpgradesById: Record<number, CCUpgrade>;

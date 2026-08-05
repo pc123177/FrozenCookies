@@ -27,7 +27,8 @@ export interface GameSnapshot {
 
     hasWizardTower: boolean;
     hasTemple: boolean;
-    hasChocolateEgg: boolean;
+    hasDragon: boolean; // Game.dragonLevel > 0 (egg hatched) - NOT the "Chocolate egg"
+    // heavenly upgrade, an unrelated CpS-bonus purchase that happens to share the word "egg".
 
     isAscending: boolean; // Game.OnAscend || Game.AscendTimer
 }

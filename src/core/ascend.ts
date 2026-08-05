@@ -8,11 +8,11 @@ import type { GameSnapshot, GameStage, AscendRoiStats } from "./types";
 // Wizard Towers owned still read as EARLY GAME because the minigame script hadn't
 // finished loading yet).
 export function gameStage(snapshot: GameSnapshot): GameStage {
-    if (snapshot.hasChocolateEgg) {
+    if (snapshot.hasDragon) {
         return {
             stage: "late",
             label: "LATE GAME",
-            reason: "Dragon unlocked (Chocolate egg owned)",
+            reason: "Dragon hatched (dragonLevel > 0)",
         };
     }
     if (snapshot.hasWizardTower || snapshot.hasTemple) {

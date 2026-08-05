@@ -22,7 +22,7 @@ function baseSnapshot(overrides: Partial<GameSnapshot> = {}): GameSnapshot {
         minCpSMult: 7,
         hasWizardTower: false,
         hasTemple: false,
-        hasChocolateEgg: false,
+        hasDragon: false,
         isAscending: false,
         ...overrides,
     };
@@ -33,9 +33,9 @@ assert.strictEqual(gameStage(baseSnapshot()).stage, "early");
 assert.strictEqual(gameStage(baseSnapshot({ hasWizardTower: true })).stage, "mid");
 assert.strictEqual(gameStage(baseSnapshot({ hasTemple: true })).stage, "mid");
 assert.strictEqual(
-    gameStage(baseSnapshot({ hasWizardTower: true, hasChocolateEgg: true })).stage,
+    gameStage(baseSnapshot({ hasWizardTower: true, hasDragon: true })).stage,
     "late",
-    "Chocolate egg takes priority over mid-game signals"
+    "Dragon hatched takes priority over mid-game signals"
 );
 
 // --- ascendROIStats ---

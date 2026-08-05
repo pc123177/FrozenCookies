@@ -13,8 +13,15 @@ import { installPreferences } from "./preferences";
 //    their top-level function declarations stay on window, not trapped in the bundle's IIFE.
 // 4. registerMod, same as always.
 
+// Game.LoadMod() injects a plain <script src="..."> with no id - document.currentScript is
+// the reliable way to find our own URL, since it resolves to whichever <script> tag is
+// synchronously executing right now (this bundle isn't deferred/async/module, so it applies
+// regardless of how the tag got here: Game.LoadMod, a manual injection, anything).
+const currentScript = document.currentScript as HTMLScriptElement | null;
 const scriptElement =
-    document.getElementById("frozenCookieScript") ?? document.getElementById("modscript_frozen_cookies");
+    currentScript ??
+    document.getElementById("frozenCookieScript") ??
+    document.getElementById("modscript_frozen_cookies");
 const baseUrl =
     scriptElement !== null
         ? (scriptElement.getAttribute("src") ?? "").replace(/\/frozen_cookies\.js(\?.*)?$/, "")
