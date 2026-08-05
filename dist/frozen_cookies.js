@@ -2,11 +2,11 @@
 (() => {
   // src/core/ascend.ts
   function gameStage(snapshot) {
-    if (snapshot.hasChocolateEgg) {
+    if (snapshot.hasDragon) {
       return {
         stage: "late",
         label: "LATE GAME",
-        reason: "Dragon unlocked (Chocolate egg owned)"
+        reason: "Dragon hatched (dragonLevel > 0)"
       };
     }
     if (snapshot.hasWizardTower || snapshot.hasTemple) {
@@ -97,7 +97,7 @@
       minCpSMult: FrozenCookies.minCpSMult,
       hasWizardTower: Game.Objects["Wizard tower"].amount > 0,
       hasTemple: Game.Objects["Temple"].amount > 0,
-      hasChocolateEgg: Game.Has("Chocolate egg"),
+      hasDragon: Game.dragonLevel > 0,
       isAscending: !!Game.OnAscend || !!Game.AscendTimer
     };
   }
@@ -868,7 +868,8 @@
   }
 
   // src/main.ts
-  var scriptElement = document.getElementById("frozenCookieScript") ?? document.getElementById("modscript_frozen_cookies");
+  var currentScript = document.currentScript;
+  var scriptElement = currentScript ?? document.getElementById("frozenCookieScript") ?? document.getElementById("modscript_frozen_cookies");
   var baseUrl = scriptElement !== null ? (scriptElement.getAttribute("src") ?? "").replace(/\/frozen_cookies\.js(\?.*)?$/, "") : "https://pc123177.github.io/FrozenCookies/dist";
   var repoRootUrl = baseUrl.replace(/\/dist$/, "");
   var windowWithFc = window;
