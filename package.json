@@ -1,0 +1,18 @@
+{
+  "name": "frozen-cookies",
+  "version": "2.0.0-alpha",
+  "private": true,
+  "type": "module",
+  "description": "FrozenCookies v2 - Cookie Clicker automation mod (TypeScript, incremental migration)",
+  "scripts": {
+    "build": "esbuild src/main.ts --bundle --outfile=dist/frozen_cookies.js",
+    "watch": "esbuild src/main.ts --bundle --outfile=dist/frozen_cookies.js --watch",
+    "typecheck": "tsc --noEmit",
+    "check": "node --experimental-strip-types src/core/ascend.selfcheck.ts && node --experimental-strip-types src/core/efficiency.selfcheck.ts && node --experimental-strip-types src/core/heavenlyUpgrades.selfcheck.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.2",
+    "esbuild": "^0.24.2",
+    "typescript": "^5.9.3"
+  }
+}
