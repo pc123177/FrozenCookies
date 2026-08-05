@@ -15,6 +15,7 @@ export interface GameSnapshot {
     wrinklerValue: number;
     chocolateValue: number;
     hasPersistentMemory: boolean;
+    hcExponent: number; // Game.HCfactor - the live exponent in prestige = (cookies/1e12)^(1/hcExponent)
     buildings: Building[];
 
     autoAscendToggle: boolean;

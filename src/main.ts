@@ -120,7 +120,7 @@ function fcInit(): void {
     document.head.appendChild(jquery);
 }
 
-const lastCompatibleVersion = 2.052;
+const lastCompatibleVersion = 2.058;
 const liveGame = Game as unknown as { version?: number; ready?: boolean };
 if (typeof Game !== "undefined" && liveGame.version! > lastCompatibleVersion) {
     console.log("WARNING: The Cookie Clicker version is newer than this version of Frozen Cookies.");

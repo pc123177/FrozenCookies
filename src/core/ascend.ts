@@ -50,8 +50,11 @@ export function ascendROIStats(snapshot: GameSnapshot): AscendRoiStats | null {
         snapshot.cookiesReset +
         snapshot.wrinklerValue +
         snapshot.chocolateValue;
-    // Game.HowMuchPrestige: prestige = (cookiesBaked / 1e12) ^ (1/3)
-    const resetPrestige = Math.pow(cookiesBaked / 1e12, 1 / 3);
+    // Game.HowMuchPrestige: prestige = (cookiesBaked / 1e12) ^ (1/Game.HCfactor). Reads the
+    // live exponent off the snapshot rather than hardcoding 1/3 - Game.HCfactor is the exact
+    // constant the game itself uses, and Orteil has rebalanced prestige math across versions
+    // before, so this shouldn't assume the current value is permanent.
+    const resetPrestige = Math.pow(cookiesBaked / 1e12, 1 / snapshot.hcExponent);
     const newHC = Math.floor(resetPrestige) - snapshot.prestige;
 
     const minHC = ASCEND_ROI_MIN_HC_VALUES[snapshot.ascendRoiMinHCIndex] ?? 10;
