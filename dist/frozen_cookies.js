@@ -211,9 +211,13 @@
       autoBroker: 1,
       autoLoan: 1,
       minLoanMult: 777,
+      // autoWorship2: 6 (Muridal, Spirit of Labor) - same 3rd-slot pick as the mod's own
+      // recommendedSettingsAction() reference preset (fc_main.js), filling all 3 Pantheon
+      // slots instead of leaving Jade permanently empty.
       autoWorshipToggle: 1,
       autoWorship0: 2,
       autoWorship1: 8,
+      autoWorship2: 6,
       towerLimit: 1,
       manaMax: 37,
       autoCasting: 3,
@@ -237,9 +241,14 @@
       autoBroker: 1,
       autoLoan: 1,
       minLoanMult: 777,
+      // autoWorship2 also feeds autoCycliusAction()'s swapIfNeeded() default JADE-slot
+      // target once Cyclius takes over slot management below - leaving it unset (0) would
+      // mean Cyclius repeatedly swaps in god id 0 (Holobore, unslotted by any golden-cookie
+      // click) instead of a real pick, wasting Pantheon swaps every cycle with autoGC on.
       autoWorshipToggle: 1,
       autoWorship0: 2,
       autoWorship1: 8,
+      autoWorship2: 6,
       autoCyclius: 1,
       towerLimit: 1,
       manaMax: 100,
@@ -854,7 +863,7 @@
     autopilot: {
       hint: "Bot detects game stage and configures itself automatically (no manual presets).",
       display: ["Autopilot OFF", "Autopilot ON"],
-      default: 0
+      default: 1
     },
     // v2: after every ascend, spend heavenly chips on unlocked prestige upgrades
     // (cheapest-first) automatically - see src/core/heavenlyUpgrades.ts.

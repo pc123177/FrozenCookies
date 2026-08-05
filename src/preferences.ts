@@ -506,7 +506,7 @@ export const preferenceValues: PreferenceValues = {
     autopilot: {
         hint: "Bot detects game stage and configures itself automatically (no manual presets).",
         display: ["Autopilot OFF", "Autopilot ON"],
-        default: 0,
+        default: 1,
     },
     // v2: after every ascend, spend heavenly chips on unlocked prestige upgrades
     // (cheapest-first) automatically - see src/core/heavenlyUpgrades.ts.
