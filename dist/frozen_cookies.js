@@ -287,13 +287,18 @@
   }
 
   // src/game/heavenly-upgrade-bot.ts
+  function canBePurchased(u) {
+    if (u.bought) return true;
+    if (u.showIf && !u.showIf()) return false;
+    return u.parents.every((p) => p === -1 || p.bought === 1);
+  }
   function heavenlyUpgradeBotTick() {
     if (FrozenCookies.autoBuyHeavenlyUpgrades !== 1) return;
     for (; ; ) {
       const candidates = Object.values(Game.UpgradesById).filter((u) => u.pool === "prestige").map((u) => ({
         name: u.name,
         price: u.getPrice(),
-        unlocked: u.unlocked === 1,
+        unlocked: canBePurchased(u),
         bought: u.bought === 1
       }));
       const next = nextHeavenlyUpgradeToBuy(candidates, Game.heavenlyChips);

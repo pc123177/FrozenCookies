@@ -16,6 +16,8 @@ interface CCUpgrade {
     pool: string;
     unlocked: number;
     bought: number;
+    parents: (CCUpgrade | -1)[];
+    showIf?: () => boolean;
     getPrice(): number;
     buy(): void;
 }
