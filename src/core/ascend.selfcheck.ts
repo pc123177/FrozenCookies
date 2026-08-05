@@ -12,6 +12,7 @@ function baseSnapshot(overrides: Partial<GameSnapshot> = {}): GameSnapshot {
         wrinklerValue: 0,
         chocolateValue: 0,
         hasPersistentMemory: false,
+        hcExponent: 3,
         buildings: [],
         autoAscendToggle: false,
         autoAscendMode: 0,

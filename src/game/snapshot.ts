@@ -13,6 +13,7 @@ export function buildGameSnapshot(): GameSnapshot {
         wrinklerValue: wrinklerValue(),
         chocolateValue: chocolateValue(),
         hasPersistentMemory: Game.Has("Persistent memory"),
+        hcExponent: Game.HCfactor,
         buildings: Game.ObjectsById.map((b) => ({ basePrice: b.basePrice, amount: b.amount })),
 
         autoAscendToggle: FrozenCookies.autoAscendToggle === 1,

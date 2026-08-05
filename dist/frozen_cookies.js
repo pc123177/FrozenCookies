@@ -31,7 +31,7 @@
   function ascendROIStats(snapshot) {
     if (snapshot.prestige < 1) return null;
     const cookiesBaked = snapshot.cookiesEarned + snapshot.cookiesReset + snapshot.wrinklerValue + snapshot.chocolateValue;
-    const resetPrestige = Math.pow(cookiesBaked / 1e12, 1 / 3);
+    const resetPrestige = Math.pow(cookiesBaked / 1e12, 1 / snapshot.hcExponent);
     const newHC = Math.floor(resetPrestige) - snapshot.prestige;
     const minHC = ASCEND_ROI_MIN_HC_VALUES[snapshot.ascendRoiMinHCIndex] ?? 10;
     const bonusPerHC = snapshot.hasPersistentMemory ? 0.02 : 0.01;
@@ -87,6 +87,7 @@
       wrinklerValue: wrinklerValue(),
       chocolateValue: chocolateValue(),
       hasPersistentMemory: Game.Has("Persistent memory"),
+      hcExponent: Game.HCfactor,
       buildings: Game.ObjectsById.map((b) => ({ basePrice: b.basePrice, amount: b.amount })),
       autoAscendToggle: FrozenCookies.autoAscendToggle === 1,
       autoAscendMode: FrozenCookies.autoAscend,
@@ -943,7 +944,7 @@
     jquery.onload = () => loadScript(0);
     document.head.appendChild(jquery);
   }
-  var lastCompatibleVersion = 2.052;
+  var lastCompatibleVersion = 2.058;
   var liveGame = Game;
   if (typeof Game !== "undefined" && liveGame.version > lastCompatibleVersion) {
     console.log("WARNING: The Cookie Clicker version is newer than this version of Frozen Cookies.");
