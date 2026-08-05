@@ -482,6 +482,22 @@ FrozenCookies.preferenceValues = {
         default: 0,
         extras: '<a class="option" id="viewStats" onclick="viewStatGraphs();">View Stat Graphs</a>',
     },
+    presetOptions: { hint: "Stage presets: (⚠️ each reloads game instantly)" },
+    presetEarlyGame: {
+        hint: "Preset tuned for early game (pre-Wizard Tower/Temple).",
+        display: ["Preset Early Game OFF", "Preset Early Game ON"],
+        default: 0,
+    },
+    presetMidGame: {
+        hint: "Preset tuned for mid game (Grimoire/Pantheon, no Dragon).",
+        display: ["Preset Mid Game OFF", "Preset Mid Game ON"],
+        default: 0,
+    },
+    presetLateGame: {
+        hint: "Preset tuned for late game (Dragon unlocked).",
+        display: ["Preset Late Game OFF", "Preset Late Game ON"],
+        default: 0,
+    },
     recommendedSettings: {
         hint: "Set all recommended options (⚠️ reloads game instantly).",
         display: ["Recommended OFF", "Recommended ON"],

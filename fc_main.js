@@ -644,6 +644,119 @@ function recommendedSettingsAction() {
     }
 }
 
+// Stage presets: same shape as recommendedSettingsAction, tuned per gameStage(). All three
+// share the same clicking/buying/season/display baseline and differ mainly in ascend
+// aggressiveness (ROI threshold/min HC) and which stage-locked systems are turned on -
+// no point polling Grimoire/Dragon/Pantheon bots before those minigames even exist.
+function presetEarlyGameAction() {
+    if (FrozenCookies.presetEarlyGame != 1) return;
+    FrozenCookies.autoClick = 1; FrozenCookies.cookieClickSpeed = 150;
+    FrozenCookies.autoFrenzy = 1; FrozenCookies.frenzyClickSpeed = 1000;
+    FrozenCookies.autoGC = 1; FrozenCookies.autoReindeer = 1; FrozenCookies.autoFortune = 1;
+    FrozenCookies.autoBuy = 1; FrozenCookies.otherUpgrades = 1;
+    FrozenCookies.autoBlacklistOff = 0; FrozenCookies.blacklist = 0;
+    FrozenCookies.mineLimit = 0; FrozenCookies.factoryLimit = 0; FrozenCookies.pastemode = 0;
+    FrozenCookies.autoAscendToggle = 1; FrozenCookies.autoAscend = 3;
+    FrozenCookies.ascendROIMinHC = 0; FrozenCookies.ascendROIThreshold = 0;
+    FrozenCookies.comboAscend = 0; FrozenCookies.HCAscendAmount = 0;
+    FrozenCookies.autoBulk = 2; FrozenCookies.autoBuyAll = 1;
+    FrozenCookies.autoWrinkler = 1; FrozenCookies.shinyPop = 0;
+    FrozenCookies.autoSL = 0; FrozenCookies.dragonsCurve = 0;
+    FrozenCookies.sugarBakingGuard = 0; FrozenCookies.autoGS = 0; FrozenCookies.autoGodzamok = 0;
+    FrozenCookies.autoBank = 0; FrozenCookies.autoBroker = 0; FrozenCookies.autoLoan = 0;
+    FrozenCookies.autoWorshipToggle = 0; FrozenCookies.autoWorship0 = 0;
+    FrozenCookies.autoWorship1 = 0; FrozenCookies.autoWorship2 = 0; FrozenCookies.autoCyclius = 0;
+    FrozenCookies.towerLimit = 0; FrozenCookies.autoCasting = 0; FrozenCookies.minCpSMult = 7;
+    FrozenCookies.autoFTHOFCombo = 0; FrozenCookies.auto100ConsistencyCombo = 0;
+    FrozenCookies.autoSugarFrenzy = 0; FrozenCookies.autoSweet = 0;
+    FrozenCookies.autoDragon = 0; FrozenCookies.petDragon = 0; FrozenCookies.autoDragonToggle = 0;
+    FrozenCookies.autoDragonOrbs = 0; FrozenCookies.orbLimit = 0;
+    FrozenCookies.defaultSeasonToggle = 1; FrozenCookies.defaultSeason = 1;
+    FrozenCookies.freeSeason = 1; FrozenCookies.autoEaster = 1; FrozenCookies.autoHalloween = 1;
+    FrozenCookies.holdManBank = 0; FrozenCookies.holdSEBank = 0; FrozenCookies.setHarvestBankPlant = 0;
+    FrozenCookies.FCshortcuts = 1; FrozenCookies.simulatedGCPercent = 1;
+    FrozenCookies.showMissedCookies = 0; FrozenCookies.numberDisplay = 1; FrozenCookies.fancyui = 1;
+    FrozenCookies.logging = 1; FrozenCookies.purchaseLog = 0; FrozenCookies.fpsModifier = 2; FrozenCookies.trackStats = 0;
+    logEvent("presetEarlyGame", "Set all options to the early game preset");
+    FrozenCookies.presetEarlyGame = 0;
+    Game.toSave = true;
+    Game.toReload = true;
+}
+
+function presetMidGameAction() {
+    if (FrozenCookies.presetMidGame != 1) return;
+    FrozenCookies.autoClick = 1; FrozenCookies.cookieClickSpeed = 250;
+    FrozenCookies.autoFrenzy = 1; FrozenCookies.frenzyClickSpeed = 1000;
+    FrozenCookies.autoGC = 1; FrozenCookies.autoReindeer = 1; FrozenCookies.autoFortune = 1;
+    FrozenCookies.autoBuy = 1; FrozenCookies.otherUpgrades = 1;
+    FrozenCookies.autoBlacklistOff = 0; FrozenCookies.blacklist = 0;
+    FrozenCookies.mineLimit = 0; FrozenCookies.factoryLimit = 0; FrozenCookies.pastemode = 0;
+    FrozenCookies.autoAscendToggle = 1; FrozenCookies.autoAscend = 3;
+    FrozenCookies.ascendROIMinHC = 1; FrozenCookies.ascendROIThreshold = 1;
+    FrozenCookies.comboAscend = 0; FrozenCookies.HCAscendAmount = 0;
+    FrozenCookies.autoBulk = 2; FrozenCookies.autoBuyAll = 1;
+    FrozenCookies.autoWrinkler = 1; FrozenCookies.shinyPop = 0;
+    FrozenCookies.autoSL = 2; FrozenCookies.dragonsCurve = 0;
+    FrozenCookies.sugarBakingGuard = 1; FrozenCookies.autoGS = 1; FrozenCookies.autoGodzamok = 1;
+    FrozenCookies.autoBank = 1; FrozenCookies.autoBroker = 1; FrozenCookies.autoLoan = 1; FrozenCookies.minLoanMult = 777;
+    FrozenCookies.autoWorshipToggle = 1; FrozenCookies.autoWorship0 = 2;
+    FrozenCookies.autoWorship1 = 8; FrozenCookies.autoWorship2 = 0; FrozenCookies.autoCyclius = 0;
+    FrozenCookies.towerLimit = 1; FrozenCookies.manaMax = 37; FrozenCookies.autoCasting = 3;
+    FrozenCookies.minCpSMult = 7; FrozenCookies.autoFTHOFCombo = 0;
+    FrozenCookies.auto100ConsistencyCombo = 0; FrozenCookies.autoSugarFrenzy = 0;
+    FrozenCookies.minASFMult = 7777; FrozenCookies.autoSweet = 0;
+    FrozenCookies.autoDragon = 0; FrozenCookies.petDragon = 0; FrozenCookies.autoDragonToggle = 0;
+    FrozenCookies.autoDragonOrbs = 0; FrozenCookies.orbLimit = 0;
+    FrozenCookies.defaultSeasonToggle = 1; FrozenCookies.defaultSeason = 1;
+    FrozenCookies.freeSeason = 1; FrozenCookies.autoEaster = 1; FrozenCookies.autoHalloween = 1;
+    FrozenCookies.holdManBank = 0; FrozenCookies.holdSEBank = 0; FrozenCookies.setHarvestBankPlant = 0;
+    FrozenCookies.FCshortcuts = 1; FrozenCookies.simulatedGCPercent = 1;
+    FrozenCookies.showMissedCookies = 0; FrozenCookies.numberDisplay = 1; FrozenCookies.fancyui = 1;
+    FrozenCookies.logging = 1; FrozenCookies.purchaseLog = 0; FrozenCookies.fpsModifier = 2; FrozenCookies.trackStats = 0;
+    logEvent("presetMidGame", "Set all options to the mid game preset");
+    FrozenCookies.presetMidGame = 0;
+    Game.toSave = true;
+    Game.toReload = true;
+}
+
+function presetLateGameAction() {
+    if (FrozenCookies.presetLateGame != 1) return;
+    FrozenCookies.autoClick = 1; FrozenCookies.cookieClickSpeed = 250;
+    FrozenCookies.autoFrenzy = 1; FrozenCookies.frenzyClickSpeed = 1000;
+    FrozenCookies.autoGC = 1; FrozenCookies.autoReindeer = 1; FrozenCookies.autoFortune = 1;
+    FrozenCookies.autoBuy = 1; FrozenCookies.otherUpgrades = 1;
+    FrozenCookies.autoBlacklistOff = 0; FrozenCookies.blacklist = 0;
+    FrozenCookies.mineLimit = 1; FrozenCookies.mineMax = 500;
+    FrozenCookies.factoryLimit = 1; FrozenCookies.factoryMax = 500; FrozenCookies.pastemode = 0;
+    FrozenCookies.autoAscendToggle = 1; FrozenCookies.autoAscend = 3;
+    FrozenCookies.ascendROIMinHC = 2; FrozenCookies.ascendROIThreshold = 3;
+    FrozenCookies.comboAscend = 0; FrozenCookies.HCAscendAmount = 0;
+    FrozenCookies.autoBulk = 2; FrozenCookies.autoBuyAll = 1;
+    FrozenCookies.autoWrinkler = 1; FrozenCookies.shinyPop = 0;
+    FrozenCookies.autoSL = 2; FrozenCookies.dragonsCurve = 2;
+    FrozenCookies.sugarBakingGuard = 1; FrozenCookies.autoGS = 1; FrozenCookies.autoGodzamok = 1;
+    FrozenCookies.autoBank = 1; FrozenCookies.autoBroker = 1; FrozenCookies.autoLoan = 1; FrozenCookies.minLoanMult = 777;
+    FrozenCookies.autoWorshipToggle = 1; FrozenCookies.autoWorship0 = 2;
+    FrozenCookies.autoWorship1 = 8; FrozenCookies.autoWorship2 = 0; FrozenCookies.autoCyclius = 1;
+    FrozenCookies.towerLimit = 1; FrozenCookies.manaMax = 100; FrozenCookies.autoCasting = 0;
+    FrozenCookies.minCpSMult = 7; FrozenCookies.autoFTHOFCombo = 0;
+    FrozenCookies.auto100ConsistencyCombo = 1; FrozenCookies.autoSugarFrenzy = 1;
+    FrozenCookies.minASFMult = 7; FrozenCookies.autoSweet = 0;
+    FrozenCookies.autoDragon = 1; FrozenCookies.petDragon = 1; FrozenCookies.autoDragonToggle = 1;
+    FrozenCookies.autoDragonAura0 = 15; FrozenCookies.autoDragonAura1 = 16;
+    FrozenCookies.autoDragonOrbs = 0; FrozenCookies.orbLimit = 0; FrozenCookies.orbMax = 200;
+    FrozenCookies.defaultSeasonToggle = 1; FrozenCookies.defaultSeason = 1;
+    FrozenCookies.freeSeason = 1; FrozenCookies.autoEaster = 1; FrozenCookies.autoHalloween = 1;
+    FrozenCookies.holdManBank = 0; FrozenCookies.holdSEBank = 0; FrozenCookies.setHarvestBankPlant = 0;
+    FrozenCookies.FCshortcuts = 1; FrozenCookies.simulatedGCPercent = 1;
+    FrozenCookies.showMissedCookies = 0; FrozenCookies.numberDisplay = 1; FrozenCookies.fancyui = 1;
+    FrozenCookies.logging = 1; FrozenCookies.purchaseLog = 0; FrozenCookies.fpsModifier = 2; FrozenCookies.trackStats = 0;
+    logEvent("presetLateGame", "Set all options to the late game preset");
+    FrozenCookies.presetLateGame = 0;
+    Game.toSave = true;
+    Game.toReload = true;
+}
+
 function generateProbabilities(upgradeMult, minBase, maxMult) {
     var cumProb = [];
     var remainingProbability = 1;
@@ -1734,6 +1847,31 @@ function fcClickCookie() {
     if (!Game.OnAscend && !Game.AscendTimer && !Game.specialTabHovered) Game.ClickCookie();
 }
 
+// Detects which game stage the player is in from actual unlock state (not HC/cookie
+// thresholds, which vary wildly by play speed). Drives the "Game Stage" menu display and
+// is a natural fit for stage-tuned presets (see preset*GameAction functions).
+function gameStage() {
+    if (Game.Has("Chocolate egg")) {
+        return {
+            stage: "late",
+            label: "LATE GAME",
+            reason: "Dragon unlocked (Chocolate egg owned)",
+        };
+    }
+    if (Game.Objects["Wizard tower"].unlocked || Game.Objects["Temple"].unlocked) {
+        return {
+            stage: "mid",
+            label: "MID GAME",
+            reason: "Wizard Tower/Temple unlocked, no Dragon yet",
+        };
+    }
+    return {
+        stage: "early",
+        label: "EARLY GAME",
+        reason: "Wizard Tower/Temple not unlocked yet",
+    };
+}
+
 // SMART ASCEND: ROI-based ascension decision.
 //
 // Problem with the original fixed-amount and prestige-doubling modes:
@@ -1798,7 +1936,7 @@ function ascendROIStats() {
 }
 
 function shouldAscendByROI() {
-    if (!FrozenCookies.autoAscendROI) return false;
+    if (!(FrozenCookies.autoAscendToggle == 1 && FrozenCookies.autoAscend == 3)) return false;
     if (Game.OnAscend || Game.AscendTimer) return false;
 
     // Don't ascend mid-combo
@@ -2030,6 +2168,7 @@ function FCStart() {
         "petDragonBot","autoDragonAura0Bot","autoDragonAura1Bot","autoDragonOrbsBot",
         "autoSugarFrenzyBot","autoWorship0Bot","autoWorship1Bot","autoWorship2Bot",
         "otherUpgradesBot","autoCycliusBot","recommendedSettingsBot","autoMinigameCheckBot",
+        "presetEarlyGameBot","presetMidGameBot","presetLateGameBot",
     ];
     bots.forEach(function(bot) {
         if (FrozenCookies[bot]) { clearInterval(FrozenCookies[bot]); FrozenCookies[bot] = 0; }
@@ -2062,6 +2201,9 @@ function FCStart() {
     if (FrozenCookies.otherUpgrades) FrozenCookies.otherUpgradesBot = setInterval(buyOtherUpgrades, FrozenCookies.frequency * 10);
     if (FrozenCookies.autoCyclius) FrozenCookies.autoCycliusBot = setInterval(autoCycliusAction, FrozenCookies.frequency * 600);
     if (FrozenCookies.recommendedSettings) FrozenCookies.recommendedSettingsBot = setInterval(recommendedSettingsAction, FrozenCookies.frequency);
+    if (FrozenCookies.presetEarlyGame) FrozenCookies.presetEarlyGameBot = setInterval(presetEarlyGameAction, FrozenCookies.frequency);
+    if (FrozenCookies.presetMidGame) FrozenCookies.presetMidGameBot = setInterval(presetMidGameAction, FrozenCookies.frequency);
+    if (FrozenCookies.presetLateGame) FrozenCookies.presetLateGameBot = setInterval(presetLateGameAction, FrozenCookies.frequency);
     if (!G || !B || !T || !M) FrozenCookies.autoMinigameCheckBot = setInterval(minigameCheckAction, FrozenCookies.frequency * 600);
     if (statSpeed(FrozenCookies.trackStats) > 0) {
         FrozenCookies.statBot = setInterval(saveStats, statSpeed(FrozenCookies.trackStats));
