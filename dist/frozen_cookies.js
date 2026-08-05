@@ -909,14 +909,22 @@
     repoRootUrl + "/src/legacy/fc_infobox.js"
     // infobox
   ];
-  function loadScript(id) {
+  function loadScript(id, isRetry = false) {
     if (id >= legacyScriptList.length) {
       registerMod("frozen_cookies");
       return;
     }
     const url = legacyScriptList[id];
     if (/\.js$/.exec(url)) {
-      $.getScript(url, () => loadScript(id + 1));
+      $.getScript(url, () => loadScript(id + 1)).fail(() => {
+        if (isRetry) {
+          console.log("FrozenCookies: failed to load " + url + " after retry, skipping.");
+          loadScript(id + 1);
+          return;
+        }
+        console.log("FrozenCookies: failed to load " + url + ", retrying in 2s...");
+        setTimeout(() => loadScript(id, true), 2e3);
+      });
     } else if (/\.css$/.exec(url)) {
       $("<link>").attr({ rel: "stylesheet", type: "text/css", href: url }).appendTo($("head"));
       loadScript(id + 1);

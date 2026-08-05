@@ -67,19 +67,31 @@ const legacyScriptList = [
 ];
 
 declare const $: {
-    getScript(url: string, done: () => void): void;
+    getScript(url: string, done: () => void): { fail(handler: () => void): void };
     (selector: string): { attr(props: Record<string, string>): { appendTo(target: unknown): void } };
 };
 declare function registerMod(name: string): void;
 
-function loadScript(id: number): void {
+// A transient CDN failure (e.g. a 502 from cdnjs) must not permanently wedge the load
+// chain - the old fire-and-forget $.getScript with no .fail() handler left the mod stuck
+// forever on one bad request. One retry after a short delay for the transient case, then
+// skip to the next script rather than block loading everything after it.
+function loadScript(id: number, isRetry: boolean = false): void {
     if (id >= legacyScriptList.length) {
         registerMod("frozen_cookies"); // when the mod is registered, the save data is passed in the load function
         return;
     }
     const url = legacyScriptList[id];
     if (/\.js$/.exec(url)) {
-        $.getScript(url, () => loadScript(id + 1));
+        $.getScript(url, () => loadScript(id + 1)).fail(() => {
+            if (isRetry) {
+                console.log("FrozenCookies: failed to load " + url + " after retry, skipping.");
+                loadScript(id + 1);
+                return;
+            }
+            console.log("FrozenCookies: failed to load " + url + ", retrying in 2s...");
+            setTimeout(() => loadScript(id, true), 2000);
+        });
     } else if (/\.css$/.exec(url)) {
         $("<link>")
             .attr({ rel: "stylesheet", type: "text/css", href: url })
