@@ -1,4 +1,17 @@
-FrozenCookies.preferenceValues = {
+// Typed port of legacy/fc_preferences.js - copied verbatim (not retyped by hand, to avoid
+// transcription errors across ~50 config entries) and given a type on top. Content is data,
+// not logic; the value of "typed" here is catching a malformed entry (missing `default`,
+// wrong `display` shape) at build time instead of at menu-render time in a live game.
+export interface PreferenceEntry {
+    hint: string;
+    display?: string[];
+    default?: number;
+    extras?: string;
+}
+
+export type PreferenceValues = Record<string, PreferenceEntry>;
+
+export const preferenceValues: PreferenceValues = {
     // clicking options
     clickingOptions: { hint: "Auto clicking:" },
     autoClick: {
@@ -482,25 +495,28 @@ FrozenCookies.preferenceValues = {
         default: 0,
         extras: '<a class="option" id="viewStats" onclick="viewStatGraphs();">View Stat Graphs</a>',
     },
-    presetOptions: { hint: "Stage presets: (⚠️ each reloads game instantly)" },
-    presetEarlyGame: {
-        hint: "Preset tuned for early game (pre-Wizard Tower/Temple).",
-        display: ["Preset Early Game OFF", "Preset Early Game ON"],
-        default: 0,
-    },
-    presetMidGame: {
-        hint: "Preset tuned for mid game (Grimoire/Pantheon, no Dragon).",
-        display: ["Preset Mid Game OFF", "Preset Mid Game ON"],
-        default: 0,
-    },
-    presetLateGame: {
-        hint: "Preset tuned for late game (Dragon unlocked).",
-        display: ["Preset Late Game OFF", "Preset Late Game ON"],
-        default: 0,
-    },
     recommendedSettings: {
         hint: "Set all recommended options (⚠️ reloads game instantly).",
         display: ["Recommended OFF", "Recommended ON"],
         default: 0,
     },
+    // v2: replaces the 3 manual presetEarlyGame/presetMidGame/presetLateGame toggles - the
+    // autopilot detects the stage itself (src/core/ascend.ts gameStage()) and applies the
+    // matching settings table (src/core/autopilot.ts) continuously, no reload needed.
+    autopilot: {
+        hint: "Bot detects game stage and configures itself automatically (no manual presets).",
+        display: ["Autopilot OFF", "Autopilot ON"],
+        default: 0,
+    },
+    // v2: after every ascend, spend heavenly chips on unlocked prestige upgrades
+    // (cheapest-first) automatically - see src/core/heavenlyUpgrades.ts.
+    autoBuyHeavenlyUpgrades: {
+        hint: "Automatically buy unlocked heavenly upgrades with HC after ascending.",
+        display: ["Auto-buy Heavenly Upgrades OFF", "Auto-buy Heavenly Upgrades ON"],
+        default: 1,
+    },
 };
+
+export function installPreferences(): void {
+    FrozenCookies.preferenceValues = preferenceValues;
+}

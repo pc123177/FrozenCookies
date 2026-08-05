@@ -18,7 +18,7 @@ An automated Cookie Clicker tool.
 
 -   **Steam:** Subscribe on [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=2816199538)
 -   **Web:** Paste this in the console:  
-    `Game.LoadMod("https://github.erbkaiser.com/FrozenCookies/frozen_cookies.js");`
+    `Game.LoadMod("https://github.erbkaiser.com/FrozenCookies/dist/frozen_cookies.js");`
 -   **Bookmarklet/Userscript:** See 'How to use' below for details.
 
 ## Table of Contents
@@ -69,12 +69,12 @@ Click the button to open the FrozenCookies menu, where you can configure setting
 2. Go to the Console tab.
 3. Paste and run:
     ```js
-    Game.LoadMod("https://github.erbkaiser.com/FrozenCookies/frozen_cookies.js");
+    Game.LoadMod("https://github.erbkaiser.com/FrozenCookies/dist/frozen_cookies.js");
     ```
 4. You should see a confirmation message in the console.
 5. You might need to enable pasting in the browser console first, it will tell you if that is the case
 6. Some net nanny programs may block my website. In that case, try to load from
-   **Game.LoadMod("https://erbkaiser.github.io/FrozenCookies/frozen_cookies.js");**. If
+   **Game.LoadMod("https://erbkaiser.github.io/FrozenCookies/dist/frozen_cookies.js");**. If
    that also fails, contact your internet administrator and ask them to unblock
    github.erbkaiser.com
 
