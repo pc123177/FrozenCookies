@@ -1858,7 +1858,11 @@ function gameStage() {
             reason: "Dragon unlocked (Chocolate egg owned)",
         };
     }
-    if (Game.Objects["Wizard tower"].unlocked || Game.Objects["Temple"].unlocked) {
+    // .amount > 0 is the real, immediate signal that the building is owned - the M/T
+    // minigame globals (used elsewhere in this file) only populate once Cookie Clicker
+    // finishes an async fetch of the minigame script, which can lag well behind the actual
+    // purchase. .unlocked just means "visible in store", not "owned" either.
+    if (Game.Objects["Wizard tower"].amount > 0 || Game.Objects["Temple"].amount > 0) {
         return {
             stage: "mid",
             label: "MID GAME",
