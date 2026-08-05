@@ -66,8 +66,12 @@ nextSpell = function (i) {
             if (!Game.hasBuff("Dragonflight"))
                 choices.push('<b style="color:#00C4FF">Click Frenzy');
             if (Math.random() < 0.1)
+                // Real game weighting (minigameGrimoire.js spellsById[1].win): pushes
+                // 'cookie storm' TWICE and 'blab' once - a 2/3 vs 1/3 split, not three
+                // distinct equally-weighted outcomes. There is no separate "Cookie Chain"
+                // outcome for this spell.
                 choices.push(
-                    '<b style="color:#FFDE5F">Cookie Chain',
+                    '<b style="color:#00C4FF">Cookie Storm',
                     '<b style="color:#00C4FF">Cookie Storm',
                     "Blab"
                 );
@@ -87,9 +91,14 @@ nextSpell = function (i) {
                 '<b style="color:#FF3605">Ruin Cookies'
             );
             if (Math.random() < 0.1)
+                // Real game (minigameGrimoire.js spellsById[1].fail): pushes 'cursed
+                // finger' and 'blood frenzy' - NOT 'elder frenzy'. "Elder Frenzy" does not
+                // exist anywhere in the Grimoire minigame source; the name was wrong here,
+                // making every nextSpellName(0) == "Elder Frenzy" check below unreachable
+                // dead code that never fired for the real backfire outcome.
                 choices.push(
                     '<b style="color:#174F01">Cursed Finger',
-                    '<b style="color:#4F0007">Elder Frenzy'
+                    '<b style="color:#4F0007">Blood Frenzy'
                 );
             if (Math.random() < 0.003)
                 choices.push('<b style="color:#5FFFFC">Sugar Lump');
@@ -123,7 +132,6 @@ nextSpellName = function (i) {
         'frenzy':              'Frenzy',
         'lucky':               'Lucky',
         'click frenzy':        'Click Frenzy',
-        'cookie chain':        'Cookie Chain',
         'cookie storm':        'Cookie Storm',
         'cookie storm (drop)': 'Cookie Storm (Drop)',
         'building special':    'Building Special',
@@ -131,7 +139,7 @@ nextSpellName = function (i) {
         'ruin cookies':        'Ruin Cookies',
         'clot':                'Clot',
         'cursed finger':       'Cursed Finger',
-        'elder frenzy':        'Elder Frenzy',
+        'blood frenzy':        'Blood Frenzy',
         'sugar lump':          'Sugar Lump',
     };
 
@@ -364,7 +372,6 @@ function autoCast() {
                     }
 
                     if (
-                        nextSpellName(0) == "Cookie Chain" ||
                         nextSpellName(0) == "Cookie Storm" ||
                         nextSpellName(0) == "Frenzy" ||
                         nextSpellName(0) == "Building Special"
@@ -397,7 +404,7 @@ function autoCast() {
                         return;
                     }
 
-                    if (nextSpellName(0) == "Elder Frenzy") {
+                    if (nextSpellName(0) == "Blood Frenzy") {
                         if (Game.Upgrades["Elder Pact"].bought == 1) {
                             if (
                                 (Game.hasBuff("Click frenzy") ||
@@ -468,7 +475,6 @@ function autoCast() {
                     !Game.hasBuff("Dragonflight") &&
                     (nextSpellName(0) == "Blab" ||
                         nextSpellName(0) == "Cookie Storm (Drop)" ||
-                        nextSpellName(0) == "Cookie Chain" ||
                         nextSpellName(0) == "Cookie Storm" ||
                         nextSpellName(0) == "Frenzy" ||
                         nextSpellName(0) == "Lucky")
@@ -509,7 +515,7 @@ function autoCast() {
                         return;
                     }
 
-                    if (nextSpellName(0) == "Elder Frenzy") {
+                    if (nextSpellName(0) == "Blood Frenzy") {
                         if (Game.Upgrades["Elder Pact"].bought == 1) {
                             if (
                                 (Game.hasBuff("Click frenzy") ||
@@ -662,9 +668,9 @@ function autoFTHOFComboAction() {
             (nextSpellName(1) == "Click Frenzy" &&
                 nextSpellName(0) == "Building Special") ||
             (nextSpellName(0) == "Click Frenzy" &&
-                nextSpellName(1) == "Elder Frenzy") ||
+                nextSpellName(1) == "Blood Frenzy") ||
             (nextSpellName(1) == "Click Frenzy" &&
-                nextSpellName(0) == "Elder Frenzy"))
+                nextSpellName(0) == "Blood Frenzy"))
     ) {
         autoFTHOFComboAction.state = 1;
     }
@@ -893,8 +899,8 @@ function auto100ConsistencyComboAction() {
         M.magicM >= 98 &&
         ((nextSpellName(0) == "Click Frenzy" && nextSpellName(1) == "Building Special") ||
             (nextSpellName(1) == "Click Frenzy" && nextSpellName(0) == "Building Special") ||
-            (nextSpellName(0) == "Click Frenzy" && nextSpellName(1) == "Elder Frenzy") ||
-            (nextSpellName(1) == "Click Frenzy" && nextSpellName(0) == "Elder Frenzy"))
+            (nextSpellName(0) == "Click Frenzy" && nextSpellName(1) == "Blood Frenzy") ||
+            (nextSpellName(1) == "Click Frenzy" && nextSpellName(0) == "Blood Frenzy"))
     ) {
         auto100ConsistencyComboAction.state = 1;
     }
