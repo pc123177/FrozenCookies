@@ -866,7 +866,7 @@ function FCMenu() {
             subsection.append(
                 buildListing(
                     "ROI ascend mode",
-                    FrozenCookies.autoAscendROI ? "ON" : "OFF"
+                    FrozenCookies.autoAscendToggle == 1 && FrozenCookies.autoAscend == 3 ? "ON" : "OFF"
                 )
             );
             subsection.append(
@@ -1006,6 +1006,10 @@ function FCMenu() {
             );
         }
         subsection.append(buildListing("Game Seed", Game.seed));
+        var stage = gameStage();
+        subsection.append(
+            buildListing("Game Stage", stage.label + " - " + stage.reason)
+        );
         menu.append(subsection);
         // --- INTERNAL INFO SECTION ---
         subsection = $("<div>").addClass("subsection");
