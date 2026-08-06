@@ -1925,7 +1925,7 @@ function FCStart() {
         "petDragonBot","autoDragonAura0Bot","autoDragonAura1Bot","autoDragonOrbsBot",
         "autoSugarFrenzyBot","autoWorship0Bot","autoWorship1Bot","autoWorship2Bot",
         "otherUpgradesBot","autoCycliusBot","recommendedSettingsBot","autoMinigameCheckBot",
-        "ascendBot","autopilotBot","heavenlyUpgradeBot",
+        "ascendBot","autopilotBot","heavenlyUpgradeBot","lumpLevelingBot",
     ];
     bots.forEach(function(bot) {
         if (FrozenCookies[bot]) { clearInterval(FrozenCookies[bot]); FrozenCookies[bot] = 0; }
@@ -1961,6 +1961,7 @@ function FCStart() {
     FrozenCookies.ascendBot = setInterval(ascendBotTick, FrozenCookies.frequency);
     FrozenCookies.autopilotBot = setInterval(autopilotBotTick, FrozenCookies.frequency);
     FrozenCookies.heavenlyUpgradeBot = setInterval(heavenlyUpgradeBotTick, FrozenCookies.frequency * 10);
+    FrozenCookies.lumpLevelingBot = setInterval(lumpLevelingBotTick, FrozenCookies.frequency * 10);
     if (!G || !B || !T || !M) FrozenCookies.autoMinigameCheckBot = setInterval(minigameCheckAction, FrozenCookies.frequency * 600);
     if (statSpeed(FrozenCookies.trackStats) > 0) {
         FrozenCookies.statBot = setInterval(saveStats, statSpeed(FrozenCookies.trackStats));
