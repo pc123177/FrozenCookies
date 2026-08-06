@@ -330,14 +330,6 @@ if (typeof Game.oldUpdateMenu != "function") {
             filter: none;
             box-shadow: 0 0 8px 2px #fff, 0 0 2px 1px #cfc inset;
         }
-        .fc-section-heading {
-            font-variant: small-caps;
-            font-weight: bold;
-            letter-spacing: 1px;
-            font-size: 1.1em;
-            display: block;
-            margin-bottom: 2px;
-        }
         .fc-hint-label {
             font-size: smaller;
             color: #aaa;
@@ -354,9 +346,52 @@ if (typeof Game.oldUpdateMenu != "function") {
             color: #a00;
             margin-bottom: 6px;
         }
+        .fc-group {
+            border: 1px solid #333;
+            border-radius: 6px;
+            margin: 8px 0;
+            background: #0a0a0a;
+            overflow: hidden;
+        }
+        .fc-group > summary {
+            list-style: none;
+            cursor: pointer;
+            padding: 8px 12px;
+            font-variant: small-caps;
+            font-weight: bold;
+            letter-spacing: 1px;
+            font-size: 1.1em;
+            background: #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            user-select: none;
+        }
+        .fc-group > summary::-webkit-details-marker { display: none; }
+        .fc-group > summary::after {
+            content: "\\25BE";
+            font-size: 0.8em;
+            opacity: 0.6;
+            transition: transform 0.15s;
+        }
+        .fc-group:not([open]) > summary::after { transform: rotate(-90deg); }
+        .fc-group > summary:hover { background: #222; }
+        .fc-group-body {
+            padding: 8px 12px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
     `;
     document.head.appendChild(style);
 })();
+
+// Game.UpdateMenu() rebuilds the entire menu DOM from scratch every ~1s (see the
+// Game.callingMenu self-scheduling loop below) - a fresh <details> element defaults to closed
+// every rebuild, so collapsing a group would silently snap back open a second later without
+// this: persisted per-group state, keyed by the preference-group name, read on render and
+// written on toggle.
+var fcMenuGroupOpen = {};
 
 function FCMenu() {
     Game.UpdateMenu = function () {
@@ -555,6 +590,14 @@ function FCMenu() {
                     .addClass("fc-warning")
                     .text(" ⚠️ All options take effect immediately.")
             );
+            // Each no-`display` preference entry (e.g. clickingOptions, buyingOptions in
+            // preferences.ts) is a group header - previously rendered as a plain inline label
+            // with every option from every group stacked flat below it (277 buttons in one
+            // unbroken column). Wrapping each header's group in a native <details> accordion
+            // keeps every listing/button exactly as before (same ids, same click handlers) -
+            // only the container around them changes. Defaults open so nothing is hidden that
+            // was visible before.
+            var currentGroupBody = null;
             _.keys(FrozenCookies.preferenceValues).forEach(function (
                 preference
             ) {
@@ -565,6 +608,20 @@ function FCMenu() {
                     extras = prefVal.extras,
                     current = FrozenCookies[preference],
                     preferenceButtonId = preference + "Button";
+                if (!display) {
+                    var isOpen = fcMenuGroupOpen[preference] !== false;
+                    var details = $("<details>")
+                        .addClass("fc-group")
+                        .prop("open", isOpen)
+                        .on("toggle", function () {
+                            fcMenuGroupOpen[preference] = this.open;
+                        });
+                    details.append($("<summary>").text(hint || preference));
+                    currentGroupBody = $("<div>").addClass("fc-group-body");
+                    details.append(currentGroupBody);
+                    subsection.append(details);
+                    return;
+                }
                 if (display && display.length > 0 && display.length > current) {
                     listing = $("<div>").addClass("listing");
                     // Show hint as a subsection head before the button(s)
@@ -643,22 +700,7 @@ function FCMenu() {
                                   );
                         listing.append($(extrasHtml));
                     }
-                    subsection.append(listing);
-                }
-                // if no options, still display the hint as a subsection head
-                if (!display) {
-                    listing = $("<div>").addClass("fc-section-heading");
-                    if (hint) {
-                        listing.append(
-                            $("<br>"),
-                            $("<label>").text(
-                                hint.replace(/\$\{(.+)\}/g, function (s, id) {
-                                    return FrozenCookies[id];
-                                })
-                            )
-                        );
-                    }
-                    subsection.append(listing);
+                    (currentGroupBody || subsection).append(listing);
                 }
             });
             menu.append(subsection);
