@@ -4,6 +4,7 @@ import type { AscendRoiStats, GameStage } from "../core/types";
 import { ascendBotTick } from "./ascend-bot";
 import { autopilotBotTick } from "./autopilot-bot";
 import { heavenlyUpgradeBotTick } from "./heavenly-upgrade-bot";
+import { lumpLevelingBotTick } from "./lump-leveling-bot";
 import { buildGameSnapshot } from "./snapshot";
 
 // Everything legacy/*.js (not yet migrated) needs to keep calling as a plain global
@@ -25,6 +26,7 @@ declare global {
         ascendBotTick: () => void;
         autopilotBotTick: () => void;
         heavenlyUpgradeBotTick: () => void;
+        lumpLevelingBotTick: () => void;
     }
 }
 
@@ -40,4 +42,5 @@ export function installLegacyGlobals(): void {
     window.ascendBotTick = ascendBotTick;
     window.autopilotBotTick = autopilotBotTick;
     window.heavenlyUpgradeBotTick = heavenlyUpgradeBotTick;
+    window.lumpLevelingBotTick = lumpLevelingBotTick;
 }

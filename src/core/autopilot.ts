@@ -83,6 +83,11 @@ export const STAGE_SETTINGS: Record<GameStageId, StageSettings> = {
         autoWorshipToggle: 1, autoWorship0: 2, autoWorship1: 8,
         towerLimit: 1, manaMax: 37, autoCasting: 3,
         minASFMult: 7777,
+        // FTHOF combo double-casts Force the Hand of Fate via a Wizard Tower sell/rebuy - real
+        // optimization the autopilot never turned on for any stage. Safe to enable here: it
+        // self-disables once Wizard tower.level > 10 (fc_spells.js autoFTHOFComboAction) and
+        // yields to auto100ConsistencyCombo automatically once that's active (same file).
+        autoFTHOFCombo: 1,
     },
     late: {
         ...SHARED_BASE,

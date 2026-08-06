@@ -4,11 +4,14 @@
 // legacy files keep using the untyped `any` implicitly for everything else.
 
 interface CCBuilding {
+    name: string;
     basePrice: number;
     amount: number;
+    level: number;
     unlocked: number;
     minigame: unknown;
     getPrice(): number;
+    levelUp(): void;
 }
 
 interface CCUpgrade {
@@ -34,6 +37,7 @@ interface CCGame {
     heavenlyChips: number;
     dragonLevel: number;
     HCfactor: number;
+    lumps: number;
     ObjectsById: CCBuilding[];
     Objects: Record<string, CCBuilding>;
     UpgradesById: Record<number, CCUpgrade>;
@@ -56,6 +60,8 @@ interface FrozenCookiesState {
     frequency: number;
     autopilot?: number;
     autoBuyHeavenlyUpgrades?: number;
+    autoLevelBuildings?: number;
+    sugarBakingGuard?: number;
     [key: string]: unknown;
 }
 

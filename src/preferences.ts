@@ -192,6 +192,11 @@ export const preferenceValues: PreferenceValues = {
         display: ["Sugar Baking Guard OFF", "Sugar Baking Guard ON"],
         default: 0,
     },
+    autoLevelBuildings: {
+        hint: "Auto-spend sugar lumps to level up owned buildings (cheapest first).",
+        display: ["Auto-Level Buildings OFF", "Auto-Level Buildings ON"],
+        default: 1,
+    },
     autoGS: {
         hint: "Auto-toggle Golden Switch for click buffs.",
         display: ["Auto-Golden Switch OFF", "Auto-Golden Switch ON"],

@@ -217,7 +217,12 @@
       towerLimit: 1,
       manaMax: 37,
       autoCasting: 3,
-      minASFMult: 7777
+      minASFMult: 7777,
+      // FTHOF combo double-casts Force the Hand of Fate via a Wizard Tower sell/rebuy - real
+      // optimization the autopilot never turned on for any stage. Safe to enable here: it
+      // self-disables once Wizard tower.level > 10 (fc_spells.js autoFTHOFComboAction) and
+      // yields to auto100ConsistencyCombo automatically once that's active (same file).
+      autoFTHOFCombo: 1
     },
     late: {
       ...SHARED_BASE,
@@ -307,6 +312,29 @@
     }
   }
 
+  // src/core/lumpLeveling.ts
+  function nextBuildingToLevel(buildings, lumps, minLumpsReserve) {
+    const available = lumps - minLumpsReserve;
+    const candidates = buildings.filter((b) => b.amount > 0 && b.level + 1 <= available).sort((a, b) => a.level - b.level);
+    return candidates.length > 0 ? candidates[0].name : null;
+  }
+
+  // src/game/lump-leveling-bot.ts
+  function lumpLevelingBotTick() {
+    if (FrozenCookies.autoLevelBuildings !== 1) return;
+    const minLumpsReserve = FrozenCookies.sugarBakingGuard === 1 ? 101 : 0;
+    for (; ; ) {
+      const buildings = Object.values(Game.ObjectsById).map((b) => ({
+        name: b.name,
+        amount: b.amount,
+        level: b.level
+      }));
+      const next = nextBuildingToLevel(buildings, Game.lumps, minLumpsReserve);
+      if (!next) break;
+      Game.Objects[next].levelUp();
+    }
+  }
+
   // src/game/legacy-bridge.ts
   function installLegacyGlobals() {
     window.ascendROIStats = () => ascendROIStats(buildGameSnapshot());
@@ -316,6 +344,7 @@
     window.ascendBotTick = ascendBotTick;
     window.autopilotBotTick = autopilotBotTick;
     window.heavenlyUpgradeBotTick = heavenlyUpgradeBotTick;
+    window.lumpLevelingBotTick = lumpLevelingBotTick;
   }
 
   // src/preferences.ts
@@ -497,6 +526,11 @@
       hint: "Don't spend lumps below 101 (keep Sugar Baking bonus).",
       display: ["Sugar Baking Guard OFF", "Sugar Baking Guard ON"],
       default: 0
+    },
+    autoLevelBuildings: {
+      hint: "Auto-spend sugar lumps to level up owned buildings (cheapest first).",
+      display: ["Auto-Level Buildings OFF", "Auto-Level Buildings ON"],
+      default: 1
     },
     autoGS: {
       hint: "Auto-toggle Golden Switch for click buffs.",
