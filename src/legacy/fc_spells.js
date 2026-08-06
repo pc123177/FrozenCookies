@@ -998,9 +998,12 @@ function auto100ConsistencyComboAction() {
             return;
 
         case 4:
-            if (Game.dragonAura == 16 && !Game.dragonAura2 == 15) { Game.specialTab = "dragon"; Game.SetDragonAura(15, 1); Game.ConfirmPrompt(); }
+            // FIX: was `!Game.dragonAura2 == 15` - `!` binds tighter than `==`, so this
+            // compared a boolean to 15 and was always false, making the conflict-avoidance
+            // branch dead code (only the else-if fallback ever ran). Same bug on the next pair.
+            if (Game.dragonAura == 16 && Game.dragonAura2 != 15) { Game.specialTab = "dragon"; Game.SetDragonAura(15, 1); Game.ConfirmPrompt(); }
             else if (!Game.hasAura("Radiant Appetite")) { Game.specialTab = "dragon"; Game.SetDragonAura(15, 0); Game.ConfirmPrompt(); }
-            if (Game.dragonAura2 == 15 && !Game.dragonAura == 16) { Game.specialTab = "dragon"; Game.SetDragonAura(16, 0); Game.ConfirmPrompt(); }
+            if (Game.dragonAura2 == 15 && Game.dragonAura != 16) { Game.specialTab = "dragon"; Game.SetDragonAura(16, 0); Game.ConfirmPrompt(); }
             else if (!Game.hasAura("Dragon's Fortune")) { Game.specialTab = "dragon"; Game.SetDragonAura(16, 1); Game.ConfirmPrompt(); }
             auto100ConsistencyComboAction.state = 5;
             return;
