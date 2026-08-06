@@ -1098,7 +1098,7 @@ function FCMenu() {
                         .attr("colspan", "2")
                         .append(
                             $("<b>").text(
-                                bank.name + (bank.deltaCps === 0 ? " (*)" : "")
+                                bank.name + (deltaCps === 0 ? " (*)" : "")
                             )
                         ),
                     $("<td>").text(Beautify(bank.efficiency)),
@@ -1161,20 +1161,18 @@ function FCMenu() {
 }
 
 // Cycle through the preference values for a given option.
+// FIX: menu buttons are rendered one-per-value with id `<pref>Button_<idx>`
+// (see the multichoice button group above), not a single `<pref>Button` whose
+// text gets swapped - the old selector never matched, so this never fired.
 function cyclePreference(preferenceName) {
     var preference = FrozenCookies.preferenceValues[preferenceName];
     if (preference) {
         var display = preference.display;
         var current = FrozenCookies[preferenceName];
-        var preferenceButton = $("#" + preferenceName + "Button");
-        if (
-            display &&
-            display.length > 0 &&
-            preferenceButton &&
-            preferenceButton.length > 0
-        ) {
+        if (display && display.length > 0) {
             var newValue = (current + 1) % display.length;
-            preferenceButton[0].innerText = display[newValue];
+            $("#" + preferenceName + "Button_" + current).removeClass("selected");
+            $("#" + preferenceName + "Button_" + newValue).addClass("selected");
             FrozenCookies[preferenceName] = newValue;
             FrozenCookies.recalculateCaches = true;
             Game.RefreshStore();
