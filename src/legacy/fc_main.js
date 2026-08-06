@@ -520,23 +520,8 @@ function updateManBank(base) {
     userInputPrompt("Manual Bank!", 'How many minutes of base CpS should be kept at all times?', FrozenCookies[base], storeNumberCallback(base, 0));
 }
 
-function cyclePreference(preferenceName) {
-    var preference = FrozenCookies.preferenceValues[preferenceName];
-    if (preference) {
-        var display = preference.display;
-        var current = FrozenCookies[preferenceName];
-        var preferenceButton = $("#" + preferenceName + "Button");
-        if (display && display.length > 0 && preferenceButton && preferenceButton.length > 0) {
-            var newValue = (current + 1) % display.length;
-            preferenceButton[0].innerText = display[newValue];
-            FrozenCookies[preferenceName] = newValue;
-            FrozenCookies.recalculateCaches = true;
-            Game.RefreshStore();
-            Game.RebuildUpgrades();
-            FCStart();
-        }
-    }
-}
+// cyclePreference() lives in fc_button.js (loaded after this file, so its
+// definition is the one actually active) - removed the duplicate copy here.
 
 function toggleFrozen(setting) {
     if (!FrozenCookies[setting]) { FrozenCookies[setting] = 1; } else { FrozenCookies[setting] = 0; }
