@@ -81,7 +81,7 @@ function autoWorship2Action() {
     }
 
     if (T.slot[0] == FrozenCookies.autoWorship2) {
-        FrozenCookies.autoworship2 = 0;
+        FrozenCookies.autoWorship2 = 0;
         logEvent(
             "autoWorship",
             "Can't worship the same god in Diamond and Jade slots!"
@@ -89,7 +89,7 @@ function autoWorship2Action() {
         return;
     }
     if (T.slot[1] == FrozenCookies.autoWorship2) {
-        FrozenCookies.autoworship2 = 0;
+        FrozenCookies.autoWorship2 = 0;
         logEvent(
             "autoWorship",
             "Can't worship the same god in Ruby and Jade slots!"

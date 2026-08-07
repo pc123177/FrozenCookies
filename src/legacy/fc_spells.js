@@ -905,16 +905,23 @@ function auto100ConsistencyComboAction() {
         auto100ConsistencyComboAction.state = 1;
     }
 
-    auto100ConsistencyComboAction.countFarm = Game.Objects["Farm"].amount - 1;
-    auto100ConsistencyComboAction.countMine = Game.Objects["Mine"].amount;
-    auto100ConsistencyComboAction.countFactory = Game.Objects["Factory"].amount;
-    auto100ConsistencyComboAction.countBank = Game.Objects["Bank"].amount - 1;
-    auto100ConsistencyComboAction.countTemple = Game.Objects["Temple"].amount - 1;
-    auto100ConsistencyComboAction.countWizard = Game.Objects["Wizard tower"].amount - 1;
-    auto100ConsistencyComboAction.countShipment = Game.Objects["Shipment"].amount;
-    auto100ConsistencyComboAction.countAlchemy = Game.Objects["Alchemy lab"].amount;
-    auto100ConsistencyComboAction.countTimeMach = Game.Objects["Time machine"].amount;
-    auto100ConsistencyComboAction.countAntiMatter = Game.Objects["Antimatter condenser"].amount;
+    // FIX: this block used to run unconditionally every tick, including on the tick that
+    // buys buildings back (state 15/17/etc). Since sell happens at state 13, by the time
+    // buy-back runs the counts had already been overwritten with the POST-SELL amounts (0
+    // or 1), so safeBuy(building, countX) always bought 0 - buildings sold and never
+    // restored. Only state 0 (idle, before any selling) is safe to (re)capture on.
+    if (auto100ConsistencyComboAction.state === 0) {
+        auto100ConsistencyComboAction.countFarm = Game.Objects["Farm"].amount - 1;
+        auto100ConsistencyComboAction.countMine = Game.Objects["Mine"].amount;
+        auto100ConsistencyComboAction.countFactory = Game.Objects["Factory"].amount;
+        auto100ConsistencyComboAction.countBank = Game.Objects["Bank"].amount - 1;
+        auto100ConsistencyComboAction.countTemple = Game.Objects["Temple"].amount - 1;
+        auto100ConsistencyComboAction.countWizard = Game.Objects["Wizard tower"].amount - 1;
+        auto100ConsistencyComboAction.countShipment = Game.Objects["Shipment"].amount;
+        auto100ConsistencyComboAction.countAlchemy = Game.Objects["Alchemy lab"].amount;
+        auto100ConsistencyComboAction.countTimeMach = Game.Objects["Time machine"].amount;
+        auto100ConsistencyComboAction.countAntiMatter = Game.Objects["Antimatter condenser"].amount;
+    }
 
     if (
         !auto100ConsistencyComboAction.state &&
