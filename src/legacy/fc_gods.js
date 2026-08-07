@@ -710,7 +710,11 @@ function autoDragonOrbsAction() {
     for (var ii in Game.buffs) {
         buffsN++;
     }
-    if (!goldenCookieLife() && Game.hasAura("Dragon Orbs") && !buffsN) {
+    // FIX: was missing the FrozenCookies.autoDragonOrbs==1 check - the block above only sets
+    // that flag to 0 when the feature becomes impossible, it never gated this sell action
+    // itself, so it kept selling Yous every tick even after being "disabled" (or if the user
+    // never enabled it at all but has Dragon Orbs equipped).
+    if (FrozenCookies.autoDragonOrbs == 1 && !goldenCookieLife() && Game.hasAura("Dragon Orbs") && !buffsN) {
         Game.Objects["You"].sell(1);
         logEvent(
             "autoDragonOrbs",
