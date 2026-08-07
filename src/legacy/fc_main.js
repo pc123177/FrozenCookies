@@ -973,6 +973,12 @@ function bestBank(minEfficiency) {
         .sort(function (a, b) { return b - a; })
         .map(function (bank) { return { cost: bank, efficiency: cookieEfficiency(Game.cookies, bank) }; })
         .filter(function (bank) { return (bank.efficiency >= 0 && bank.efficiency <= minEfficiency) ? bank : null; });
+    // FIX: the filter above can drop all 3 candidates (e.g. Game.cookies briefly NaN, or a
+    // negative minEfficiency), leaving bankLevels empty. bankLevels[0].cost then threw
+    // "Cannot read properties of undefined (reading 'cost')" every single autoCookie tick -
+    // the 0-cost candidate is always a safe fallback (matches the {cost:0, efficiency:0}
+    // FrozenCookies.currentBank/targetBank are initialized to).
+    if (bankLevels.length === 0) return { cost: 0, efficiency: 0 };
     if (bankLevels[0].cost > bankOverride) return bankLevels[0];
     return { cost: bankOverride, efficiency: 1 };
 }
