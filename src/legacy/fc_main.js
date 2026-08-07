@@ -246,9 +246,10 @@ function setOverrides(gameSaveData) {
         FrozenCookies.manaMax = preferenceParse("manaMax", 0);
         FrozenCookies.orbMax = preferenceParse("orbMax", 0);
 
-        // SMART ASCEND: load new ROI preferences
+        // SMART ASCEND: load ROI threshold pref (ascendROIMinGrowth is covered by the generic
+        // preferenceValues loop above; ascendROIMinHC preference was removed - the min-HC floor
+        // is a hardcoded sanity check now, not user-configurable).
         FrozenCookies.ascendROIThreshold = preferenceParse("ascendROIThreshold", 1);
-        FrozenCookies.ascendROIMinHC     = preferenceParse("ascendROIMinHC", 1);
 
         if (!FrozenCookies.autoSweet && autoSweetAction.autobuyyes == 1) {
             FrozenCookies.autoBuy = 1;
@@ -394,9 +395,9 @@ function saveFCData() {
     saveString.orbMax = FrozenCookies.orbMax;
     saveString.manBankMins = FrozenCookies.manBankMins;
     saveString.prevLastHCTime = FrozenCookies.prevLastHCTime;
-    // SMART ASCEND: persist ROI settings
+    // SMART ASCEND: persist ROI threshold (ascendROIMinGrowth already covered by the generic
+    // preferenceValues loop above).
     saveString.ascendROIThreshold = FrozenCookies.ascendROIThreshold;
-    saveString.ascendROIMinHC = FrozenCookies.ascendROIMinHC;
     saveString.saveVersion = FrozenCookies.version;
     return JSON.stringify(saveString);
 }

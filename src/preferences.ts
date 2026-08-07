@@ -109,7 +109,7 @@ export const preferenceValues: PreferenceValues = {
     // The original modes (fixed amount, prestige doubles) are kept unchanged.
     // Mode 3 calculates payback time: ascending is triggered only when the extra
     // CpS from new HCs would recover the cookies-on-screen within the configured
-    // threshold (see ascendROIThreshold and ascendROIMinHC below).
+    // threshold (see ascendROIThreshold and ascendROIMinGrowth below).
     autoAscend: {
         hint: "Choose auto-ascend method.",
         display: [
@@ -135,27 +135,14 @@ export const preferenceValues: PreferenceValues = {
         ],
         default: 1,
     },
-    // SMART ASCEND: minimum new HC gate.
-    // Prevents ROI mode from triggering on trivially small gains.
-    // Even if payback is fast, don't ascend for fewer than N new HCs.
-    ascendROIMinHC: {
-        hint: "ROI mode: minimum new HCs required before ascending.",
-        display: [
-            "Min 5 new HCs",
-            "Min 10 new HCs",
-            "Min 25 new HCs",
-            "Min 50 new HCs",
-            "Min 100 new HCs",
-        ],
-        default: 1,
-    },
-    // SMART ASCEND: relative growth floor. Absolute HC floors above are meaningful early
-    // (25 HC when you have 5 is huge) but become noise late-game once HC is already in the
-    // hundreds/thousands - this scales the bar with what you already have instead.
+    // SMART ASCEND: relative growth floor. Replaces an earlier flat "min N new HCs" dropdown
+    // that stayed fixed no matter how far into the run you were (5 HC meant a lot at prestige
+    // 10, meant nothing at prestige 1000). A % of current prestige scales with progress instead.
     ascendROIMinGrowth: {
         hint: "ROI mode: minimum % growth in HC vs current total before ascending.",
         display: [
             "No minimum growth",
+            "+2% growth",
             "+5% growth",
             "+10% growth",
             "+20% growth",

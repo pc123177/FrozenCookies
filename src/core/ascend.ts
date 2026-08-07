@@ -29,13 +29,11 @@ export function gameStage(snapshot: GameSnapshot): GameStage {
     };
 }
 
-const ASCEND_ROI_MIN_HC_VALUES = [5, 10, 25, 50, 100];
 const ASCEND_ROI_THRESHOLD_HOURS = [1, 2, 4, 8];
-// Absolute HC floors (above) make sense early (25 HC when you have 5 is huge) but are noise
-// late-game once HC is already in the hundreds/thousands - a "small" ascend by that measure
-// still clears the absolute floor easily. This is a relative floor on top: newHC as a percent
-// of current prestige, so what counts as "worth ascending for" scales with what you already have.
-const ASCEND_ROI_MIN_GROWTH_PERCENT = [0, 0.05, 0.1, 0.2, 0.35];
+// newHC as a percent of current prestige - scales naturally with progress (the same % of a
+// bigger base demands more absolute HC), replacing an earlier flat/fixed HC-count floor that
+// stayed static no matter how far into the run you were.
+const ASCEND_ROI_MIN_GROWTH_PERCENT = [0, 0.02, 0.05, 0.1, 0.2, 0.35];
 
 // Cumulative cookie cost to build a building from 0 to `amount` (same formula as the
 // game's own cumulative-price curve).
@@ -62,7 +60,6 @@ export function ascendROIStats(snapshot: GameSnapshot): AscendRoiStats | null {
     const resetPrestige = Math.pow(cookiesBaked / 1e12, 1 / snapshot.hcExponent);
     const newHC = Math.floor(resetPrestige) - snapshot.prestige;
 
-    const minHC = ASCEND_ROI_MIN_HC_VALUES[snapshot.ascendRoiMinHCIndex] ?? 10;
     const minGrowthPercent = ASCEND_ROI_MIN_GROWTH_PERCENT[snapshot.ascendRoiMinGrowthIndex] ?? 0;
     // snapshot.prestige >= 1 always holds here (the prestige < 1 guard above already returned
     // null), so this division is always well-defined.
@@ -97,21 +94,23 @@ export function ascendROIStats(snapshot: GameSnapshot): AscendRoiStats | null {
     const thresholdHours = ASCEND_ROI_THRESHOLD_HOURS[snapshot.ascendRoiThresholdIndex] ?? 2;
     const thresholdSecs = thresholdHours * 3600;
 
-    const meetsMinHC = newHC >= minHC;
+    // Sanity floor only, not user-configurable: never ascend for a zero (or negative,
+    // shouldn't happen but be safe) HC gain. The real "is this worth it" gate is meetsGrowth
+    // (scales with progress) + meetsPayback.
+    const meetsSanityFloor = newHC >= 1;
     const meetsPayback = paybackSecs <= thresholdSecs;
 
     return {
         newHC,
-        minHC,
         minGrowthPercent,
         rebuildCost,
         paybackSecs,
         thresholdHours,
         thresholdSecs,
-        meetsMinHC,
+        meetsSanityFloor,
         meetsGrowth,
         meetsPayback,
-        wouldAscend: meetsMinHC && meetsGrowth && meetsPayback,
+        wouldAscend: meetsSanityFloor && meetsGrowth && meetsPayback,
     };
 }
 

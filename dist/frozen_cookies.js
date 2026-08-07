@@ -22,9 +22,8 @@
       reason: "Wizard Tower/Temple not unlocked yet"
     };
   }
-  var ASCEND_ROI_MIN_HC_VALUES = [5, 10, 25, 50, 100];
   var ASCEND_ROI_THRESHOLD_HOURS = [1, 2, 4, 8];
-  var ASCEND_ROI_MIN_GROWTH_PERCENT = [0, 0.05, 0.1, 0.2, 0.35];
+  var ASCEND_ROI_MIN_GROWTH_PERCENT = [0, 0.02, 0.05, 0.1, 0.2, 0.35];
   function cumulativeBuildingCost(basePrice, amount) {
     const priceIncrease = 1.15;
     return basePrice * (Math.pow(priceIncrease, amount) - 1) / (priceIncrease - 1);
@@ -34,7 +33,6 @@
     const cookiesBaked = snapshot.cookiesEarned + snapshot.cookiesReset + snapshot.wrinklerValue + snapshot.chocolateValue;
     const resetPrestige = Math.pow(cookiesBaked / 1e12, 1 / snapshot.hcExponent);
     const newHC = Math.floor(resetPrestige) - snapshot.prestige;
-    const minHC = ASCEND_ROI_MIN_HC_VALUES[snapshot.ascendRoiMinHCIndex] ?? 10;
     const minGrowthPercent = ASCEND_ROI_MIN_GROWTH_PERCENT[snapshot.ascendRoiMinGrowthIndex] ?? 0;
     const meetsGrowth = newHC / snapshot.prestige >= minGrowthPercent;
     const bonusPerHC = 0.01 * snapshot.heavenlyBonusMultiplier;
@@ -49,20 +47,19 @@
     const paybackSecs = cpsDelta > 0 ? (snapshot.cookies + rebuildCost) / cpsDelta : Number.POSITIVE_INFINITY;
     const thresholdHours = ASCEND_ROI_THRESHOLD_HOURS[snapshot.ascendRoiThresholdIndex] ?? 2;
     const thresholdSecs = thresholdHours * 3600;
-    const meetsMinHC = newHC >= minHC;
+    const meetsSanityFloor = newHC >= 1;
     const meetsPayback = paybackSecs <= thresholdSecs;
     return {
       newHC,
-      minHC,
       minGrowthPercent,
       rebuildCost,
       paybackSecs,
       thresholdHours,
       thresholdSecs,
-      meetsMinHC,
+      meetsSanityFloor,
       meetsGrowth,
       meetsPayback,
-      wouldAscend: meetsMinHC && meetsGrowth && meetsPayback
+      wouldAscend: meetsSanityFloor && meetsGrowth && meetsPayback
     };
   }
   function shouldAscendByROI(snapshot) {
@@ -96,7 +93,6 @@
       buildings: Game.ObjectsById.map((b) => ({ basePrice: b.basePrice, amount: b.amount })),
       autoAscendToggle: FrozenCookies.autoAscendToggle === 1,
       autoAscendMode: FrozenCookies.autoAscend,
-      ascendRoiMinHCIndex: FrozenCookies.ascendROIMinHC,
       ascendRoiThresholdIndex: FrozenCookies.ascendROIThreshold,
       ascendRoiMinGrowthIndex: FrozenCookies.ascendROIMinGrowth,
       comboAscendBlock: FrozenCookies.comboAscend === 1,
@@ -146,7 +142,6 @@
     pastemode: 0,
     autoAscendToggle: 1,
     autoAscend: 3,
-    ascendROIMinHC: 1,
     ascendROIThreshold: 1,
     comboAscend: 0,
     HCAscendAmount: 0,
@@ -201,14 +196,17 @@
     early: {
       ...SHARED_BASE,
       cookieClickSpeed: 150,
-      ascendROIMinHC: 0,
-      ascendROIThreshold: 0
+      ascendROIThreshold: 0,
       // cheap/fast early ascends compound fastest
+      ascendROIMinGrowth: 1
+      // +2% - prestige is small early, so any real HC gain clears
+      // this easily; just enough to skip a 0-value ascend that happened to have fast payback.
     },
     mid: {
       ...SHARED_BASE,
-      ascendROIMinHC: 1,
       ascendROIThreshold: 1,
+      ascendROIMinGrowth: 2,
+      // +5%
       autoSL: 2,
       sugarBakingGuard: 1,
       autoGS: 1,
@@ -236,12 +234,10 @@
       mineMax: 500,
       factoryLimit: 1,
       factoryMax: 500,
-      ascendROIMinHC: 2,
       ascendROIThreshold: 3,
       // rebuildCost fix already weighs the real cost
-      ascendROIMinGrowth: 2,
-      // +10% - absolute 25-HC floor alone is noise once HC is in the
-      // hundreds/thousands late-game; this scales the bar with the current HC total instead.
+      ascendROIMinGrowth: 3,
+      // +10%
       autoSL: 2,
       dragonsCurve: 2,
       sugarBakingGuard: 1,
@@ -453,7 +449,7 @@
     // The original modes (fixed amount, prestige doubles) are kept unchanged.
     // Mode 3 calculates payback time: ascending is triggered only when the extra
     // CpS from new HCs would recover the cookies-on-screen within the configured
-    // threshold (see ascendROIThreshold and ascendROIMinHC below).
+    // threshold (see ascendROIThreshold and ascendROIMinGrowth below).
     autoAscend: {
       hint: "Choose auto-ascend method.",
       display: [
@@ -479,27 +475,14 @@
       ],
       default: 1
     },
-    // SMART ASCEND: minimum new HC gate.
-    // Prevents ROI mode from triggering on trivially small gains.
-    // Even if payback is fast, don't ascend for fewer than N new HCs.
-    ascendROIMinHC: {
-      hint: "ROI mode: minimum new HCs required before ascending.",
-      display: [
-        "Min 5 new HCs",
-        "Min 10 new HCs",
-        "Min 25 new HCs",
-        "Min 50 new HCs",
-        "Min 100 new HCs"
-      ],
-      default: 1
-    },
-    // SMART ASCEND: relative growth floor. Absolute HC floors above are meaningful early
-    // (25 HC when you have 5 is huge) but become noise late-game once HC is already in the
-    // hundreds/thousands - this scales the bar with what you already have instead.
+    // SMART ASCEND: relative growth floor. Replaces an earlier flat "min N new HCs" dropdown
+    // that stayed fixed no matter how far into the run you were (5 HC meant a lot at prestige
+    // 10, meant nothing at prestige 1000). A % of current prestige scales with progress instead.
     ascendROIMinGrowth: {
       hint: "ROI mode: minimum % growth in HC vs current total before ascending.",
       display: [
         "No minimum growth",
+        "+2% growth",
         "+5% growth",
         "+10% growth",
         "+20% growth",

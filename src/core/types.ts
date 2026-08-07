@@ -27,9 +27,8 @@ export interface GameSnapshot {
 
     autoAscendToggle: boolean;
     autoAscendMode: number; // 0=off, 1=fixed HC, 2=prestige doubles, 3=ROI
-    ascendRoiMinHCIndex: number; // preference index: 0=5, 1=10, 2=25, 3=50, 4=100
     ascendRoiThresholdIndex: number; // preference index: 0=1h, 1=2h, 2=4h, 3=8h
-    ascendRoiMinGrowthIndex: number; // preference index: 0=off, 1=5%, 2=10%, 3=20%, 4=35%
+    ascendRoiMinGrowthIndex: number; // preference index: 0=off, 1=2%, 2=5%, 3=10%, 4=20%, 5=35%
     comboAscendBlock: boolean;
     cpsBonus: number;
     minCpSMult: number;
@@ -52,13 +51,12 @@ export interface GameStage {
 
 export interface AscendRoiStats {
     newHC: number;
-    minHC: number;
     minGrowthPercent: number;
     rebuildCost: number;
     paybackSecs: number;
     thresholdHours: number;
     thresholdSecs: number;
-    meetsMinHC: boolean;
+    meetsSanityFloor: boolean;
     meetsGrowth: boolean;
     meetsPayback: boolean;
     wouldAscend: boolean;
