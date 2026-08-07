@@ -31,6 +31,11 @@ export function gameStage(snapshot: GameSnapshot): GameStage {
 
 const ASCEND_ROI_MIN_HC_VALUES = [5, 10, 25, 50, 100];
 const ASCEND_ROI_THRESHOLD_HOURS = [1, 2, 4, 8];
+// Absolute HC floors (above) make sense early (25 HC when you have 5 is huge) but are noise
+// late-game once HC is already in the hundreds/thousands - a "small" ascend by that measure
+// still clears the absolute floor easily. This is a relative floor on top: newHC as a percent
+// of current prestige, so what counts as "worth ascending for" scales with what you already have.
+const ASCEND_ROI_MIN_GROWTH_PERCENT = [0, 0.05, 0.1, 0.2, 0.35];
 
 // Cumulative cookie cost to build a building from 0 to `amount` (same formula as the
 // game's own cumulative-price curve).
@@ -58,6 +63,10 @@ export function ascendROIStats(snapshot: GameSnapshot): AscendRoiStats | null {
     const newHC = Math.floor(resetPrestige) - snapshot.prestige;
 
     const minHC = ASCEND_ROI_MIN_HC_VALUES[snapshot.ascendRoiMinHCIndex] ?? 10;
+    const minGrowthPercent = ASCEND_ROI_MIN_GROWTH_PERCENT[snapshot.ascendRoiMinGrowthIndex] ?? 0;
+    // snapshot.prestige >= 1 always holds here (the prestige < 1 guard above already returned
+    // null), so this division is always well-defined.
+    const meetsGrowth = newHC / snapshot.prestige >= minGrowthPercent;
 
     const bonusPerHC = snapshot.hasPersistentMemory ? 0.02 : 0.01;
     const newBonus = Math.max(0, newHC) * bonusPerHC;
@@ -88,13 +97,15 @@ export function ascendROIStats(snapshot: GameSnapshot): AscendRoiStats | null {
     return {
         newHC,
         minHC,
+        minGrowthPercent,
         rebuildCost,
         paybackSecs,
         thresholdHours,
         thresholdSecs,
         meetsMinHC,
+        meetsGrowth,
         meetsPayback,
-        wouldAscend: meetsMinHC && meetsPayback,
+        wouldAscend: meetsMinHC && meetsGrowth && meetsPayback,
     };
 }
 

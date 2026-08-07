@@ -149,6 +149,20 @@ export const preferenceValues: PreferenceValues = {
         ],
         default: 1,
     },
+    // SMART ASCEND: relative growth floor. Absolute HC floors above are meaningful early
+    // (25 HC when you have 5 is huge) but become noise late-game once HC is already in the
+    // hundreds/thousands - this scales the bar with what you already have instead.
+    ascendROIMinGrowth: {
+        hint: "ROI mode: minimum % growth in HC vs current total before ascending.",
+        display: [
+            "No minimum growth",
+            "+5% growth",
+            "+10% growth",
+            "+20% growth",
+            "+35% growth",
+        ],
+        default: 0,
+    },
     comboAscend: {
         hint: "Block auto-ascend when you have X Frenzy or higher.",
         display: ["Ascend during combo OFF", "Ascend during combo ON"],

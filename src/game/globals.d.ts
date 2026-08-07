@@ -55,6 +55,7 @@ interface FrozenCookiesState {
     autoAscend: number;
     ascendROIMinHC: number;
     ascendROIThreshold: number;
+    ascendROIMinGrowth: number;
     comboAscend: number;
     minCpSMult: number;
     frequency: number;
