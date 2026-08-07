@@ -24,6 +24,7 @@
   }
   var ASCEND_ROI_MIN_HC_VALUES = [5, 10, 25, 50, 100];
   var ASCEND_ROI_THRESHOLD_HOURS = [1, 2, 4, 8];
+  var ASCEND_ROI_MIN_GROWTH_PERCENT = [0, 0.05, 0.1, 0.2, 0.35];
   function cumulativeBuildingCost(basePrice, amount) {
     const priceIncrease = 1.15;
     return basePrice * (Math.pow(priceIncrease, amount) - 1) / (priceIncrease - 1);
@@ -34,6 +35,8 @@
     const resetPrestige = Math.pow(cookiesBaked / 1e12, 1 / snapshot.hcExponent);
     const newHC = Math.floor(resetPrestige) - snapshot.prestige;
     const minHC = ASCEND_ROI_MIN_HC_VALUES[snapshot.ascendRoiMinHCIndex] ?? 10;
+    const minGrowthPercent = ASCEND_ROI_MIN_GROWTH_PERCENT[snapshot.ascendRoiMinGrowthIndex] ?? 0;
+    const meetsGrowth = newHC / snapshot.prestige >= minGrowthPercent;
     const bonusPerHC = snapshot.hasPersistentMemory ? 0.02 : 0.01;
     const newBonus = Math.max(0, newHC) * bonusPerHC;
     const currentCps = snapshot.cpsBonus > 0 ? snapshot.cookiesPs / snapshot.cpsBonus : 0;
@@ -51,13 +54,15 @@
     return {
       newHC,
       minHC,
+      minGrowthPercent,
       rebuildCost,
       paybackSecs,
       thresholdHours,
       thresholdSecs,
       meetsMinHC,
+      meetsGrowth,
       meetsPayback,
-      wouldAscend: meetsMinHC && meetsPayback
+      wouldAscend: meetsMinHC && meetsGrowth && meetsPayback
     };
   }
   function shouldAscendByROI(snapshot) {
@@ -93,6 +98,7 @@
       autoAscendMode: FrozenCookies.autoAscend,
       ascendRoiMinHCIndex: FrozenCookies.ascendROIMinHC,
       ascendRoiThresholdIndex: FrozenCookies.ascendROIThreshold,
+      ascendRoiMinGrowthIndex: FrozenCookies.ascendROIMinGrowth,
       comboAscendBlock: FrozenCookies.comboAscend === 1,
       cpsBonus: cpsBonus(),
       minCpSMult: FrozenCookies.minCpSMult,
@@ -233,6 +239,9 @@
       ascendROIMinHC: 2,
       ascendROIThreshold: 3,
       // rebuildCost fix already weighs the real cost
+      ascendROIMinGrowth: 2,
+      // +10% - absolute 25-HC floor alone is noise once HC is in the
+      // hundreds/thousands late-game; this scales the bar with the current HC total instead.
       autoSL: 2,
       dragonsCurve: 2,
       sugarBakingGuard: 1,
@@ -483,6 +492,20 @@
         "Min 100 new HCs"
       ],
       default: 1
+    },
+    // SMART ASCEND: relative growth floor. Absolute HC floors above are meaningful early
+    // (25 HC when you have 5 is huge) but become noise late-game once HC is already in the
+    // hundreds/thousands - this scales the bar with what you already have instead.
+    ascendROIMinGrowth: {
+      hint: "ROI mode: minimum % growth in HC vs current total before ascending.",
+      display: [
+        "No minimum growth",
+        "+5% growth",
+        "+10% growth",
+        "+20% growth",
+        "+35% growth"
+      ],
+      default: 0
     },
     comboAscend: {
       hint: "Block auto-ascend when you have X Frenzy or higher.",

@@ -18,6 +18,7 @@ function baseSnapshot(overrides: Partial<GameSnapshot> = {}): GameSnapshot {
         autoAscendMode: 0,
         ascendRoiMinHCIndex: 0,
         ascendRoiThresholdIndex: 3,
+        ascendRoiMinGrowthIndex: 0,
         comboAscendBlock: false,
         cpsBonus: 1,
         minCpSMult: 7,
@@ -122,6 +123,69 @@ assert.strictEqual(ascendROIStats(baseSnapshot({ prestige: 0 })), null, "prestig
         !shouldAscendByROI({ ...readySnapshot, autoAscendMode: 2 }),
         "must not ascend when a different ascend mode is selected"
     );
+}
+
+// --- ascendROIStats: relative growth floor (ascendRoiMinGrowthIndex) ---
+// The bug this fixes: an absolute HC floor alone (e.g. 25) is trivial to clear once prestige
+// is already in the hundreds/thousands, so the bot kept ascending for relatively tiny gains.
+{
+    // prestige=1000, newHC=20 (2% growth) - below the 10% floor. Fast payback, low absolute
+    // floor (5) both individually satisfied, isolating the growth gate as the blocker.
+    const smallGrowth = ascendROIStats(
+        baseSnapshot({
+            prestige: 1000,
+            cookiesEarned: Math.pow(1020.5, 3) * 1e12,
+            cookiesPs: 1e10,
+            cookies: 1e10,
+            cpsBonus: 1,
+            ascendRoiMinHCIndex: 0, // min 5 - trivially satisfied by newHC=20
+            ascendRoiThresholdIndex: 3, // <= 8h - trivially satisfied, payback is seconds
+            ascendRoiMinGrowthIndex: 2, // +10%
+        })
+    );
+    assert.strictEqual(smallGrowth!.newHC, 20);
+    assert.ok(smallGrowth!.meetsMinHC, "absolute floor alone is satisfied");
+    assert.ok(smallGrowth!.meetsPayback, "payback alone is satisfied");
+    assert.ok(!smallGrowth!.meetsGrowth, "2% growth is below the 10% floor");
+    assert.ok(!smallGrowth!.wouldAscend, "growth gate must block ascend even when the other two pass");
+}
+
+{
+    // Same prestige base, newHC=150 (15% growth) - clears the 10% floor.
+    const bigGrowth = ascendROIStats(
+        baseSnapshot({
+            prestige: 1000,
+            cookiesEarned: Math.pow(1150.5, 3) * 1e12,
+            cookiesPs: 1e10,
+            cookies: 1e10,
+            cpsBonus: 1,
+            ascendRoiMinHCIndex: 0,
+            ascendRoiThresholdIndex: 3,
+            ascendRoiMinGrowthIndex: 2,
+        })
+    );
+    assert.strictEqual(bigGrowth!.newHC, 150);
+    assert.ok(bigGrowth!.meetsGrowth, "15% growth clears the 10% floor");
+    assert.ok(bigGrowth!.wouldAscend);
+}
+
+{
+    // Same small-growth scenario as above, but the floor is OFF (index 0) - old behavior
+    // (payback + absolute floor only) must be unaffected.
+    const growthOff = ascendROIStats(
+        baseSnapshot({
+            prestige: 1000,
+            cookiesEarned: Math.pow(1020.5, 3) * 1e12,
+            cookiesPs: 1e10,
+            cookies: 1e10,
+            cpsBonus: 1,
+            ascendRoiMinHCIndex: 0,
+            ascendRoiThresholdIndex: 3,
+            ascendRoiMinGrowthIndex: 0,
+        })
+    );
+    assert.ok(growthOff!.meetsGrowth, "growth gate off -> always satisfied");
+    assert.ok(growthOff!.wouldAscend, "old behavior preserved when the floor is off");
 }
 
 console.log("ascend.selfcheck: OK");

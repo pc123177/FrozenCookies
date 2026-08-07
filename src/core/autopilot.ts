@@ -13,7 +13,7 @@ export interface StageSettings {
     factoryLimit: number; factoryMax?: number;
     pastemode: number;
     autoAscendToggle: number; autoAscend: number;
-    ascendROIMinHC: number; ascendROIThreshold: number;
+    ascendROIMinHC: number; ascendROIThreshold: number; ascendROIMinGrowth?: number;
     comboAscend: number; HCAscendAmount: number;
     autoBulk: number; autoBuyAll: number;
     autoWrinkler: number; shinyPop: number;
@@ -93,6 +93,8 @@ export const STAGE_SETTINGS: Record<GameStageId, StageSettings> = {
         ...SHARED_BASE,
         mineLimit: 1, mineMax: 500, factoryLimit: 1, factoryMax: 500,
         ascendROIMinHC: 2, ascendROIThreshold: 3, // rebuildCost fix already weighs the real cost
+        ascendROIMinGrowth: 2, // +10% - absolute 25-HC floor alone is noise once HC is in the
+        // hundreds/thousands late-game; this scales the bar with the current HC total instead.
         autoSL: 2, dragonsCurve: 2,
         sugarBakingGuard: 1, autoGS: 1, autoGodzamok: 1,
         autoBank: 1, autoBroker: 1, autoLoan: 1, minLoanMult: 777,
