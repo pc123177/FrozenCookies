@@ -37,7 +37,7 @@
     const minHC = ASCEND_ROI_MIN_HC_VALUES[snapshot.ascendRoiMinHCIndex] ?? 10;
     const minGrowthPercent = ASCEND_ROI_MIN_GROWTH_PERCENT[snapshot.ascendRoiMinGrowthIndex] ?? 0;
     const meetsGrowth = newHC / snapshot.prestige >= minGrowthPercent;
-    const bonusPerHC = snapshot.hasPersistentMemory ? 0.02 : 0.01;
+    const bonusPerHC = 0.01 * snapshot.heavenlyBonusMultiplier;
     const newBonus = Math.max(0, newHC) * bonusPerHC;
     const currentCps = snapshot.cpsBonus > 0 ? snapshot.cookiesPs / snapshot.cpsBonus : 0;
     const newCps = currentCps * (1 + newBonus);
@@ -91,7 +91,7 @@
       cookiesPs: Game.cookiesPs,
       wrinklerValue: wrinklerValue(),
       chocolateValue: chocolateValue(),
-      hasPersistentMemory: Game.Has("Persistent memory"),
+      heavenlyBonusMultiplier: Game.heavenlyPower * Game.GetHeavenlyMultiplier(),
       hcExponent: Game.HCfactor,
       buildings: Game.ObjectsById.map((b) => ({ basePrice: b.basePrice, amount: b.amount })),
       autoAscendToggle: FrozenCookies.autoAscendToggle === 1,

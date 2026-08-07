@@ -38,6 +38,7 @@ interface CCGame {
     dragonLevel: number;
     HCfactor: number;
     lumps: number;
+    heavenlyPower: number;
     ObjectsById: CCBuilding[];
     Objects: Record<string, CCBuilding>;
     UpgradesById: Record<number, CCUpgrade>;
@@ -46,6 +47,7 @@ interface CCGame {
     Ascend(reincarnate: number): void;
     Reincarnate(fromAscend: number): void;
     ClosePrompt(): void;
+    GetHeavenlyMultiplier(): number;
 }
 
 declare const Game: CCGame;

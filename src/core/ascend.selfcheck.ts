@@ -11,7 +11,7 @@ function baseSnapshot(overrides: Partial<GameSnapshot> = {}): GameSnapshot {
         cookiesPs: 0,
         wrinklerValue: 0,
         chocolateValue: 0,
-        hasPersistentMemory: false,
+        heavenlyBonusMultiplier: 1,
         hcExponent: 3,
         buildings: [],
         autoAscendToggle: false,
@@ -186,6 +186,28 @@ assert.strictEqual(ascendROIStats(baseSnapshot({ prestige: 0 })), null, "prestig
     );
     assert.ok(growthOff!.meetsGrowth, "growth gate off -> always satisfied");
     assert.ok(growthOff!.wouldAscend, "old behavior preserved when the floor is off");
+}
+
+// --- ascendROIStats: heavenlyBonusMultiplier drives the real per-HC CpS gain ---
+// The bug this fixes: bonusPerHC used to be a flat 0.01/0.02 gated on "Persistent memory" (a
+// research-speed upgrade with zero relation to CpS). The real game only grants the 1%-per-HC
+// bonus once "Heavenly X" upgrades are bought (Game.GetHeavenlyMultiplier() starts at 0) -
+// with none of them owned, new HC gives no real CpS gain at all, so ROI ascend must never fire.
+{
+    const noHeavenlyUpgrades = ascendROIStats(
+        baseSnapshot({
+            prestige: 10,
+            cookiesEarned: 1e18,
+            cookiesPs: 1e10,
+            cookies: 1e10,
+            heavenlyBonusMultiplier: 0,
+            ascendRoiMinHCIndex: 0,
+            ascendRoiThresholdIndex: 3,
+        })
+    );
+    assert.strictEqual(noHeavenlyUpgrades!.paybackSecs, Number.POSITIVE_INFINITY,
+        "zero heavenly multiplier -> zero cpsDelta -> payback never recovers");
+    assert.ok(!noHeavenlyUpgrades!.wouldAscend, "must not ascend when HC gives no real CpS gain");
 }
 
 console.log("ascend.selfcheck: OK");

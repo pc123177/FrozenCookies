@@ -14,7 +14,14 @@ export interface GameSnapshot {
     cookiesPs: number;
     wrinklerValue: number;
     chocolateValue: number;
-    hasPersistentMemory: boolean;
+    // Game.heavenlyPower * Game.GetHeavenlyMultiplier() - the real per-HC CpS bonus factor
+    // (Game.CalculateGains: mult += prestige*0.01*heavenlyPower*GetHeavenlyMultiplier()).
+    // GetHeavenlyMultiplier() starts at 0 and only grows by owning "Heavenly chip secret"
+    // (+0.05), "Heavenly cookie stand" (+0.20), "Heavenly bakery" (+0.25), "Heavenly
+    // confectionery" (+0.25), "Heavenly key" (+0.25), Dragon God aura, and Lucky
+    // digit/number/payout upgrades (the Creation god can also shrink it). Read live rather
+    // than reimplemented, so it can never drift from the real formula.
+    heavenlyBonusMultiplier: number;
     hcExponent: number; // Game.HCfactor - the live exponent in prestige = (cookies/1e12)^(1/hcExponent)
     buildings: Building[];
 

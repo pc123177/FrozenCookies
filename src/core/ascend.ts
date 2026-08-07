@@ -68,7 +68,13 @@ export function ascendROIStats(snapshot: GameSnapshot): AscendRoiStats | null {
     // null), so this division is always well-defined.
     const meetsGrowth = newHC / snapshot.prestige >= minGrowthPercent;
 
-    const bonusPerHC = snapshot.hasPersistentMemory ? 0.02 : 0.01;
+    // FIX: was `snapshot.hasPersistentMemory ? 0.02 : 0.01` - "Persistent memory" is a research-
+    // speed upgrade (10x research), completely unrelated to CpS. The real per-HC bonus is
+    // 0.01 * Game.heavenlyPower * Game.GetHeavenlyMultiplier() (confirmed live in
+    // Game.CalculateGains) - GetHeavenlyMultiplier() starts at 0 with none of the 5 "Heavenly
+    // X" upgrades bought, meaning early HC gave close to zero real CpS gain no matter what
+    // this mod assumed, badly skewing every ROI/payback calculation before this fix.
+    const bonusPerHC = 0.01 * snapshot.heavenlyBonusMultiplier;
     const newBonus = Math.max(0, newHC) * bonusPerHC;
 
     // baseCps = cookiesPs / cpsBonus (strip buff multipliers to get the base rate ascend
