@@ -774,8 +774,12 @@ function cookieValue(bankAmount, wrathValue, wrinklerCount) {
     var wrinkler = wrinklerMod(wrinklerCount);
     var value = 0;
     value -= cookieInfo.clot.odds[wrathValue] * (wrinkler * cps + clickCps) * luckyMod * 66 * 0.5;
-    value += cookieInfo.frenzy.odds[wrathValue] * (wrinkler * cps + clickCps) * luckyMod * 77 * 6;
-    value += cookieInfo.blood.odds[wrathValue] * (wrinkler * cps + clickCps) * luckyMod * 6 * 665;
+    // FIX: was 77*6 (frenzy) and 6*665 (blood) - real game buffs are gainBuff('frenzy',77,7)
+    // (7x for 77s) and gainBuff('blood',6,666) (666x for 6s), confirmed live. cookieStats()
+    // just below already has the correct 77*7 / 666*6 - this sibling function had drifted out
+    // of sync, undercounting frenzy EV by ~14% and blood EV by a smaller but still wrong margin.
+    value += cookieInfo.frenzy.odds[wrathValue] * (wrinkler * cps + clickCps) * luckyMod * 77 * 7;
+    value += cookieInfo.blood.odds[wrathValue] * (wrinkler * cps + clickCps) * luckyMod * 666 * 6;
     value += cookieInfo.chain.odds[wrathValue] * calculateChainValue(bankAmount, cps, 7 - wrathValue / 3);
     value -= cookieInfo.ruin.odds[wrathValue] * (Math.min(bankAmount * 0.05, cps * 60 * 10) + 13);
     value -= cookieInfo.frenzyRuin.odds[wrathValue] * (Math.min(bankAmount * 0.05, cps * 60 * 10 * 7) + 13);
@@ -1604,11 +1608,23 @@ function wrinklerMod(num) {
 }
 
 function popValue(w) {
+    // FIX: was missing the Dragon Guts aura multiplier and the Scorn god bonus entirely -
+    // confirmed live against main.js's real wrinkler-pop handler (`toSuck*=1+Game.auraMult(
+    // 'Dragon Guts')*0.2` and the hasGod('scorn') tier bonus applied after Wrinklerspawn).
+    // Both real multipliers, both silently missing before - undercounted wrinkler value by up
+    // to 40% (both aura slots) plus up to another 15% (Scorn tier 1) whenever equipped.
     var toSuck = 1.1;
     if (Game.Has("Sacrilegious corruption")) toSuck *= 1.05;
+    toSuck *= 1 + Game.auraMult("Dragon Guts") * 0.2;
     if (w.type == 1) toSuck *= 3;
     var sucked = w.sucked * toSuck;
     if (Game.Has("Wrinklerspawn")) sucked *= 1.05;
+    if (Game.hasGod) {
+        var godLvl = Game.hasGod("scorn");
+        if (godLvl == 1) sucked *= 1.15;
+        else if (godLvl == 2) sucked *= 1.1;
+        else if (godLvl == 3) sucked *= 1.05;
+    }
     return sucked;
 }
 
@@ -1766,7 +1782,13 @@ function autoCookie() {
                 popWrinklerList(_.filter(Game.wrinklers, function(w) { return _.contains(popList, w.id); }));
             }
             if (FrozenCookies.autoWrinkler == 2) {
-                popWrinklerList(Game.wrinklers.filter(function(w) { return w.close === true; }));
+                // FIX: was `w.close === true` - `close` is a float in [0,1] the game grows
+                // toward 1 as a wrinkler visually closes in (confirmed live against main.js's
+                // wrinkler-tick code), never a boolean, so this filter always returned empty
+                // and INSTANTLY mode silently popped nothing. "Instantly" means pop any living
+                // wrinkler right away instead of waiting on the EFFICIENTLY mode's ROI calc -
+                // same alive-check as liveWrinklers() (phase>0), no waiting for growth/value.
+                popWrinklerList(Game.wrinklers.filter(function(w) { return w.phase > 0; }));
             }
 
             if (
