@@ -12,7 +12,7 @@ export function buildGameSnapshot(): GameSnapshot {
         cookiesPs: Game.cookiesPs,
         wrinklerValue: wrinklerValue(),
         chocolateValue: chocolateValue(),
-        hasPersistentMemory: Game.Has("Persistent memory"),
+        heavenlyBonusMultiplier: Game.heavenlyPower * Game.GetHeavenlyMultiplier(),
         hcExponent: Game.HCfactor,
         buildings: Game.ObjectsById.map((b) => ({ basePrice: b.basePrice, amount: b.amount })),
 
