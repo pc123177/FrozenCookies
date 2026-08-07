@@ -13,7 +13,7 @@ export interface StageSettings {
     factoryLimit: number; factoryMax?: number;
     pastemode: number;
     autoAscendToggle: number; autoAscend: number;
-    ascendROIMinHC: number; ascendROIThreshold: number; ascendROIMinGrowth?: number;
+    ascendROIThreshold: number; ascendROIMinGrowth?: number;
     comboAscend: number; HCAscendAmount: number;
     autoBulk: number; autoBuyAll: number;
     autoWrinkler: number; shinyPop: number;
@@ -44,7 +44,7 @@ const SHARED_BASE: StageSettings = {
     autoBlacklistOff: 0, blacklist: 0,
     mineLimit: 0, factoryLimit: 0, pastemode: 0,
     autoAscendToggle: 1, autoAscend: 3,
-    ascendROIMinHC: 1, ascendROIThreshold: 1,
+    ascendROIThreshold: 1,
     comboAscend: 0, HCAscendAmount: 0,
     autoBulk: 2, autoBuyAll: 1,
     autoWrinkler: 1, shinyPop: 0,
@@ -73,11 +73,14 @@ export const STAGE_SETTINGS: Record<GameStageId, StageSettings> = {
     early: {
         ...SHARED_BASE,
         cookieClickSpeed: 150,
-        ascendROIMinHC: 0, ascendROIThreshold: 0, // cheap/fast early ascends compound fastest
+        ascendROIThreshold: 0, // cheap/fast early ascends compound fastest
+        ascendROIMinGrowth: 1, // +2% - prestige is small early, so any real HC gain clears
+        // this easily; just enough to skip a 0-value ascend that happened to have fast payback.
     },
     mid: {
         ...SHARED_BASE,
-        ascendROIMinHC: 1, ascendROIThreshold: 1,
+        ascendROIThreshold: 1,
+        ascendROIMinGrowth: 2, // +5%
         autoSL: 2, sugarBakingGuard: 1, autoGS: 1, autoGodzamok: 1,
         autoBank: 1, autoBroker: 1, autoLoan: 1, minLoanMult: 777,
         autoWorshipToggle: 1, autoWorship0: 2, autoWorship1: 8,
@@ -92,9 +95,8 @@ export const STAGE_SETTINGS: Record<GameStageId, StageSettings> = {
     late: {
         ...SHARED_BASE,
         mineLimit: 1, mineMax: 500, factoryLimit: 1, factoryMax: 500,
-        ascendROIMinHC: 2, ascendROIThreshold: 3, // rebuildCost fix already weighs the real cost
-        ascendROIMinGrowth: 2, // +10% - absolute 25-HC floor alone is noise once HC is in the
-        // hundreds/thousands late-game; this scales the bar with the current HC total instead.
+        ascendROIThreshold: 3, // rebuildCost fix already weighs the real cost
+        ascendROIMinGrowth: 3, // +10%
         autoSL: 2, dragonsCurve: 2,
         sugarBakingGuard: 1, autoGS: 1, autoGodzamok: 1,
         autoBank: 1, autoBroker: 1, autoLoan: 1, minLoanMult: 777,

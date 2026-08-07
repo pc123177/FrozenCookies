@@ -16,7 +16,6 @@ function baseSnapshot(overrides: Partial<GameSnapshot> = {}): GameSnapshot {
         buildings: [],
         autoAscendToggle: false,
         autoAscendMode: 0,
-        ascendRoiMinHCIndex: 0,
         ascendRoiThresholdIndex: 3,
         ascendRoiMinGrowthIndex: 0,
         comboAscendBlock: false,
@@ -56,14 +55,12 @@ assert.strictEqual(ascendROIStats(baseSnapshot({ prestige: 0 })), null, "prestig
             cookiesPs: 1e10,
             cpsBonus: 1,
             cookies: 1e10,
-            ascendRoiMinHCIndex: 0, // min 5
             ascendRoiThresholdIndex: 3, // <= 8h
         })
     );
     assert.ok(stats, "expected non-null stats with prestige >= 1");
     assert.strictEqual(stats!.newHC, 90);
-    assert.strictEqual(stats!.minHC, 5);
-    assert.ok(stats!.meetsMinHC);
+    assert.ok(stats!.meetsSanityFloor);
     assert.ok(stats!.rebuildCost === 0, "no buildings owned -> zero rebuild cost");
     // bonusPerHC=0.01, newBonus=0.9, cpsDelta = 1e10*0.9 = 9e9
     // paybackSecs = (1e10 + 0) / 9e9 ~= 1.111s
@@ -126,11 +123,11 @@ assert.strictEqual(ascendROIStats(baseSnapshot({ prestige: 0 })), null, "prestig
 }
 
 // --- ascendROIStats: relative growth floor (ascendRoiMinGrowthIndex) ---
-// The bug this fixes: an absolute HC floor alone (e.g. 25) is trivial to clear once prestige
-// is already in the hundreds/thousands, so the bot kept ascending for relatively tiny gains.
+// The floor scales with progress instead of being a flat HC count: same % of a bigger prestige
+// base demands more absolute HC. Index 3 = +10% (array is [0, 2%, 5%, 10%, 20%, 35%]).
 {
-    // prestige=1000, newHC=20 (2% growth) - below the 10% floor. Fast payback, low absolute
-    // floor (5) both individually satisfied, isolating the growth gate as the blocker.
+    // prestige=1000, newHC=20 (2% growth) - below the 10% floor. Fast payback trivially
+    // satisfied, isolating the growth gate as the blocker.
     const smallGrowth = ascendROIStats(
         baseSnapshot({
             prestige: 1000,
@@ -138,13 +135,12 @@ assert.strictEqual(ascendROIStats(baseSnapshot({ prestige: 0 })), null, "prestig
             cookiesPs: 1e10,
             cookies: 1e10,
             cpsBonus: 1,
-            ascendRoiMinHCIndex: 0, // min 5 - trivially satisfied by newHC=20
             ascendRoiThresholdIndex: 3, // <= 8h - trivially satisfied, payback is seconds
-            ascendRoiMinGrowthIndex: 2, // +10%
+            ascendRoiMinGrowthIndex: 3, // +10%
         })
     );
     assert.strictEqual(smallGrowth!.newHC, 20);
-    assert.ok(smallGrowth!.meetsMinHC, "absolute floor alone is satisfied");
+    assert.ok(smallGrowth!.meetsSanityFloor);
     assert.ok(smallGrowth!.meetsPayback, "payback alone is satisfied");
     assert.ok(!smallGrowth!.meetsGrowth, "2% growth is below the 10% floor");
     assert.ok(!smallGrowth!.wouldAscend, "growth gate must block ascend even when the other two pass");
@@ -159,9 +155,8 @@ assert.strictEqual(ascendROIStats(baseSnapshot({ prestige: 0 })), null, "prestig
             cookiesPs: 1e10,
             cookies: 1e10,
             cpsBonus: 1,
-            ascendRoiMinHCIndex: 0,
             ascendRoiThresholdIndex: 3,
-            ascendRoiMinGrowthIndex: 2,
+            ascendRoiMinGrowthIndex: 3,
         })
     );
     assert.strictEqual(bigGrowth!.newHC, 150);
@@ -170,8 +165,8 @@ assert.strictEqual(ascendROIStats(baseSnapshot({ prestige: 0 })), null, "prestig
 }
 
 {
-    // Same small-growth scenario as above, but the floor is OFF (index 0) - old behavior
-    // (payback + absolute floor only) must be unaffected.
+    // Same small-growth scenario as above, but the floor is OFF (index 0) - only payback +
+    // sanity floor gate the ascend.
     const growthOff = ascendROIStats(
         baseSnapshot({
             prestige: 1000,
@@ -179,13 +174,33 @@ assert.strictEqual(ascendROIStats(baseSnapshot({ prestige: 0 })), null, "prestig
             cookiesPs: 1e10,
             cookies: 1e10,
             cpsBonus: 1,
-            ascendRoiMinHCIndex: 0,
             ascendRoiThresholdIndex: 3,
             ascendRoiMinGrowthIndex: 0,
         })
     );
     assert.ok(growthOff!.meetsGrowth, "growth gate off -> always satisfied");
-    assert.ok(growthOff!.wouldAscend, "old behavior preserved when the floor is off");
+    assert.ok(growthOff!.wouldAscend, "payback + sanity floor alone allow the ascend");
+}
+
+{
+    // Small prestige (2), newHC=1 -> 50% growth, trivially clears any % floor. The sanity
+    // floor (newHC>=1) is the only thing that would ever block a tiny early ascend now - there
+    // is no separate flat "N HC minimum" left to enforce it.
+    const smallPrestige = ascendROIStats(
+        baseSnapshot({
+            prestige: 2,
+            cookiesEarned: Math.pow(3.5, 3) * 1e12,
+            cookiesPs: 1e10,
+            cookies: 1e10,
+            cpsBonus: 1,
+            ascendRoiThresholdIndex: 3,
+            ascendRoiMinGrowthIndex: 4, // +20%, still trivially cleared by 50% growth
+        })
+    );
+    assert.strictEqual(smallPrestige!.newHC, 1);
+    assert.ok(smallPrestige!.meetsSanityFloor);
+    assert.ok(smallPrestige!.meetsGrowth, "1 HC on a base of 2 is 50% growth");
+    assert.ok(smallPrestige!.wouldAscend);
 }
 
 // --- ascendROIStats: heavenlyBonusMultiplier drives the real per-HC CpS gain ---
@@ -201,7 +216,6 @@ assert.strictEqual(ascendROIStats(baseSnapshot({ prestige: 0 })), null, "prestig
             cookiesPs: 1e10,
             cookies: 1e10,
             heavenlyBonusMultiplier: 0,
-            ascendRoiMinHCIndex: 0,
             ascendRoiThresholdIndex: 3,
         })
     );

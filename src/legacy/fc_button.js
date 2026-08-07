@@ -874,8 +874,8 @@ function FCMenu() {
             );
             subsection.append(
                 buildListing(
-                    "Minimum HC required",
-                    Beautify(roi.minHC) + (roi.meetsMinHC ? " (met)" : " (not met)")
+                    "Minimum growth required",
+                    (roi.minGrowthPercent * 100) + "%" + (roi.meetsGrowth ? " (met)" : " (not met)")
                 )
             );
             subsection.append(

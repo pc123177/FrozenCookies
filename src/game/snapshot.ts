@@ -18,7 +18,6 @@ export function buildGameSnapshot(): GameSnapshot {
 
         autoAscendToggle: FrozenCookies.autoAscendToggle === 1,
         autoAscendMode: FrozenCookies.autoAscend,
-        ascendRoiMinHCIndex: FrozenCookies.ascendROIMinHC,
         ascendRoiThresholdIndex: FrozenCookies.ascendROIThreshold,
         ascendRoiMinGrowthIndex: FrozenCookies.ascendROIMinGrowth,
         comboAscendBlock: FrozenCookies.comboAscend === 1,

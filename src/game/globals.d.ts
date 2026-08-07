@@ -55,7 +55,6 @@ declare const Game: CCGame;
 interface FrozenCookiesState {
     autoAscendToggle: number;
     autoAscend: number;
-    ascendROIMinHC: number;
     ascendROIThreshold: number;
     ascendROIMinGrowth: number;
     comboAscend: number;
