@@ -4,10 +4,10 @@ import { buildGameSnapshot } from "./snapshot";
 
 let lastAppliedStage: string | null = null;
 
-// Runs every FrozenCookies.frequency tick (same cadence as the rest of the bots, wired in
-// src/main.ts). Detects the current stage and applies its settings table directly onto
-// FrozenCookies.* - no Game.toReload, no manual preset click. Only re-applies when the
-// detected stage actually changes, so it doesn't fight the player's own toggles every tick.
+// Executa a cada tick de FrozenCookies.frequency (mesmo cadência dos demais bots, conectado em
+// src/main.ts). Detecta o estágio atual e aplica sua tabela de configurações diretamente em
+// FrozenCookies.* - sem Game.toReload, sem clique manual de predefinição. Reaplicado apenas quando o
+// estágio detectado realmente muda, evitando conflito com os toggles manuais do jogador a cada tick.
 export function autopilotBotTick(): void {
     if (FrozenCookies.autopilot !== 1) return;
 

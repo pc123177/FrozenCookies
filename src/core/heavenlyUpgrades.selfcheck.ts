@@ -12,19 +12,19 @@ const upgrades = [
 assert.strictEqual(
     nextHeavenlyUpgradeToBuy(upgrades, 100),
     "Affordable cheap",
-    "picks the cheapest unlocked, unbought, affordable upgrade"
+    "escolhe a melhoria desbloqueada, não comprada e mais barata que seja acessível"
 );
 
 assert.strictEqual(
     nextHeavenlyUpgradeToBuy(upgrades, 0),
     null,
-    "nothing affordable with 0 heavenly chips"
+    "nada acessível com 0 chips celestiais"
 );
 
 assert.strictEqual(
     nextHeavenlyUpgradeToBuy([], 1000),
     null,
-    "no upgrades at all -> null"
+    "nenhuma melhoria existente -> null"
 );
 
 console.log("heavenlyUpgrades.selfcheck: OK");

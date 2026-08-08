@@ -1,10 +1,10 @@
 import { ascendROIStats, shouldAscendByROI } from "../core/ascend";
 import { buildGameSnapshot } from "./snapshot";
 
-// Thin side-effecting wrapper around the pure decision in src/core/ascend.ts. This is the
-// ONLY place in src/game/ that calls Game.Ascend - same trigger sequence the legacy
-// autoCookie() dispatcher used (Game.ClosePrompt -> Game.Ascend(1) -> after 10s,
-// Game.ClosePrompt -> Game.Reincarnate(1), to click through the ascend confirmation prompt).
+// Invólucro fino com efeitos colaterais em torno da decisão pura em src/core/ascend.ts. Este é o
+// ÚNICO lugar em src/game/ que chama Game.Ascend - mesma sequência de disparo que o
+// despachante autoCookie() legado usava (Game.ClosePrompt -> Game.Ascend(1) -> após 10s,
+// Game.ClosePrompt -> Game.Reincarnate(1), para clicar no prompt de confirmação de ascensão).
 export function ascendBotTick(): void {
     const snapshot = buildGameSnapshot();
     if (!shouldAscendByROI(snapshot)) return;

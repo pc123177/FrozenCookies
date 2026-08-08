@@ -1,7 +1,7 @@
 function autoBankAction() {
     if (!B || hasClickBuff()) return;
 
-    //Upgrade bank level
+    //Atualiza o nível do banco
     let currentOffice = B.offices[B.officeLevel];
     if (
         currentOffice.cost &&
@@ -14,7 +14,7 @@ function autoBankAction() {
         FrozenCookies.autobuyCount += 1;
         logEvent(
             "AutoBank",
-            "Upgrade bank level for " + countBankCursor + " cursors"
+            "Nível do banco atualizado por " + countBankCursor + " cursores"
         );
         Game.recalculateGains = 1;
         Game.upgradesToRebuild = 1;
@@ -22,20 +22,20 @@ function autoBankAction() {
 }
 
 function autoBrokerAction() {
-    if (!B) return; // Just leave if you don't have the stock market
+    if (!B) return; // Sai se não tiver mercado de ações
 
-    //Hire brokers
-    var delay = delayAmount(); //GC or harvest bank
+    //Contratar corretores
+    var delay = delayAmount(); //GC ou colheita do banco
     var recommendation = nextPurchase();
     if (
-        recommendation.type == "building" && // Don't hire when saving for upgrade
+        recommendation.type == "building" && // Não contratar ao economizar para upgrade
         B.brokers < B.getMaxBrokers() &&
         Game.cookies >= delay + B.getBrokerPrice()
     ) {
         l("bankBrokersBuy").click();
         logEvent(
             "AutoBroker",
-            "Hired a broker for " + Beautify(B.getBrokerPrice()) + " cookies"
+            "Contratou um corretor por " + Beautify(B.getBrokerPrice()) + " cookies"
         );
         Game.recalculateGains = 1;
         Game.upgradesToRebuild = 1;

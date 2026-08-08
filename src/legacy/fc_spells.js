@@ -1,4 +1,4 @@
-// @name         Cookie Clicker Predict Spell
+// @name         Cookie Clicker Prever Feitiço
 // @version      0.1
 // @author       Random Reddit Guy (SamNosliw, 3pLm1zf1rMD_Xkeo6XHl)
 // @match        http://orteil.dashnet.org/cookieclicker/
@@ -66,10 +66,10 @@ nextSpell = function (i) {
             if (!Game.hasBuff("Dragonflight"))
                 choices.push('<b style="color:#00C4FF">Click Frenzy');
             if (Math.random() < 0.1)
-                // Real game weighting (minigameGrimoire.js spellsById[1].win): pushes
-                // 'cookie storm' TWICE and 'blab' once - a 2/3 vs 1/3 split, not three
-                // distinct equally-weighted outcomes. There is no separate "Cookie Chain"
-                // outcome for this spell.
+                // Ponderação real do jogo (minigameGrimoire.js spellsById[1].win): insere
+                // 'cookie storm' DUAS VEZES e 'blab' uma vez - proporção 2/3 vs 1/3, não três
+                // resultados distintos com peso igual. Não existe resultado separado "Cookie Chain"
+                // para este feitiço.
                 choices.push(
                     '<b style="color:#00C4FF">Cookie Storm',
                     '<b style="color:#00C4FF">Cookie Storm',
@@ -91,11 +91,11 @@ nextSpell = function (i) {
                 '<b style="color:#FF3605">Ruin Cookies'
             );
             if (Math.random() < 0.1)
-                // Real game (minigameGrimoire.js spellsById[1].fail): pushes 'cursed
-                // finger' and 'blood frenzy' - NOT 'elder frenzy'. "Elder Frenzy" does not
-                // exist anywhere in the Grimoire minigame source; the name was wrong here,
-                // making every nextSpellName(0) == "Elder Frenzy" check below unreachable
-                // dead code that never fired for the real backfire outcome.
+                // Jogo real (minigameGrimoire.js spellsById[1].fail): insere 'cursed
+                // finger' e 'blood frenzy' - NÃO 'elder frenzy'. "Elder Frenzy" não existe
+                // em nenhum lugar do código-fonte do minigame Grimoire; o nome estava errado aqui,
+                // tornando toda verificação nextSpellName(0) == "Elder Frenzy" abaixo inacessível —
+                // código morto que nunca disparou para o resultado real de efeito adverso.
                 choices.push(
                     '<b style="color:#174F01">Cursed Finger',
                     '<b style="color:#4F0007">Blood Frenzy'
@@ -110,24 +110,25 @@ nextSpell = function (i) {
     }
 };
 
-// IMPROVEMENT: Replaced fragile HTML string comparison with DOM text extraction.
-// Previously, nextSpellName() compared the full HTML output of nextSpell() (e.g.
-// '<small><b style="color:#FFDE5F">Frenzy</b></small>') against hardcoded HTML strings.
-// Any whitespace change or CSS update in nextSpell() would silently break all spell
-// detection and disable auto-casting entirely. Now we extract the plain text from the
-// HTML and map it to a canonical name, making it resilient to HTML/style changes.
+// MELHORIA: Substituída a comparação frágil de string HTML pela extração de texto DOM.
+// Anteriormente, nextSpellName() comparava a saída HTML completa de nextSpell() (ex.:
+// '<small><b style="color:#FFDE5F">Frenzy</b></small>') com strings HTML fixas no código.
+// Qualquer mudança de espaço em branco ou atualização de CSS em nextSpell() quebraria
+// silenciosamente toda a detecção de feitiços e desativaria o lançamento automático.
+// Agora extraímos o texto simples do HTML e mapeamos para um nome canônico,
+// tornando-o resistente a mudanças de HTML/estilo.
 nextSpellName = function (i) {
     if (!Game.ObjectsById[7].minigameLoaded) return null;
 
     var raw = nextSpell(i);
     if (!raw) return null;
 
-    // Extract plain text from the HTML string, ignoring all tags and styles
+    // Extrai o texto simples da string HTML, ignorando todas as tags e estilos
     var div = document.createElement('div');
     div.innerHTML = raw;
     var text = (div.textContent || div.innerText || '').trim();
 
-    // Normalize to canonical names used throughout the codebase
+    // Normaliza para os nomes canônicos usados em todo o código
     var nameMap = {
         'frenzy':              'Frenzy',
         'lucky':               'Lucky',
@@ -146,19 +147,19 @@ nextSpellName = function (i) {
     return nameMap[text.toLowerCase()] || text;
 };
 
-// IMPROVEMENT: Helper to safely get remaining time (in seconds) of any buff.
-// Previously, code accessed Game.hasBuff("X").time directly in many places.
-// If the buff didn't exist, Game.hasBuff() returns falsy and .time would throw
-// "Cannot read property 'time' of null/undefined", crashing the auto-cast logic.
-// This helper returns 0 when the buff is absent, making all buff time checks safe.
-// Used by autoCast(), autoFTHOFComboAction(), and auto100ConsistencyComboAction().
+// MELHORIA: Helper para obter com segurança o tempo restante (em segundos) de qualquer buff.
+// Anteriormente, o código acessava Game.hasBuff("X").time diretamente em muitos lugares.
+// Se o buff não existisse, Game.hasBuff() retornaria falso e .time lançaria
+// "Cannot read property 'time' of null/undefined", travando a lógica de lançamento automático.
+// Este helper retorna 0 quando o buff está ausente, tornando todas as verificações de tempo de buff seguras.
+// Usado por autoCast(), autoFTHOFComboAction() e auto100ConsistencyComboAction().
 function buffTime(name) {
     var b = Game.hasBuff(name);
     return b ? b.time / 30 : 0;
 }
 
-// Converts all of the games' building special named buffs to a single function to check if a building special buff is up.
-// Used for autocasting Force The Hand of Fate
+// Converte todos os buffs especiais de edifício do jogo em uma única função para verificar se um buff especial de edifício está ativo.
+// Usado para lançamento automático de Força do Destino
 BuildingSpecialBuff = function () {
     if (
         Game.hasBuff("High-five") ||
@@ -208,7 +209,7 @@ BuildingSpecialBuff = function () {
     }
 };
 
-// This function will be used to check time left on building buff within autoCast() function
+// Esta função verifica o tempo restante do buff de edifício dentro da função autoCast()
 function BuildingBuffTime() {
     for (var i in Game.buffs) {
         if (Game.buffs[i].type && Game.buffs[i].type.name == "building buff") {
@@ -218,7 +219,7 @@ function BuildingBuffTime() {
     return 0;
 }
 
-// Used in autoCast() for some maths in the smart Force The Hand of Fate subroutine
+// Usado em autoCast() para cálculos na sub-rotina inteligente de Força do Destino
 function BuffTimeFactor() {
     var DurMod = 1;
     if (Game.Has("Get lucky")) DurMod *= 2;
@@ -255,7 +256,7 @@ function autoCast() {
         (FrozenCookies.towerLimit && M.magic >= M.magicM) ||
         (!FrozenCookies.towerLimit && M.magic >= M.magicM - 1)
     ) {
-        // Free lump!
+        // Torrão grátis!
         if (
             M.magicM >=
                 Math.floor(
@@ -267,12 +268,12 @@ function autoCast() {
             M.castSpell(M.spellsById[1]);
             logEvent(
                 "autoCasting",
-                "Cast Force the Hand of Fate for a free lump"
+                "Lançou Força do Destino para um torrão grátis"
             );
             return;
         }
 
-        // Can we shorten a negative buff with a backfire?
+        // Podemos encurtar um buff negativo com um efeito adverso?
         if (
             M.magicM >=
                 Math.floor(
@@ -287,11 +288,11 @@ function autoCast() {
             (nextSpellName(0) == "Clot" || nextSpellName(0) == "Ruin Cookies")
         ) {
             M.castSpell(M.spellsById[2]);
-            logEvent("autoCasting", "Cast Stretch Time to shorten debuff");
+            logEvent("autoCasting", "Lançou Estender o Tempo para encurtar debuff");
             return;
         }
 
-        // Will it backfire?
+        // Vai causar efeito adverso?
         if (
             M.magicM >=
                 Math.floor(
@@ -302,7 +303,7 @@ function autoCast() {
             (nextSpellName(0) == "Clot" || nextSpellName(0) == "Ruin Cookies")
         ) {
             M.castSpell(M.spellsById[4]);
-            logEvent("autoCasting", "Cast Haggler's Charm to avoid backfire");
+            logEvent("autoCasting", "Lançou Amuleto do Regateador para evitar efeito adverso");
             return;
         }
 
@@ -318,7 +319,7 @@ function autoCast() {
                     return;
                 }
                 M.castSpell(M.spellsById[0]);
-                logEvent("autoCasting", "Cast Conjure Baked Goods");
+                logEvent("autoCasting", "Lançou Conjurar Assados");
                 return;
 
             case 2:
@@ -334,7 +335,7 @@ function autoCast() {
 
                 if (cpsBonus() >= FrozenCookies.minCpSMult) {
                     M.castSpell(M.spellsById[1]);
-                    logEvent("autoCasting", "Cast Force the Hand of Fate");
+                    logEvent("autoCasting", "Lançou Força do Destino");
                 }
                 return;
 
@@ -357,7 +358,7 @@ function autoCast() {
                     M.castSpell(M.spellsById[4]);
                     logEvent(
                         "autoCasting",
-                        "Cast Haggler's Charm instead of Force the Hand of Fate"
+                        "Lançou Amuleto do Regateador em vez de Força do Destino"
                     );
                     return;
                 }
@@ -368,7 +369,7 @@ function autoCast() {
                         nextSpellName(0) == "Lucky"
                     ) {
                         M.castSpell(M.spellsById[1]);
-                        logEvent("autoCasting", "Cast Force the Hand of Fate");
+                        logEvent("autoCasting", "Lançou Força do Destino");
                     }
 
                     if (
@@ -377,12 +378,12 @@ function autoCast() {
                         nextSpellName(0) == "Building Special"
                     ) {
                         M.castSpell(M.spellsById[1]);
-                        logEvent("autoCasting", "Cast Force the Hand of Fate");
+                        logEvent("autoCasting", "Lançou Força do Destino");
                         return;
                     }
 
-                    // IMPROVEMENT: All .time accesses replaced with buffTime() helper
-                    // to prevent crashes when a buff is not active.
+                    // MELHORIA: Todos os acessos a .time substituídos pelo helper buffTime()
+                    // para evitar travamentos quando um buff não está ativo.
                     if (
                         nextSpellName(0) == "Click Frenzy" &&
                         (((Game.hasAura("Reaper of Fields") ||
@@ -400,7 +401,7 @@ function autoCast() {
                         BuildingBuffTime() >= Math.ceil(13 * BuffTimeFactor())
                     ) {
                         M.castSpell(M.spellsById[1]);
-                        logEvent("autoCasting", "Cast Force the Hand of Fate");
+                        logEvent("autoCasting", "Lançou Força do Destino");
                         return;
                     }
 
@@ -415,7 +416,7 @@ function autoCast() {
                                 M.castSpell(M.spellsById[1]);
                                 logEvent(
                                     "autoCasting",
-                                    "Cast Force the Hand of Fate"
+                                    "Lançou Força do Destino"
                                 );
                             }
                         } else if (Game.Upgrades["Elder Pact"].bought == 0) {
@@ -439,7 +440,7 @@ function autoCast() {
                                 M.castSpell(M.spellsById[1]);
                                 logEvent(
                                     "autoCasting",
-                                    "Cast Force the Hand of Fate"
+                                    "Lançou Força do Destino"
                                 );
                             }
                         }
@@ -454,7 +455,7 @@ function autoCast() {
                             buffTime("Dragonflight") >= Math.ceil(6 * BuffTimeFactor()) - 1)
                     ) {
                         M.castSpell(M.spellsById[1]);
-                        logEvent("autoCasting", "Cast Force the Hand of Fate");
+                        logEvent("autoCasting", "Lançou Força do Destino");
                         return;
                     }
                 }
@@ -482,18 +483,18 @@ function autoCast() {
                     M.castSpell(M.spellsById[4]);
                     logEvent(
                         "autoCasting",
-                        "Cast Haggler's Charm instead of Force the Hand of Fate"
+                        "Lançou Amuleto do Regateador em vez de Força do Destino"
                     );
                 }
 
                 if (cpsBonus() >= FrozenCookies.minCpSMult) {
                     if (nextSpellName(0) == "Building Special") {
                         M.castSpell(M.spellsById[1]);
-                        logEvent("autoCasting", "Cast Force the Hand of Fate");
+                        logEvent("autoCasting", "Lançou Força do Destino");
                         return;
                     }
 
-                    // IMPROVEMENT: All .time accesses replaced with buffTime() helper
+                    // MELHORIA: Todos os acessos a .time substituídos pelo helper buffTime() helper
                     if (
                         nextSpellName(0) == "Click Frenzy" &&
                         (((Game.hasAura("Reaper of Fields") ||
@@ -511,7 +512,7 @@ function autoCast() {
                         BuildingBuffTime() >= Math.ceil(13 * BuffTimeFactor())
                     ) {
                         M.castSpell(M.spellsById[1]);
-                        logEvent("autoCasting", "Cast Force the Hand of Fate");
+                        logEvent("autoCasting", "Lançou Força do Destino");
                         return;
                     }
 
@@ -526,7 +527,7 @@ function autoCast() {
                                 M.castSpell(M.spellsById[1]);
                                 logEvent(
                                     "autoCasting",
-                                    "Cast Force the Hand of Fate"
+                                    "Lançou Força do Destino"
                                 );
                             }
                         } else if (Game.Upgrades["Elder Pact"].bought == 0) {
@@ -550,7 +551,7 @@ function autoCast() {
                                 M.castSpell(M.spellsById[1]);
                                 logEvent(
                                     "autoCasting",
-                                    "Cast Force the Hand of Fate"
+                                    "Lançou Força do Destino"
                                 );
                             }
                         }
@@ -565,7 +566,7 @@ function autoCast() {
                             buffTime("Dragonflight") >= Math.ceil(6 * BuffTimeFactor()) - 1)
                     ) {
                         M.castSpell(M.spellsById[1]);
-                        logEvent("autoCasting", "Cast Force the Hand of Fate");
+                        logEvent("autoCasting", "Lançou Força do Destino");
                         return;
                     }
                 }
@@ -590,16 +591,16 @@ function autoCast() {
                     Game.Objects["You"].sell(1);
                     logEvent(
                         "Store",
-                        "Sold 1 You for " +
+                        "Vendeu 1 You por " +
                             (Beautify(
                                 Game.Objects["You"].price *
                                     Game.Objects["You"].getSellMultiplier()
                             ) +
-                                " cookies")
+                                " biscoitos")
                     );
                 }
                 M.castSpell(M.spellsById[3]);
-                logEvent("autoCasting", "Cast Spontaneous Edifice");
+                logEvent("autoCasting", "Lançou Edifício Espontâneo");
                 return;
 
             case 6:
@@ -613,7 +614,7 @@ function autoCast() {
                     return;
                 }
                 M.castSpell(M.spellsById[4]);
-                logEvent("autoCasting", "Cast Haggler's Charm");
+                logEvent("autoCasting", "Lançou Amuleto do Regateador");
                 return;
         }
     }
@@ -627,7 +628,7 @@ function autoFTHOFComboAction() {
         FrozenCookies.autoFTHOFCombo = 0;
         logEvent(
             "autoFTHOFCombo",
-            "Combo disabled, wizard tower level too high"
+            "Combo desativado, nível da torre de feiticeiros alto demais"
         );
         return;
     }
@@ -658,7 +659,7 @@ function autoFTHOFComboAction() {
             autoFTHOFComboAction.autobuyyes = 0;
         }
         autoFTHOFComboAction.state = 0;
-        logEvent("autoFTHOFCombo", "Soft fail, spell combo is gone");
+        logEvent("autoFTHOFCombo", "Falha suave, o combo de feitiços foi perdido");
     }
 
     if (
@@ -689,22 +690,22 @@ function autoFTHOFComboAction() {
     ) {
         if (nextSpellName(0) == "Sugar Lump") {
             M.castSpell(M.spellsById[1]);
-            logEvent("autoFTHOFCombo", "Cast Force the Hand of Fate");
+            logEvent("autoFTHOFCombo", "Lançou Força do Destino");
         } else if (
             cpsBonus() < 1 &&
             (nextSpellName(0) == "Clot" || nextSpellName(0) == "Ruin Cookies")
         ) {
             M.castSpell(M.spellsById[2]);
-            logEvent("autoFTHOFCombo", "Cast Stretch Time instead of FTHOF");
+            logEvent("autoFTHOFCombo", "Lançou Estender o Tempo em vez de FTHOF");
         } else {
             M.castSpell(M.spellsById[4]);
-            logEvent("autoFTHOFCombo", "Cast Haggler's Charm instead of FTHOF");
+            logEvent("autoFTHOFCombo", "Lançou Amuleto do Regateador em vez de FTHOF");
         }
     }
 
     var SugarLevel = Game.Objects["Wizard tower"].level;
 
-    // IMPROVEMENT: All .time accesses inside combo state machine replaced with buffTime()
+    // MELHORIA: Todos os acessos a .time na máquina de estados do combo substituídos por buffTime()
     switch (autoFTHOFComboAction.state) {
         case 0:
             return;
@@ -736,16 +737,16 @@ function autoFTHOFComboAction() {
             ) {
                 switch (SugarLevel) {
                     case 0: return;
-                    case 1: if (M.magic >= 81) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 21; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Cast first Force the Hand of Fate"); autoFTHOFComboAction.state = 3; } return;
-                    case 2: if (M.magic >= 81) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 14; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Cast first Force the Hand of Fate"); autoFTHOFComboAction.state = 3; } return;
-                    case 3: if (M.magic >= 81) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 8; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Cast first Force the Hand of Fate"); autoFTHOFComboAction.state = 3; } return;
-                    case 4: if (M.magic >= 81) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 3; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Cast first Force the Hand of Fate"); autoFTHOFComboAction.state = 3; } return;
-                    case 5: if (M.magic >= 83) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 1; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Cast first Force the Hand of Fate"); autoFTHOFComboAction.state = 3; } return;
-                    case 6: if (M.magic >= 88) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 1; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Cast first Force the Hand of Fate"); autoFTHOFComboAction.state = 3; } return;
-                    case 7: if (M.magic >= 91) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 1; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Cast first Force the Hand of Fate"); autoFTHOFComboAction.state = 3; } return;
-                    case 8: if (M.magic >= 93) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 1; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Cast first Force the Hand of Fate"); autoFTHOFComboAction.state = 3; } return;
-                    case 9: if (M.magic >= 96) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 1; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Cast first Force the Hand of Fate"); autoFTHOFComboAction.state = 3; } return;
-                    case 10: if (M.magic >= 98) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 1; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Cast first Force the Hand of Fate"); autoFTHOFComboAction.state = 3; } return;
+                    case 1: if (M.magic >= 81) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 21; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Lançou o primeiro Força do Destino"); autoFTHOFComboAction.state = 3; } return;
+                    case 2: if (M.magic >= 81) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 14; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Lançou o primeiro Força do Destino"); autoFTHOFComboAction.state = 3; } return;
+                    case 3: if (M.magic >= 81) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 8; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Lançou o primeiro Força do Destino"); autoFTHOFComboAction.state = 3; } return;
+                    case 4: if (M.magic >= 81) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 3; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Lançou o primeiro Força do Destino"); autoFTHOFComboAction.state = 3; } return;
+                    case 5: if (M.magic >= 83) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 1; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Lançou o primeiro Força do Destino"); autoFTHOFComboAction.state = 3; } return;
+                    case 6: if (M.magic >= 88) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 1; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Lançou o primeiro Força do Destino"); autoFTHOFComboAction.state = 3; } return;
+                    case 7: if (M.magic >= 91) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 1; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Lançou o primeiro Força do Destino"); autoFTHOFComboAction.state = 3; } return;
+                    case 8: if (M.magic >= 93) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 1; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Lançou o primeiro Força do Destino"); autoFTHOFComboAction.state = 3; } return;
+                    case 9: if (M.magic >= 96) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 1; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Lançou o primeiro Força do Destino"); autoFTHOFComboAction.state = 3; } return;
+                    case 10: if (M.magic >= 98) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 1; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Lançou o primeiro Força do Destino"); autoFTHOFComboAction.state = 3; } return;
                 }
             }
             return;
@@ -779,16 +780,16 @@ function autoFTHOFComboAction() {
             ) {
                 switch (SugarLevel) {
                     case 0: return;
-                    case 1: if (M.magic >= 81) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 21; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Cast first Force the Hand of Fate"); autoFTHOFComboAction.state = 3; } return;
-                    case 2: if (M.magic >= 81) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 14; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Cast first Force the Hand of Fate"); autoFTHOFComboAction.state = 3; } return;
-                    case 3: if (M.magic >= 81) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 8; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Cast first Force the Hand of Fate"); autoFTHOFComboAction.state = 3; } return;
-                    case 4: if (M.magic >= 81) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 3; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Cast first Force the Hand of Fate"); autoFTHOFComboAction.state = 3; } return;
-                    case 5: if (M.magic >= 83) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 1; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Cast first Force the Hand of Fate"); autoFTHOFComboAction.state = 3; } return;
-                    case 6: if (M.magic >= 88) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 1; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Cast first Force the Hand of Fate"); autoFTHOFComboAction.state = 3; } return;
-                    case 7: if (M.magic >= 91) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 1; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Cast first Force the Hand of Fate"); autoFTHOFComboAction.state = 3; } return;
-                    case 8: if (M.magic >= 93) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 1; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Cast first Force the Hand of Fate"); autoFTHOFComboAction.state = 3; } return;
-                    case 9: if (M.magic >= 96) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 1; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Cast first Force the Hand of Fate"); autoFTHOFComboAction.state = 3; } return;
-                    case 10: if (M.magic >= 98) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 1; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Cast first Force the Hand of Fate"); autoFTHOFComboAction.state = 3; } return;
+                    case 1: if (M.magic >= 81) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 21; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Lançou o primeiro Força do Destino"); autoFTHOFComboAction.state = 3; } return;
+                    case 2: if (M.magic >= 81) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 14; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Lançou o primeiro Força do Destino"); autoFTHOFComboAction.state = 3; } return;
+                    case 3: if (M.magic >= 81) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 8; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Lançou o primeiro Força do Destino"); autoFTHOFComboAction.state = 3; } return;
+                    case 4: if (M.magic >= 81) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 3; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Lançou o primeiro Força do Destino"); autoFTHOFComboAction.state = 3; } return;
+                    case 5: if (M.magic >= 83) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 1; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Lançou o primeiro Força do Destino"); autoFTHOFComboAction.state = 3; } return;
+                    case 6: if (M.magic >= 88) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 1; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Lançou o primeiro Força do Destino"); autoFTHOFComboAction.state = 3; } return;
+                    case 7: if (M.magic >= 91) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 1; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Lançou o primeiro Força do Destino"); autoFTHOFComboAction.state = 3; } return;
+                    case 8: if (M.magic >= 93) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 1; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Lançou o primeiro Força do Destino"); autoFTHOFComboAction.state = 3; } return;
+                    case 9: if (M.magic >= 96) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 1; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Lançou o primeiro Força do Destino"); autoFTHOFComboAction.state = 3; } return;
+                    case 10: if (M.magic >= 98) { autoFTHOFComboAction.count = Game.Objects["Wizard tower"].amount - 1; M.castSpell(M.spellsById[1]); logEvent("autoFTHOFCombo", "Lançou o primeiro Força do Destino"); autoFTHOFComboAction.state = 3; } return;
                 }
             }
             return;
@@ -803,7 +804,7 @@ function autoFTHOFComboAction() {
             Game.Objects["Wizard tower"].sell(autoFTHOFComboAction.count);
             M.computeMagicM();
             M.castSpell(M.spellsById[1]);
-            logEvent("autoFTHOFCombo", "Double cast Force the Hand of Fate");
+            logEvent("autoFTHOFCombo", "Lançou Força do Destino duas vezes");
             if (
                 FrozenCookies.towerLimit &&
                 FrozenCookies.manaMax <= 100 &&
@@ -838,7 +839,7 @@ function auto100ConsistencyComboAction() {
 
     if (Game.Objects["Wizard tower"].level != 10) {
         FrozenCookies.auto100ConsistencyCombo = 0;
-        logEvent("auto100ConsistencyCombo", "Combo disabled, impossible");
+        logEvent("auto100ConsistencyCombo", "Combo desativado, impossível");
         return;
     }
 
@@ -891,7 +892,7 @@ function auto100ConsistencyComboAction() {
         if (auto100ConsistencyComboAction.autodragonyes == 1) { FrozenCookies.autoDragonToggle = 1; auto100ConsistencyComboAction.autodragonyes = 0; }
         if (auto100ConsistencyComboAction.autoworshipyes == 1) { FrozenCookies.autoWorshipToggle = 1; auto100ConsistencyComboAction.autoworshipyes = 0; }
         auto100ConsistencyComboAction.state = 0;
-        logEvent("auto100ConsistencyCombo", "Trying to recover from soft fail");
+        logEvent("auto100ConsistencyCombo", "Tentando recuperar de falha suave");
     }
 
     if (
@@ -923,20 +924,20 @@ function auto100ConsistencyComboAction() {
     ) {
         if (nextSpellName(0) == "Sugar Lump") {
             M.castSpell(M.spellsById[1]);
-            logEvent("auto100ConsistencyCombo", "Cast Force the Hand of Fate");
+            logEvent("auto100ConsistencyCombo", "Lançou Força do Destino");
         } else if (
             cpsBonus() < 1 &&
             (nextSpellName(0) == "Clot" || nextSpellName(0) == "Ruin Cookies")
         ) {
             M.castSpell(M.spellsById[2]);
-            logEvent("auto100ConsistencyCombo", "Cast Stretch Time instead of FTHOF");
+            logEvent("auto100ConsistencyCombo", "Lançou Estender o Tempo em vez de FTHOF");
         } else {
             M.castSpell(M.spellsById[4]);
-            logEvent("auto100ConsistencyCombo", "Cast Haggler's Charm instead of FTHOF");
+            logEvent("auto100ConsistencyCombo", "Lançou Amuleto do Regateador em vez de FTHOF");
         }
     }
 
-    // IMPROVEMENT: All .time accesses in combo state machine replaced with buffTime()
+    // MELHORIA: Todos os acessos a .time na máquina de estados do combo substituídos por buffTime()
     switch (auto100ConsistencyComboAction.state) {
         case 0: return;
 
@@ -959,7 +960,7 @@ function auto100ConsistencyComboAction() {
                 if (FrozenCookies.autoBuy == 1) { auto100ConsistencyComboAction.autobuyyes = 1; FrozenCookies.autoBuy = 0; } else { auto100ConsistencyComboAction.autobuyyes = 0; }
                 if (FrozenCookies.autoDragonToggle == 1) { auto100ConsistencyComboAction.autodragonyes = 1; FrozenCookies.autoDragonToggle = 0; } else { auto100ConsistencyComboAction.autodragonyes = 0; }
                 if (FrozenCookies.autoWorshipToggle == 1) { auto100ConsistencyComboAction.autoworshipyes = 1; FrozenCookies.autoWorshipToggle = 0; } else { auto100ConsistencyComboAction.autoworshipyes = 0; }
-                logEvent("auto100ConsistencyCombo", "Starting combo");
+                logEvent("auto100ConsistencyCombo", "Iniciando combo");
                 auto100ConsistencyComboAction.state = 2;
             }
             return;
@@ -998,9 +999,9 @@ function auto100ConsistencyComboAction() {
             return;
 
         case 4:
-            // FIX: was `!Game.dragonAura2 == 15` - `!` binds tighter than `==`, so this
-            // compared a boolean to 15 and was always false, making the conflict-avoidance
-            // branch dead code (only the else-if fallback ever ran). Same bug on the next pair.
+            // CORREÇÃO: era `!Game.dragonAura2 == 15` - `!` tem precedência maior que `==`, então isso
+            // comparava um booleano com 15 e era sempre falso, tornando o ramo de evitar conflito
+            // código morto (apenas o fallback else-if executava). Mesmo bug no próximo par.
             if (Game.dragonAura == 16 && Game.dragonAura2 != 15) { Game.specialTab = "dragon"; Game.SetDragonAura(15, 1); Game.ConfirmPrompt(); }
             else if (!Game.hasAura("Radiant Appetite")) { Game.specialTab = "dragon"; Game.SetDragonAura(15, 0); Game.ConfirmPrompt(); }
             if (Game.dragonAura2 == 15 && Game.dragonAura != 16) { Game.specialTab = "dragon"; Game.SetDragonAura(16, 0); Game.ConfirmPrompt(); }
@@ -1018,7 +1019,7 @@ function auto100ConsistencyComboAction() {
         case 6:
             if ((FrozenCookies.towerLimit && M.magic >= M.magicM) || (!FrozenCookies.towerLimit && M.magic >= M.magicM - 1)) {
                 M.castSpell(M.spellsById[1]);
-                logEvent("auto100ConsistencyCombo", "Cast FTHOF 1");
+                logEvent("auto100ConsistencyCombo", "Lançou FTHOF 1");
                 auto100ConsistencyComboAction.state = 7;
             }
             return;
@@ -1028,7 +1029,7 @@ function auto100ConsistencyComboAction() {
             M.computeMagicM();
             if (M.magic >= 30) {
                 M.castSpell(M.spellsById[1]);
-                logEvent("auto100ConsistencyCombo", "Cast FTHOF 2");
+                logEvent("auto100ConsistencyCombo", "Lançou FTHOF 2");
                 Game.Objects["Wizard tower"].buy(auto100ConsistencyComboAction.countWizard);
                 FrozenCookies.autobuyCount += 1;
                 auto100ConsistencyComboAction.state = 8;
@@ -1044,7 +1045,7 @@ function auto100ConsistencyComboAction() {
         case 9:
             if ((FrozenCookies.towerLimit && M.magic >= M.magicM) || (!FrozenCookies.towerLimit && M.magic >= M.magicM - 1)) {
                 M.castSpell(M.spellsById[1]);
-                logEvent("auto100ConsistencyCombo", "Cast FTHOF 3");
+                logEvent("auto100ConsistencyCombo", "Lançou FTHOF 3");
                 auto100ConsistencyComboAction.state = 10;
             }
             return;
@@ -1054,7 +1055,7 @@ function auto100ConsistencyComboAction() {
             M.computeMagicM();
             if (M.magic >= 30) {
                 M.castSpell(M.spellsById[1]);
-                logEvent("auto100ConsistencyCombo", "Cast FTHOF 4");
+                logEvent("auto100ConsistencyCombo", "Lançou FTHOF 4");
                 Game.Objects["Wizard tower"].buy(auto100ConsistencyComboAction.countWizard);
                 FrozenCookies.autobuyCount += 1;
                 auto100ConsistencyComboAction.state = 11;
@@ -1180,7 +1181,7 @@ function auto100ConsistencyComboAction() {
             if (auto100ConsistencyComboAction.autogodyes == 1) { FrozenCookies.autoGodzamok = 1; auto100ConsistencyComboAction.autogodyes = 0; }
             if (auto100ConsistencyComboAction.autodragonyes == 1) { FrozenCookies.autoDragonToggle = 1; auto100ConsistencyComboAction.autodragonyes = 0; }
             if (auto100ConsistencyComboAction.autoworshipyes == 1) { FrozenCookies.autoWorshipToggle = 1; auto100ConsistencyComboAction.autoworshipyes = 0; }
-            logEvent("auto100ConsistencyCombo", "Combo completed");
+            logEvent("auto100ConsistencyCombo", "Combo concluído");
             auto100ConsistencyComboAction.state = 0;
             return;
     }
@@ -1214,7 +1215,7 @@ function autoSweetAction() {
         }
 
         if (!autoSweetAction.state && !Game.OnAscend && !Game.AscendTimer) {
-            logEvent("autoSweet", 'No "Sweet" detected, ascending');
+            logEvent("autoSweet", 'Nenhum "Sweet" detectado, ascendendo');
             Game.Reincarnate(1);
         }
 
@@ -1231,12 +1232,12 @@ function autoSweetAction() {
                 ) {
                     if (nextSpellName(0) != "Sugar Lump") {
                         M.castSpell(M.spellsById[4]);
-                        logEvent("autoSweet", "Cast Haggler's Charm while waiting for 'Sweet'");
+                        logEvent("autoSweet", "Lançou Amuleto do Regateador enquanto aguarda 'Sweet'");
                     }
                     if (nextSpellName(0) == "Sugar Lump") {
                         M.castSpell(M.spellsById[1]);
                         autoSweetAction.state = 0;
-                        logEvent("autoSweet", "Sugar Lump Get! Disabling Auto Sweet");
+                        logEvent("autoSweet", "Torrão de Açúcar obtido! Desativando Auto Sweet");
                         if (autoSweetAction.manaPrev != -1)
                             FrozenCookies.manaMax = autoSweetAction.manaPrev;
                         if (autoSweetAction.autobuyyes == 1) {
@@ -1264,7 +1265,7 @@ function autoSugarFrenzyAction() {
     ) {
         Game.UpgradesById["452"].buy();
         Game.ConfirmPrompt();
-        logEvent("autoSugarFrenzy", "Started a Sugar Frenzy this ascension");
+        logEvent("autoSugarFrenzy", "Iniciou uma Frenesi de Açúcar nesta ascensão");
     }
 
     if (
@@ -1278,6 +1279,6 @@ function autoSugarFrenzyAction() {
     ) {
         Game.UpgradesById["452"].buy();
         Game.ConfirmPrompt();
-        logEvent("autoSugarFrenzy", "Started a Sugar Frenzy this ascension");
+        logEvent("autoSugarFrenzy", "Iniciou uma Frenesi de Açúcar nesta ascensão");
     }
 }

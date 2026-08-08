@@ -36,17 +36,17 @@ assert.strictEqual(gameStage(baseSnapshot({ hasTemple: true })).stage, "mid");
 assert.strictEqual(
     gameStage(baseSnapshot({ hasWizardTower: true, hasDragon: true })).stage,
     "late",
-    "Dragon hatched takes priority over mid-game signals"
+    "Dragon hatched tem prioridade sobre sinais de mid-game"
 );
 
 // --- ascendROIStats ---
-assert.strictEqual(ascendROIStats(baseSnapshot({ prestige: 0 })), null, "prestige < 1 -> null");
+assert.strictEqual(ascendROIStats(baseSnapshot({ prestige: 0 })), null, "prestígio < 1 -> null");
 
 {
-    // prestige=10, cookiesEarned chosen so resetPrestige = 100.5 exactly (100.5^3 * 1e12) -
-    // deliberately not a perfect cube, so floor(100.5)=100 is robust against float epsilon
-    // (a perfect-cube input like 1e18 can land a hair under the boundary and floor to 99).
-    // newHC = 100 - 10 = 90
+    // prestige=10, cookiesEarned escolhido para que resetPrestige = 100.5 exatamente (100.5^3 * 1e12) -
+    // deliberadamente não é um cubo perfeito, para que floor(100.5)=100 seja robusto contra epsilon de
+    // ponto flutuante (uma entrada cubo perfeito como 1e18 pode cair ligeiramente abaixo do limite e
+    // arredondar para 99). newHC = 100 - 10 = 90
     const cookiesEarned = Math.pow(100.5, 3) * 1e12;
     const stats = ascendROIStats(
         baseSnapshot({
@@ -58,10 +58,10 @@ assert.strictEqual(ascendROIStats(baseSnapshot({ prestige: 0 })), null, "prestig
             ascendRoiThresholdIndex: 3, // <= 8h
         })
     );
-    assert.ok(stats, "expected non-null stats with prestige >= 1");
+    assert.ok(stats, "esperado stats não-nulo com prestige >= 1");
     assert.strictEqual(stats!.newHC, 90);
     assert.ok(stats!.meetsSanityFloor);
-    assert.ok(stats!.rebuildCost === 0, "no buildings owned -> zero rebuild cost");
+    assert.ok(stats!.rebuildCost === 0, "nenhum edifício possuído -> custo de reconstrução zero");
     // bonusPerHC=0.01, newBonus=0.9, cpsDelta = 1e10*0.9 = 9e9
     // paybackSecs = (1e10 + 0) / 9e9 ~= 1.111s
     assert.ok(Math.abs(stats!.paybackSecs - 10 / 9) < 1e-6);
@@ -69,9 +69,9 @@ assert.strictEqual(ascendROIStats(baseSnapshot({ prestige: 0 })), null, "prestig
 }
 
 {
-    // Rebuild cost pulls in owned buildings' full cumulative cost, driving payback up -
-    // this is exactly the fix that was missing before this session (payback used to only
-    // look at cookies-on-screen and ignored the cost of rebuilding).
+    // O custo de reconstrução inclui o custo cumulativo real dos edifícios possuídos, elevando o
+    // retorno - esta é exatamente a correção que estava faltando antes desta sessão (o retorno
+    // costumava considerar apenas os cookies na tela e ignorava o custo de reconstrução).
     const withBuildings = ascendROIStats(
         baseSnapshot({
             prestige: 10,
@@ -93,14 +93,14 @@ assert.strictEqual(ascendROIStats(baseSnapshot({ prestige: 0 })), null, "prestig
     assert.ok(withBuildings!.rebuildCost > 0);
     assert.ok(
         withBuildings!.paybackSecs > withoutBuildings!.paybackSecs,
-        "owning buildings must raise the payback estimate (rebuild cost matters)"
+        "possuir edifícios deve elevar a estimativa de retorno (custo de reconstrução importa)"
     );
 }
 
-// --- shouldAscendByROI: real gate must be autoAscendToggle && autoAscendMode===3 ---
-// This is the exact bug fixed this session: an old check on a non-existent preference
-// (`autoAscendROI`) meant ROI ascend never fired regardless of what was selected in
-// Options. Confirmed live in-game; this check locks the correct gate in place.
+// --- shouldAscendByROI: gate real deve ser autoAscendToggle && autoAscendMode===3 ---
+// Este é o bug exato corrigido nesta sessão: uma verificação antiga em uma preferência inexistente
+// (`autoAscendROI`) fazia o ROI ascend nunca disparar independentemente do que estava selecionado
+// em Opções. Confirmado ao vivo no jogo; esta verificação fixa o gate correto no lugar.
 {
     const readySnapshot = baseSnapshot({
         prestige: 10,
@@ -111,23 +111,23 @@ assert.strictEqual(ascendROIStats(baseSnapshot({ prestige: 0 })), null, "prestig
         autoAscendToggle: true,
         autoAscendMode: 3,
     });
-    assert.ok(shouldAscendByROI(readySnapshot), "should ascend when gate + ROI conditions are met");
+    assert.ok(shouldAscendByROI(readySnapshot), "deve ascender quando gate + condições de ROI são satisfeitas");
     assert.ok(
         !shouldAscendByROI({ ...readySnapshot, autoAscendToggle: false }),
-        "must not ascend when autoAscendToggle is off, even if mode is 3"
+        "não deve ascender quando autoAscendToggle está desligado, mesmo que mode seja 3"
     );
     assert.ok(
         !shouldAscendByROI({ ...readySnapshot, autoAscendMode: 2 }),
-        "must not ascend when a different ascend mode is selected"
+        "não deve ascender quando um modo de ascensão diferente está selecionado"
     );
 }
 
-// --- ascendROIStats: relative growth floor (ascendRoiMinGrowthIndex) ---
-// The floor scales with progress instead of being a flat HC count: same % of a bigger prestige
-// base demands more absolute HC. Index 3 = +10% (array is [0, 2%, 5%, 10%, 20%, 35%]).
+// --- ascendROIStats: piso de crescimento relativo (ascendRoiMinGrowthIndex) ---
+// O piso escala com o progresso em vez de ser uma contagem fixa de HC: a mesma % de uma base maior
+// de prestígio exige mais HC absoluto. Índice 3 = +10% (array é [0, 2%, 5%, 10%, 20%, 35%]).
 {
-    // prestige=1000, newHC=20 (2% growth) - below the 10% floor. Fast payback trivially
-    // satisfied, isolating the growth gate as the blocker.
+    // prestige=1000, newHC=20 (crescimento de 2%) - abaixo do piso de 10%. Retorno rapidamente
+    // satisfeito, isolando o gate de crescimento como o bloqueador.
     const smallGrowth = ascendROIStats(
         baseSnapshot({
             prestige: 1000,
@@ -135,19 +135,19 @@ assert.strictEqual(ascendROIStats(baseSnapshot({ prestige: 0 })), null, "prestig
             cookiesPs: 1e10,
             cookies: 1e10,
             cpsBonus: 1,
-            ascendRoiThresholdIndex: 3, // <= 8h - trivially satisfied, payback is seconds
+            ascendRoiThresholdIndex: 3, // <= 8h - trivialmente satisfeito, retorno é em segundos
             ascendRoiMinGrowthIndex: 3, // +10%
         })
     );
     assert.strictEqual(smallGrowth!.newHC, 20);
     assert.ok(smallGrowth!.meetsSanityFloor);
-    assert.ok(smallGrowth!.meetsPayback, "payback alone is satisfied");
-    assert.ok(!smallGrowth!.meetsGrowth, "2% growth is below the 10% floor");
-    assert.ok(!smallGrowth!.wouldAscend, "growth gate must block ascend even when the other two pass");
+    assert.ok(smallGrowth!.meetsPayback, "retorno sozinho é satisfeito");
+    assert.ok(!smallGrowth!.meetsGrowth, "crescimento de 2% está abaixo do piso de 10%");
+    assert.ok(!smallGrowth!.wouldAscend, "gate de crescimento deve bloquear a ascensão mesmo quando os outros dois passam");
 }
 
 {
-    // Same prestige base, newHC=150 (15% growth) - clears the 10% floor.
+    // Mesma base de prestígio, newHC=150 (crescimento de 15%) - passa o piso de 10%.
     const bigGrowth = ascendROIStats(
         baseSnapshot({
             prestige: 1000,
@@ -160,13 +160,13 @@ assert.strictEqual(ascendROIStats(baseSnapshot({ prestige: 0 })), null, "prestig
         })
     );
     assert.strictEqual(bigGrowth!.newHC, 150);
-    assert.ok(bigGrowth!.meetsGrowth, "15% growth clears the 10% floor");
+    assert.ok(bigGrowth!.meetsGrowth, "crescimento de 15% passa o piso de 10%");
     assert.ok(bigGrowth!.wouldAscend);
 }
 
 {
-    // Same small-growth scenario as above, but the floor is OFF (index 0) - only payback +
-    // sanity floor gate the ascend.
+    // Mesmo cenário de pequeno crescimento acima, mas o piso está DESLIGADO (índice 0) - apenas
+    // retorno + piso de sanidade fazem o gate da ascensão.
     const growthOff = ascendROIStats(
         baseSnapshot({
             prestige: 1000,
@@ -178,14 +178,14 @@ assert.strictEqual(ascendROIStats(baseSnapshot({ prestige: 0 })), null, "prestig
             ascendRoiMinGrowthIndex: 0,
         })
     );
-    assert.ok(growthOff!.meetsGrowth, "growth gate off -> always satisfied");
-    assert.ok(growthOff!.wouldAscend, "payback + sanity floor alone allow the ascend");
+    assert.ok(growthOff!.meetsGrowth, "gate de crescimento desligado -> sempre satisfeito");
+    assert.ok(growthOff!.wouldAscend, "retorno + piso de sanidade sozinhos permitem a ascensão");
 }
 
 {
-    // Small prestige (2), newHC=1 -> 50% growth, trivially clears any % floor. The sanity
-    // floor (newHC>=1) is the only thing that would ever block a tiny early ascend now - there
-    // is no separate flat "N HC minimum" left to enforce it.
+    // Prestígio pequeno (2), newHC=1 -> crescimento de 50%, passa trivialmente qualquer % de piso. O
+    // piso de sanidade (newHC>=1) é a única coisa que bloquearia uma ascensão cedo pequena agora - não
+    // há um "mínimo de N HC" plano separado para impô-la.
     const smallPrestige = ascendROIStats(
         baseSnapshot({
             prestige: 2,
@@ -194,20 +194,21 @@ assert.strictEqual(ascendROIStats(baseSnapshot({ prestige: 0 })), null, "prestig
             cookies: 1e10,
             cpsBonus: 1,
             ascendRoiThresholdIndex: 3,
-            ascendRoiMinGrowthIndex: 4, // +20%, still trivially cleared by 50% growth
+            ascendRoiMinGrowthIndex: 4, // +20%, ainda trivialmente passado pelo crescimento de 50%
         })
     );
     assert.strictEqual(smallPrestige!.newHC, 1);
     assert.ok(smallPrestige!.meetsSanityFloor);
-    assert.ok(smallPrestige!.meetsGrowth, "1 HC on a base of 2 is 50% growth");
+    assert.ok(smallPrestige!.meetsGrowth, "1 HC em uma base de 2 é 50% de crescimento");
     assert.ok(smallPrestige!.wouldAscend);
 }
 
-// --- ascendROIStats: heavenlyBonusMultiplier drives the real per-HC CpS gain ---
-// The bug this fixes: bonusPerHC used to be a flat 0.01/0.02 gated on "Persistent memory" (a
-// research-speed upgrade with zero relation to CpS). The real game only grants the 1%-per-HC
-// bonus once "Heavenly X" upgrades are bought (Game.GetHeavenlyMultiplier() starts at 0) -
-// with none of them owned, new HC gives no real CpS gain at all, so ROI ascend must never fire.
+// --- ascendROIStats: heavenlyBonusMultiplier impulsiona o ganho real de CpS por HC ---
+// O bug que isto corrige: bonusPerHC costumava ser um 0.01/0.02 fixo baseado em "Persistent memory"
+// (uma melhoria de velocidade de pesquisa sem qualquer relação com CpS). O jogo real só concede o
+// bônus de 1%-por-HC quando as melhorias "Heavenly X" são compradas (Game.GetHeavenlyMultiplier()
+// começa em 0) - sem nenhuma delas possuída, novo HC não dá ganho real de CpS, então ROI ascend
+// nunca deve disparar.
 {
     const noHeavenlyUpgrades = ascendROIStats(
         baseSnapshot({
@@ -220,8 +221,8 @@ assert.strictEqual(ascendROIStats(baseSnapshot({ prestige: 0 })), null, "prestig
         })
     );
     assert.strictEqual(noHeavenlyUpgrades!.paybackSecs, Number.POSITIVE_INFINITY,
-        "zero heavenly multiplier -> zero cpsDelta -> payback never recovers");
-    assert.ok(!noHeavenlyUpgrades!.wouldAscend, "must not ascend when HC gives no real CpS gain");
+        "multiplicador celestial zero -> cpsDelta zero -> retorno nunca se recupera");
+    assert.ok(!noHeavenlyUpgrades!.wouldAscend, "não deve ascender quando HC não dá ganho real de CpS");
 }
 
 console.log("ascend.selfcheck: OK");

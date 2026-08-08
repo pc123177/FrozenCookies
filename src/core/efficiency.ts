@@ -1,10 +1,10 @@
-// Purchase efficiency: lower is better. Ranks buildings/upgrades by how quickly they pay
-// for themselves plus a time-cost penalty (weight, calibrated at 1.15 - see README).
+// Eficiência de compra: menor é melhor. Classifica edifícios/melhorias por quão rapidamente eles
+// se pagam mais uma penalidade de custo-tempo (peso, calibrado em 1.15 - veja README).
 //
-// deltaCps must already come from a full Game.CalculateGains() simulation (the real CpS
-// delta including any synergy/multiplier effect the purchase has). Do NOT add a separate
-// synergy multiplier on top of that here - an earlier version of this mod did, and it
-// double-counted the same synergy value twice (fixed in FrozenCookies v1, see fc_main.js
+// deltaCps já deve vir de uma simulação completa de Game.CalculateGains() (o delta real de CpS
+// incluindo qualquer efeito de sinergia/multiplicador que a compra tem). NÃO adicione um
+// multiplicador de sinergia separado por cima daqui - uma versão anterior deste mod fez isso e
+// contou o mesmo valor de sinergia duas vezes (corrigido em FrozenCookies v1, veja fc_main.js
 // git history: "drop double-counted synergy boost").
 export function purchaseEfficiency(
     price: number,

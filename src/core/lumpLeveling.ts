@@ -4,9 +4,10 @@ export interface LevelableBuilding {
     level: number;
 }
 
-// Game.Objects[x].levelUp() cost is level+1 lumps (confirmed live: Game.spendLump(me.level+1,
-// ...)), no upper cap - level 10 just triggers a one-time achievement. Cheapest-first (lowest
-// level owned building) makes the fewest-lumps-per-level-gained choice every tick.
+// O custo de Game.Objects[x].levelUp() é level+1 açúcares (confirmado ao vivo: Game.spendLump(me.level+1,
+// ...)), sem limite superior - nível 10 apenas aciona uma conquista única. Escolher o mais barato
+// primeiro (edifício possuído com menor nível) faz a escolha de menos açúcares por nível ganho a
+// cada tick.
 export function nextBuildingToLevel(
     buildings: LevelableBuilding[],
     lumps: number,
