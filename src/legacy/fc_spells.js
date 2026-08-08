@@ -484,6 +484,11 @@ function autoCast() {
                         "autoCasting",
                         "Cast Haggler's Charm instead of Force the Hand of Fate"
                     );
+                    // FIX: case 3's identical Haggler's-Charm-instead-of-FTHOF branch (line 357)
+                    // returns right after casting; this one fell through into the cpsBonus()
+                    // block below and could cast FTHOF too in the same tick - double-casting
+                    // (and double-spending mana on) two spells in one go.
+                    return;
                 }
 
                 if (cpsBonus() >= FrozenCookies.minCpSMult) {
