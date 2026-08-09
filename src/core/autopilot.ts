@@ -56,7 +56,12 @@ const SHARED_BASE: StageSettings = {
     towerLimit: 0, autoCasting: 0, minCpSMult: 7,
     autoFTHOFCombo: 0, auto100ConsistencyCombo: 0,
     autoSugarFrenzy: 0, autoSweet: 0,
-    autoDragon: 0, petDragon: 0, autoDragonToggle: 0,
+    // Sempre ligado, não só em 'late': autoDragonAction() só roda de fato se o setInterval que a
+    // chama já existir desde o boot (ver comentário em src/preferences.ts sobre autoDragon) - e
+    // gameStage() só classifica 'late' quando hasDragon já é true, então esperar o estágio
+    // travaria o dragão pra sempre (confirmado por relato real de usuário). A função já se
+    // autoprotege (HasUnlocked/dragonLevel/hasClickBuff), sem custo ficar sempre ativa.
+    autoDragon: 1, petDragon: 1, autoDragonToggle: 1,
     autoDragonOrbs: 0, orbLimit: 0,
     defaultSeasonToggle: 1, defaultSeason: 1,
     freeSeason: 1, autoEaster: 1, autoHalloween: 1,
@@ -103,7 +108,7 @@ export const STAGE_SETTINGS: Record<GameStageId, StageSettings> = {
         autoWorshipToggle: 1, autoWorship0: 2, autoWorship1: 8, autoCyclius: 1,
         towerLimit: 1, manaMax: 100, autoCasting: 0,
         auto100ConsistencyCombo: 1, autoSugarFrenzy: 1, minASFMult: 7,
-        autoDragon: 1, petDragon: 1, autoDragonToggle: 1,
+        // autoDragon/petDragon/autoDragonToggle já vêm de SHARED_BASE (sempre ligados).
         autoDragonAura0: 15, autoDragonAura1: 16,
         orbMax: 200,
         // autoSweet permanece 0 (SHARED_BASE) em todo estágio - aviso de funcionalidade experimental

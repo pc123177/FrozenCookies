@@ -1970,10 +1970,18 @@ function FCStart() {
     if (FrozenCookies.autoBank) FrozenCookies.autoBankBot = setInterval(autoBankAction, FrozenCookies.frequency * 10);
     if (FrozenCookies.autoBroker) FrozenCookies.autoBrokerBot = setInterval(autoBrokerAction, FrozenCookies.frequency * 10);
     if (FrozenCookies.autoLoan) FrozenCookies.autoLoanBot = setInterval(autoLoanBuy, FrozenCookies.frequency * 2);
-    if (FrozenCookies.autoDragon) FrozenCookies.autoDragonBot = setInterval(autoDragonAction, FrozenCookies.frequency);
-    if (FrozenCookies.petDragon) FrozenCookies.petDragonBot = setInterval(petDragonAction, FrozenCookies.frequency * 10);
-    if (FrozenCookies.autoDragonAura0) FrozenCookies.autoDragonAura0Bot = setInterval(autoDragonAura0Action, FrozenCookies.frequency * 10);
-    if (FrozenCookies.autoDragonAura1) FrozenCookies.autoDragonAura1Bot = setInterval(autoDragonAura1Action, FrozenCookies.frequency * 10);
+    // FIX: sempre criados agora (não mais atrás de `if (FrozenCookies.X)`), mesmo padrão já usado
+    // por ascendBot/autopilotBot/heavenlyUpgradeBot abaixo. O gate condicional aqui decidia UMA
+    // VEZ no boot se o interval existia; o autopiloto mudar a preferência depois nunca recriava
+    // o interval, então quem carregasse com autoDragon=0 salvo (a maioria - default era 0) nunca
+    // via o dragão chocar, mesmo com "How to bake your dragon" comprado há muito tempo (relato
+    // real de usuário). As 4 funções agora se autoprotegem checando sua própria preferência
+    // internamente (autoDragonAction/petDragonAction: ver fc_gods.js; as duas de aura já
+    // checavam autoDragonToggle internamente antes mesmo desta correção).
+    FrozenCookies.autoDragonBot = setInterval(autoDragonAction, FrozenCookies.frequency);
+    FrozenCookies.petDragonBot = setInterval(petDragonAction, FrozenCookies.frequency * 10);
+    FrozenCookies.autoDragonAura0Bot = setInterval(autoDragonAura0Action, FrozenCookies.frequency * 10);
+    FrozenCookies.autoDragonAura1Bot = setInterval(autoDragonAura1Action, FrozenCookies.frequency * 10);
     if (FrozenCookies.autoDragonOrbs) FrozenCookies.autoDragonOrbsBot = setInterval(autoDragonOrbsAction, FrozenCookies.frequency * 10);
     if (FrozenCookies.autoSugarFrenzy) FrozenCookies.autoSugarFrenzyBot = setInterval(autoSugarFrenzyAction, FrozenCookies.frequency * 2);
     if (FrozenCookies.autoWorship0) FrozenCookies.autoWorship0Bot = setInterval(autoWorship0Action, FrozenCookies.frequency * 5);

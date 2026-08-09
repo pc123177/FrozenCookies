@@ -560,7 +560,14 @@ function autoDragonsCurve() {
 }
 
 function autoDragonAction() {
+    // FIX: sem esse check, o preference toggle autoDragon não tinha efeito nenhum sobre o
+    // comportamento em tempo real - o único gate real era o setInterval condicional em
+    // FCStart() (fc_main.js), decidido UMA VEZ no boot. Autopiloto mudando
+    // FrozenCookies.autoDragon depois não recriava o interval, então o dragão nunca chocava
+    // pra quem carregou uma vez com autoDragon=0 salvo (relato real de usuário). Agora o
+    // interval é sempre criado (fc_main.js) e esta função se autoprotege aqui.
     if (
+        !FrozenCookies.autoDragon ||
         !Game.HasUnlocked("A crumbly egg") ||
         Game.dragonLevel > 26 ||
         hasClickBuff()
@@ -589,7 +596,10 @@ function autoDragonAction() {
 }
 
 function petDragonAction() {
+    // FIX: mesma razão do check em autoDragonAction - sem isso, o toggle petDragon não tinha
+    // efeito em tempo real, só o setInterval condicional decidido uma vez no boot.
     if (
+        !FrozenCookies.petDragon ||
         !Game.Has("A crumbly egg") ||
         Game.dragonLevel < 4 ||
         !Game.Has("Pet the dragon") ||

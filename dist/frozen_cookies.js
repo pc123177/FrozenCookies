@@ -174,9 +174,14 @@
     auto100ConsistencyCombo: 0,
     autoSugarFrenzy: 0,
     autoSweet: 0,
-    autoDragon: 0,
-    petDragon: 0,
-    autoDragonToggle: 0,
+    // Sempre ligado, não só em 'late': autoDragonAction() só roda de fato se o setInterval que a
+    // chama já existir desde o boot (ver comentário em src/preferences.ts sobre autoDragon) - e
+    // gameStage() só classifica 'late' quando hasDragon já é true, então esperar o estágio
+    // travaria o dragão pra sempre (confirmado por relato real de usuário). A função já se
+    // autoprotege (HasUnlocked/dragonLevel/hasClickBuff), sem custo ficar sempre ativa.
+    autoDragon: 1,
+    petDragon: 1,
+    autoDragonToggle: 1,
     autoDragonOrbs: 0,
     orbLimit: 0,
     defaultSeasonToggle: 1,
@@ -262,9 +267,7 @@
       auto100ConsistencyCombo: 1,
       autoSugarFrenzy: 1,
       minASFMult: 7,
-      autoDragon: 1,
-      petDragon: 1,
-      autoDragonToggle: 1,
+      // autoDragon/petDragon/autoDragonToggle já vêm de SHARED_BASE (sempre ligados).
       autoDragonAura0: 15,
       autoDragonAura1: 16,
       orbMax: 200
@@ -654,20 +657,29 @@
     },
     // opções do Dragão
     dragonOptions: { hint: "Drag\xE3o:" },
+    // v2: default mudado de 0 para 1. FCStart() (fc_main.js) só cria o setInterval de
+    // autoDragonAction/petDragonAction/etc UMA VEZ, no boot, checando o valor ATUAL da
+    // preferência - o autopiloto mudar FrozenCookies.autoDragon depois não recria o interval
+    // (JS não relança setInterval sozinho porque uma variável mudou). Com default 0, o
+    // piloto automático NUNCA conseguia realmente ligar o dragão: o estágio 'late' já exige
+    // hasDragon=true pra ser detectado, e mesmo se detectasse, seria tarde demais pro
+    // interval já não ter sido criado no boot. autoDragonAction() já tem seus próprios
+    // guards internos (HasUnlocked/dragonLevel/hasClickBuff), então é seguro manter sempre
+    // ligado - só age quando o ovo realmente existir.
     autoDragon: {
       hint: "Atualizar drag\xE3o automaticamente.",
       display: ["Atualiza\xE7\xE3o do Drag\xE3o DESLIGADA", "Atualiza\xE7\xE3o do Drag\xE3o LIGADA"],
-      default: 0
+      default: 1
     },
     petDragon: {
       hint: "Acariciar drag\xE3o automaticamente para drops.",
       display: ["Acariciar Drag\xE3o DESLIGADO", "Acariciar Drag\xE3o LIGADO"],
-      default: 0
+      default: 1
     },
     autoDragonToggle: {
       hint: "Definir auras do drag\xE3o automaticamente.",
       display: ["Auras do Drag\xE3o DESLIGADAS", "Auras do Drag\xE3o LIGADAS"],
-      default: 0
+      default: 1
     },
     dragonNotes: { hint: "Defina as auras desejadas. N\xE3o pode definir a mesma aura duas vezes." },
     autoDragonAura0: {

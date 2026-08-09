@@ -313,20 +313,29 @@ export const preferenceValues: PreferenceValues = {
 
     // opções do Dragão
     dragonOptions: { hint: "Dragão:" },
+    // v2: default mudado de 0 para 1. FCStart() (fc_main.js) só cria o setInterval de
+    // autoDragonAction/petDragonAction/etc UMA VEZ, no boot, checando o valor ATUAL da
+    // preferência - o autopiloto mudar FrozenCookies.autoDragon depois não recria o interval
+    // (JS não relança setInterval sozinho porque uma variável mudou). Com default 0, o
+    // piloto automático NUNCA conseguia realmente ligar o dragão: o estágio 'late' já exige
+    // hasDragon=true pra ser detectado, e mesmo se detectasse, seria tarde demais pro
+    // interval já não ter sido criado no boot. autoDragonAction() já tem seus próprios
+    // guards internos (HasUnlocked/dragonLevel/hasClickBuff), então é seguro manter sempre
+    // ligado - só age quando o ovo realmente existir.
     autoDragon: {
         hint: "Atualizar dragão automaticamente.",
         display: ["Atualização do Dragão DESLIGADA", "Atualização do Dragão LIGADA"],
-        default: 0,
+        default: 1,
     },
     petDragon: {
         hint: "Acariciar dragão automaticamente para drops.",
         display: ["Acariciar Dragão DESLIGADO", "Acariciar Dragão LIGADO"],
-        default: 0,
+        default: 1,
     },
     autoDragonToggle: {
         hint: "Definir auras do dragão automaticamente.",
         display: ["Auras do Dragão DESLIGADAS", "Auras do Dragão LIGADAS"],
-        default: 0,
+        default: 1,
     },
     dragonNotes: { hint: "Defina as auras desejadas. Não pode definir a mesma aura duas vezes." },
     autoDragonAura0: {
