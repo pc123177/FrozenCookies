@@ -48,7 +48,7 @@
     const thresholdHours = ASCEND_ROI_THRESHOLD_HOURS[snapshot.ascendRoiThresholdIndex] ?? 2;
     const thresholdSecs = thresholdHours * 3600;
     const meetsSanityFloor = newHC >= 1;
-    const meetsPayback = paybackSecs <= thresholdSecs;
+    const meetsPayback = snapshot.heavenlyBonusMultiplier === 0 || paybackSecs <= thresholdSecs;
     return {
       newHC,
       minGrowthPercent,

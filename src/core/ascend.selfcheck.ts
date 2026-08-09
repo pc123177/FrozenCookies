@@ -207,8 +207,7 @@ assert.strictEqual(ascendROIStats(baseSnapshot({ prestige: 0 })), null, "prestí
 // O bug que isto corrige: bonusPerHC costumava ser um 0.01/0.02 fixo baseado em "Persistent memory"
 // (uma melhoria de velocidade de pesquisa sem qualquer relação com CpS). O jogo real só concede o
 // bônus de 1%-por-HC quando as melhorias "Heavenly X" são compradas (Game.GetHeavenlyMultiplier()
-// começa em 0) - sem nenhuma delas possuída, novo HC não dá ganho real de CpS, então ROI ascend
-// nunca deve disparar.
+// começa em 0) - sem nenhuma delas possuída, novo HC não dá ganho real de CpS.
 {
     const noHeavenlyUpgrades = ascendROIStats(
         baseSnapshot({
@@ -222,7 +221,32 @@ assert.strictEqual(ascendROIStats(baseSnapshot({ prestige: 0 })), null, "prestí
     );
     assert.strictEqual(noHeavenlyUpgrades!.paybackSecs, Number.POSITIVE_INFINITY,
         "multiplicador celestial zero -> cpsDelta zero -> retorno nunca se recupera");
-    assert.ok(!noHeavenlyUpgrades!.wouldAscend, "não deve ascender quando HC não dá ganho real de CpS");
+    // REGRESSÃO real encontrada em produção: bloquear por causa do retorno=Infinity aqui
+    // trava o bot pra sempre em modo ROI - sem CpS real por HC ainda, "retorno" não tem
+    // sentido, e nada nunca dispara uma ascensão que compraria a primeira melhoria celestial
+    // e sairia do estado. meetsPayback ignora o retorno quando heavenlyBonusMultiplier===0;
+    // crescimento + piso de sanidade sozinhos decidem.
+    assert.ok(noHeavenlyUpgrades!.meetsPayback,
+        "retorno deve ser ignorado quando não há bônus celestial real ainda, senão trava para sempre");
+    assert.ok(noHeavenlyUpgrades!.wouldAscend,
+        "deve ascender mesmo com ganho de CpS zero, pra sair do estado sem melhoria celestial");
+}
+
+{
+    // Mesmo cenário, mas já com UM bônus celestial real (>0) - o piso de retorno normal volta
+    // a valer (payback=Infinity com cpsDelta=0 bloqueia de novo, como antes desta correção).
+    const stillZeroCpsGain = ascendROIStats(
+        baseSnapshot({
+            prestige: 10,
+            cookiesEarned: 1e18,
+            cookiesPs: 0,
+            cookies: 1e10,
+            heavenlyBonusMultiplier: 1,
+            ascendRoiThresholdIndex: 3,
+        })
+    );
+    assert.ok(!stillZeroCpsGain!.wouldAscend,
+        "com bônus celestial real possuído, o piso de retorno volta a valer normalmente");
 }
 
 console.log("ascend.selfcheck: OK");
