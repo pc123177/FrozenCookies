@@ -48,7 +48,7 @@
     const thresholdHours = ASCEND_ROI_THRESHOLD_HOURS[snapshot.ascendRoiThresholdIndex] ?? 2;
     const thresholdSecs = thresholdHours * 3600;
     const meetsSanityFloor = newHC >= 1;
-    const meetsPayback = paybackSecs <= thresholdSecs;
+    const meetsPayback = snapshot.heavenlyBonusMultiplier === 0 || paybackSecs <= thresholdSecs;
     return {
       newHC,
       minGrowthPercent,
@@ -66,6 +66,9 @@
     if (!(snapshot.autoAscendToggle && snapshot.autoAscendMode === 3)) return false;
     if (snapshot.isAscending) return false;
     if (snapshot.comboAscendBlock && snapshot.cpsBonus >= snapshot.minCpSMult) return false;
+    if (snapshot.hasHowToBakeYourDragon && !snapshot.hasCrumblyEgg && snapshot.cookiesEarned < 1e6) {
+      return false;
+    }
     const stats = ascendROIStats(snapshot);
     return !!stats && stats.wouldAscend;
   }
@@ -101,6 +104,8 @@
       hasWizardTower: Game.Objects["Wizard tower"].amount > 0,
       hasTemple: Game.Objects["Temple"].amount > 0,
       hasDragon: Game.dragonLevel > 0,
+      hasHowToBakeYourDragon: Game.Has("How to bake your dragon"),
+      hasCrumblyEgg: Game.Has("A crumbly egg"),
       isAscending: !!Game.OnAscend || !!Game.AscendTimer
     };
   }

@@ -99,7 +99,16 @@ export function ascendROIStats(snapshot: GameSnapshot): AscendRoiStats | null {
     // HC zero (ou negativo, não deveria acontecer mas seja seguro). O verdadeiro gate "vale a
     // pena" é meetsGrowth (escala com o progresso) + meetsPayback.
     const meetsSanityFloor = newHC >= 1;
-    const meetsPayback = paybackSecs <= thresholdSecs;
+    // Quando nenhuma melhoria "Heavenly X" é possuída, heavenlyBonusMultiplier é exatamente 0,
+    // então cpsDelta é comprovadamente 0 não importa quanto newHC cresça - "retorno" não tem
+    // sentido nesse estado e bloquearia toda ascensão futura para sempre (uma trava real: antes
+    // da correção do bônus por HC, bonusPerHC era uma constante errada mas não-zero que deixava
+    // o progresso continuar mesmo assim; a correção do valor certo, sozinha, introduziu esse
+    // deadlock). Ignora o piso de retorno até a primeira melhoria celestial ser comprada -
+    // crescimento + piso de sanidade decidem sozinhos, o que já é suficiente pra sair do estado
+    // (o HC ganho é gasto pelo heavenlyUpgradeBotTick em src/game/heavenly-upgrade-bot.ts assim
+    // que houver fichas, restaurando heavenlyBonusMultiplier > 0 pras próximas ascensões).
+    const meetsPayback = snapshot.heavenlyBonusMultiplier === 0 || paybackSecs <= thresholdSecs;
 
     return {
         newHC,
@@ -124,6 +133,21 @@ export function shouldAscendByROI(snapshot: GameSnapshot): boolean {
     if (!(snapshot.autoAscendToggle && snapshot.autoAscendMode === 3)) return false;
     if (snapshot.isAscending) return false;
     if (snapshot.comboAscendBlock && snapshot.cpsBonus >= snapshot.minCpSMult) return false;
+
+    // Bug real reportado por um usuário: bot ascendendo normalmente, mas o dragão nunca
+    // aparecia. Causa: "How to bake your dragon" (melhoria celestial) só destrava "A crumbly
+    // egg" (que choca o ovo) quando Game.cookiesEarned - o contador DA ASCENSÃO ATUAL, que
+    // ZERA a cada ascensão - atinge 1.000.000 (confirmado ao vivo no LogicTick do jogo). Um
+    // ciclo de ascensão rápido no modo ROI pode resetar esse contador antes dele nunca bater
+    // 1M, travando o dragão pra sempre mesmo com a melhoria já comprada há muito tempo. Pausa
+    // o ascend só nessa janela estreita entre comprar a melhoria e o ovo desbloquear.
+    if (
+        snapshot.hasHowToBakeYourDragon &&
+        !snapshot.hasCrumblyEgg &&
+        snapshot.cookiesEarned < 1_000_000
+    ) {
+        return false;
+    }
 
     const stats = ascendROIStats(snapshot);
     return !!stats && stats.wouldAscend;

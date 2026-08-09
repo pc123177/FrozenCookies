@@ -27,6 +27,8 @@ export function buildGameSnapshot(): GameSnapshot {
         hasWizardTower: Game.Objects["Wizard tower"].amount > 0,
         hasTemple: Game.Objects["Temple"].amount > 0,
         hasDragon: Game.dragonLevel > 0,
+        hasHowToBakeYourDragon: Game.Has("How to bake your dragon"),
+        hasCrumblyEgg: Game.Has("A crumbly egg"),
 
         isAscending: !!Game.OnAscend || !!Game.AscendTimer,
     };
