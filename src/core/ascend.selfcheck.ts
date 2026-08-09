@@ -24,6 +24,8 @@ function baseSnapshot(overrides: Partial<GameSnapshot> = {}): GameSnapshot {
         hasWizardTower: false,
         hasTemple: false,
         hasDragon: false,
+        hasHowToBakeYourDragon: false,
+        hasCrumblyEgg: false,
         isAscending: false,
         ...overrides,
     };
@@ -207,8 +209,7 @@ assert.strictEqual(ascendROIStats(baseSnapshot({ prestige: 0 })), null, "prestí
 // O bug que isto corrige: bonusPerHC costumava ser um 0.01/0.02 fixo baseado em "Persistent memory"
 // (uma melhoria de velocidade de pesquisa sem qualquer relação com CpS). O jogo real só concede o
 // bônus de 1%-por-HC quando as melhorias "Heavenly X" são compradas (Game.GetHeavenlyMultiplier()
-// começa em 0) - sem nenhuma delas possuída, novo HC não dá ganho real de CpS, então ROI ascend
-// nunca deve disparar.
+// começa em 0) - sem nenhuma delas possuída, novo HC não dá ganho real de CpS.
 {
     const noHeavenlyUpgrades = ascendROIStats(
         baseSnapshot({
@@ -222,7 +223,90 @@ assert.strictEqual(ascendROIStats(baseSnapshot({ prestige: 0 })), null, "prestí
     );
     assert.strictEqual(noHeavenlyUpgrades!.paybackSecs, Number.POSITIVE_INFINITY,
         "multiplicador celestial zero -> cpsDelta zero -> retorno nunca se recupera");
-    assert.ok(!noHeavenlyUpgrades!.wouldAscend, "não deve ascender quando HC não dá ganho real de CpS");
+    // REGRESSÃO real encontrada em produção: bloquear por causa do retorno=Infinity aqui
+    // trava o bot pra sempre em modo ROI - sem CpS real por HC ainda, "retorno" não tem
+    // sentido, e nada nunca dispara uma ascensão que compraria a primeira melhoria celestial
+    // e sairia do estado. meetsPayback ignora o retorno quando heavenlyBonusMultiplier===0;
+    // crescimento + piso de sanidade sozinhos decidem.
+    assert.ok(noHeavenlyUpgrades!.meetsPayback,
+        "retorno deve ser ignorado quando não há bônus celestial real ainda, senão trava para sempre");
+    assert.ok(noHeavenlyUpgrades!.wouldAscend,
+        "deve ascender mesmo com ganho de CpS zero, pra sair do estado sem melhoria celestial");
+}
+
+{
+    // Mesmo cenário, mas já com UM bônus celestial real (>0) - o piso de retorno normal volta
+    // a valer (payback=Infinity com cpsDelta=0 bloqueia de novo, como antes desta correção).
+    const stillZeroCpsGain = ascendROIStats(
+        baseSnapshot({
+            prestige: 10,
+            cookiesEarned: 1e18,
+            cookiesPs: 0,
+            cookies: 1e10,
+            heavenlyBonusMultiplier: 1,
+            ascendRoiThresholdIndex: 3,
+        })
+    );
+    assert.ok(!stillZeroCpsGain!.wouldAscend,
+        "com bônus celestial real possuído, o piso de retorno volta a valer normalmente");
+}
+
+// --- shouldAscendByROI: pausa na janela de destravar o ovo do dragão ---
+// Bug real reportado por usuário: bot ascendendo normalmente (payback/growth ok), dragão nunca
+// aparecia. "How to bake your dragon" comprado destrava "A crumbly egg" só quando
+// Game.cookiesEarned (contador DA ASCENSÃO ATUAL) atinge 1.000.000 - um ciclo de ascensão rápido
+// reseta esse contador antes de nunca bater 1M, travando pra sempre.
+{
+    // cookiesReset carrega o grosso do crescimento de prestígio (representa cookies herdados de
+    // fora da ascensão atual) para isolar cookiesEarned como a única variável sob teste - assim
+    // payback/growth ficam satisfeitos independentemente do valor de cookiesEarned, provando que
+    // é o gate do dragão (e não sanityFloor/growth/payback) que bloqueia.
+    const readyToAscend = {
+        prestige: 10,
+        cookiesReset: 1e18,
+        cookiesPs: 1e10,
+        cookies: 1e10,
+        ascendRoiThresholdIndex: 3,
+        autoAscendToggle: true,
+        autoAscendMode: 3,
+    };
+    assert.ok(
+        shouldAscendByROI(baseSnapshot({ ...readyToAscend, cookiesEarned: 1e18 })),
+        "caso base (sem a melhoria do dragão envolvida) deve ascender normalmente"
+    );
+    assert.ok(
+        !shouldAscendByROI(
+            baseSnapshot({
+                ...readyToAscend,
+                hasHowToBakeYourDragon: true,
+                hasCrumblyEgg: false,
+                cookiesEarned: 999_999,
+            })
+        ),
+        "deve pausar: melhoria comprada, ovo ainda não destravado, contador da ascensão atual abaixo de 1M"
+    );
+    assert.ok(
+        shouldAscendByROI(
+            baseSnapshot({
+                ...readyToAscend,
+                hasHowToBakeYourDragon: true,
+                hasCrumblyEgg: false,
+                cookiesEarned: 1_000_000,
+            })
+        ),
+        "deve ascender assim que o contador da ascensão atual bate 1M (o jogo já destravou o ovo nesse instante)"
+    );
+    assert.ok(
+        shouldAscendByROI(
+            baseSnapshot({
+                ...readyToAscend,
+                hasHowToBakeYourDragon: true,
+                hasCrumblyEgg: true,
+                cookiesEarned: 0,
+            })
+        ),
+        "ovo já destravado -> gate não se aplica mais, ascend normal mesmo com contador baixo"
+    );
 }
 
 console.log("ascend.selfcheck: OK");

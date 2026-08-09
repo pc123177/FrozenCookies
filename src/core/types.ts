@@ -38,6 +38,15 @@ export interface GameSnapshot {
     hasDragon: boolean; // Game.dragonLevel > 0 (ovo chocado) - NÃO a melhoria celestial
     // "Chocolate egg", uma compra de bônus de CpS não relacionada que por acaso compartilha a palavra "egg".
 
+    // Game.Has("How to bake your dragon") - melhoria celestial (HC) que destrava a compra de
+    // "A crumbly egg". Game.Has("A crumbly egg") - a própria compra que choca o ovo do dragão.
+    // Confirmado ao vivo no LogicTick do jogo: Game.Unlock('A crumbly egg') só dispara quando
+    // Game.cookiesEarned (contador DA ASCENSÃO ATUAL, zera a cada ascensão) atinge 1.000.000 E
+    // "How to bake your dragon" já foi comprado. Necessário pra shouldAscendByROI evitar
+    // resetar esse contador via ascensão em loop antes dele nunca bater 1M.
+    hasHowToBakeYourDragon: boolean;
+    hasCrumblyEgg: boolean;
+
     isAscending: boolean; // Game.OnAscend || Game.AscendTimer (ascensão em andamento)
 }
 
