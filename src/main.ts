@@ -1,22 +1,22 @@
 import { installLegacyGlobals } from "./game/legacy-bridge";
 import { installPreferences } from "./preferences";
 
-// Entry point for the dist/frozen_cookies.js bundle - replaces the old frozen_cookies.js
-// loader. Web-only (Game.LoadMod): Steam/bookmarklet/userscript distribution is out of scope.
+// Ponto de entrada do bundle dist/frozen_cookies.js - substitui o antigo carregador frozen_cookies.js.
+// Somente para web (Game.LoadMod): distribuição via Steam/bookmarklet/userscript está fora do escopo.
 //
-// Load order matters:
-// 1. Build the FrozenCookies base object + typed preferences/legacy-bridge globals (this
-//    file, synchronous) - core/ and game/ are ready before anything calls into them.
-// 2. jQuery, then the CDN libs legacy/fc_button.js + fc_infobox.js still depend on
+// A ordem de carregamento importa:
+// 1. Construir o objeto base FrozenCookies + globais tipados de preferences/legacy-bridge (este
+//    arquivo, síncrono) - core/ e game/ ficam prontos antes de qualquer chamada a eles.
+// 2. jQuery, depois as libs CDN das quais legacy/fc_button.js + fc_infobox.js ainda dependem
 //    (jQuery UI, underscore, jcanvas, jqPlot).
-// 3. legacy/*.js, unbundled and loaded as plain global-scope scripts (same as before) so
-//    their top-level function declarations stay on window, not trapped in the bundle's IIFE.
-// 4. registerMod, same as always.
+// 3. legacy/*.js, sem bundle e carregados como scripts no escopo global (igual antes) para que
+//    suas declarações de funções de nível superior fiquem em window, não presas na IIFE do bundle.
+// 4. registerMod, igual a sempre.
 
-// Game.LoadMod() injects a plain <script src="..."> with no id - document.currentScript is
-// the reliable way to find our own URL, since it resolves to whichever <script> tag is
-// synchronously executing right now (this bundle isn't deferred/async/module, so it applies
-// regardless of how the tag got here: Game.LoadMod, a manual injection, anything).
+// Game.LoadMod() injeta um <script src="..."> simples sem id - document.currentScript é
+// a forma confiável de encontrar nossa própria URL, pois resolve para a tag <script> que está
+// executando de forma síncrona agora (este bundle não é deferred/async/module, então se aplica
+// independentemente de como a tag chegou aqui: Game.LoadMod, uma injeção manual, qualquer coisa).
 const currentScript = document.currentScript as HTMLScriptElement | null;
 const scriptElement =
     currentScript ??
@@ -27,9 +27,9 @@ const baseUrl =
         ? (scriptElement.getAttribute("src") ?? "").replace(/\/frozen_cookies\.js(\?.*)?$/, "")
         : "https://pc123177.github.io/FrozenCookies/dist";
 
-// dist/frozen_cookies.js and src/legacy/*.js are siblings at the repo root (both committed,
-// both served as-is by GitHub Pages) - baseUrl is the dist/ dir, so legacy scripts live one
-// level up from it.
+// dist/frozen_cookies.js e src/legacy/*.js são irmãos na raiz do repositório (ambos commitados,
+// ambos servidos como estão pelo GitHub Pages) - baseUrl é o diretório dist/, portanto os scripts
+// legados ficam um nível acima dele.
 const repoRootUrl = baseUrl.replace(/\/dist$/, "");
 
 interface FrozenCookiesBase {
@@ -44,7 +44,7 @@ const windowWithFc = window as unknown as { FrozenCookies: FrozenCookiesBase };
 windowWithFc.FrozenCookies = {
     baseUrl,
     branch: "erb-",
-    version: "2.052.8", // Keep in sync with README.md
+    version: "2.052.8", // Manter em sincronia com README.md
 };
 
 installPreferences();
@@ -64,13 +64,13 @@ const legacyScriptList = [
     "https://cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.9/plugins/jqplot.highlighter.min.js",
     "https://cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.9/plugins/jqplot.logAxisRenderer.min.js",
     "https://cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.9/plugins/jqplot.cursor.min.js",
-    repoRootUrl + "/src/legacy/cc_upgrade_prerequisites.js", // upgrade prerequisites, used in fc_main.js
-    repoRootUrl + "/src/legacy/fc_main.js", // main logic
-    repoRootUrl + "/src/legacy/fc_gods.js", // gods minigame and dragon options
-    repoRootUrl + "/src/legacy/fc_spells.js", // spells minigame and autocasting
-    repoRootUrl + "/src/legacy/fc_bank.js", // bank minigame
-    repoRootUrl + "/src/legacy/fc_button.js", // button to open the Frozen Cookies menu
-    repoRootUrl + "/src/legacy/fc_infobox.js", // infobox
+    repoRootUrl + "/src/legacy/cc_upgrade_prerequisites.js", // pré-requisitos de upgrades, usado em fc_main.js
+    repoRootUrl + "/src/legacy/fc_main.js", // lógica principal
+    repoRootUrl + "/src/legacy/fc_gods.js", // minigame dos deuses e opções do dragão
+    repoRootUrl + "/src/legacy/fc_spells.js", // minigame de feitiços e lançamento automático
+    repoRootUrl + "/src/legacy/fc_bank.js", // minigame do banco
+    repoRootUrl + "/src/legacy/fc_button.js", // botão para abrir o menu do Frozen Cookies
+    repoRootUrl + "/src/legacy/fc_infobox.js", // caixa de informações
 ];
 
 declare const $: {
@@ -79,13 +79,13 @@ declare const $: {
 };
 declare function registerMod(name: string): void;
 
-// A transient CDN failure (e.g. a 502 from cdnjs) must not permanently wedge the load
-// chain - the old fire-and-forget $.getScript with no .fail() handler left the mod stuck
-// forever on one bad request. One retry after a short delay for the transient case, then
-// skip to the next script rather than block loading everything after it.
+// Uma falha transitória de CDN (ex.: um 502 do cdnjs) não deve travar permanentemente a cadeia
+// de carregamento - o antigo $.getScript sem tratador .fail() deixava o mod preso para sempre em
+// uma requisição ruim. Uma nova tentativa após um breve atraso para o caso transitório, depois
+// pula para o próximo script em vez de bloquear tudo que vem depois.
 function loadScript(id: number, isRetry: boolean = false): void {
     if (id >= legacyScriptList.length) {
-        registerMod("frozen_cookies"); // when the mod is registered, the save data is passed in the load function
+        registerMod("frozen_cookies"); // quando o mod é registrado, os dados salvos são passados na função de carregamento
         return;
     }
     const url = legacyScriptList[id];

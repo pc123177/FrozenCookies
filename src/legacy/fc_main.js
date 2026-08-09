@@ -1,4 +1,4 @@
-// Add polyfills:
+// Adicionar polyfills:
 (function (global) {
     var global_isFinite = global.isFinite;
     Object.defineProperty(Number, "isFinite", {
@@ -31,12 +31,12 @@ function registerMod(mod_id = "frozen_cookies") {
                     Game.season != "fools"
                 ) {
                     return [
-                        "News : debate about whether using Frozen Cookies constitutes cheating continues to rage. Violence escalating.",
-                        "News : Supreme Court rules Frozen Cookies not unauthorized cheating after all.",
-                        "News : Frozen Cookies considered 'cool'. Pun-haters heard groaning.",
-                        "News : Scientists baffled as cookies are now measured in 'efficiency' instead of calories.",
-                        "News : Cookie clickers debate: is it cheating if the bot is more efficient than you?",
-                        "News : Famous movie studio lets it go: no grounds found to freeze out Frozen Cookies.",
+                        "Notícia : o debate sobre se usar o Frozen Cookies constitui trapaça continua acirrado. Violência aumentando.",
+                        "Notícia : Supremo Tribunal decide que o Frozen Cookies não é trapaça não autorizada afinal.",
+                        "Notícia : Frozen Cookies considerado 'cool'. Ouviram-se gemidos dos odiadores de trocadilhos.",
+                        "Notícia : Cientistas perplexos com cookies sendo medidos em 'eficiência' em vez de calorias.",
+                        "Notícia : Debate entre clicadores de cookies: é trapaça se o bot é mais eficiente do que você?",
+                        "Notícia : Famoso estúdio de cinema desiste: sem fundamentos para congelar o Frozen Cookies.",
                     ];
                 }
                 if (
@@ -45,21 +45,21 @@ function registerMod(mod_id = "frozen_cookies") {
                     Game.season != "fools"
                 ) {
                     return [
-                        "You wonder if those " +
+                        "Você se pergunta se aqueles " +
                             Beautify(
                                 bestBank(nextChainedPurchase().efficiency).cost
                             ) +
-                            " banked cookies are still fresh.",
+                            " cookies guardados ainda estão frescos.",
                     ];
                 }
                 if (M && Game.season != "fools") {
                     return [
-                        "News : Local wizards claim they can predict the next golden cookie, while munching on Frozen Cookies.",
+                        "Notícia : Bruxos locais afirmam que conseguem prever o próximo cookie dourado, enquanto devoram Frozen Cookies.",
                     ];
                 }
                 if (T && Game.season != "fools") {
                     return [
-                        "News : Cookie gods issue statement: 'Stop swapping us so much, we're getting dizzy!'",
+                        "Notícia : Deuses dos cookies emitem comunicado: 'Parem de nos trocar tanto, estamos ficando tontos!'",
                     ];
                 }
                 if (
@@ -68,19 +68,19 @@ function registerMod(mod_id = "frozen_cookies") {
                     Game.season != "fools"
                 ) {
                     return [
-                        "You should buy " +
+                        "Você deveria comprar " +
                             nextPurchase().purchase.name +
-                            " next.",
+                            " a seguir.",
                     ];
                 }
                 if (Math.random() < 0.3 && Game.season == "fools") {
                     return [
-                        "Investigation into potential cheating with Frozen Cookies is blocked by your lawyers.",
-                        "Your Frozen Cookies are now available in stores everywhere.",
-                        "Cookie banks report record deposits, but nobody knows what a 'Lucky Bank' actually is.",
-                        "Cookie banks now offering 'Harvest Bank' accounts with 0% interest and infinite cookies.",
-                        "Cookie economy destabilized by mysterious entity known only as 'FrozenCookies'.",
-                        "Cookie market analysts confused by sudden spike in 'Purchase Efficiency'.",
+                        "Investigação sobre possível trapaça com Frozen Cookies é bloqueada pelos seus advogados.",
+                        "Seus Frozen Cookies agora estão disponíveis em lojas por toda parte.",
+                        "Bancos de cookies reportam depósitos recordes, mas ninguém sabe o que é um 'Lucky Bank' de verdade.",
+                        "Bancos de cookies agora oferecem contas 'Harvest Bank' com 0% de juros e cookies infinitos.",
+                        "Economia de cookies desestabilizada por entidade misteriosa conhecida apenas como 'FrozenCookies'.",
+                        "Analistas do mercado de cookies confusos com aumento repentino na 'Eficiência de Compra'.",
                     ];
                 }
                 if (
@@ -89,22 +89,22 @@ function registerMod(mod_id = "frozen_cookies") {
                     Game.season == "fools"
                 ) {
                     return [
-                        "You have " +
+                        "Você tem " +
                             Beautify(
                                 bestBank(nextChainedPurchase().efficiency)
                                     .cost * 0.08
                             ) +
-                            " cookie dollars just sitting in your wallet.",
+                            " dólares em cookies parados na sua carteira.",
                     ];
                 }
                 if (M && Game.season == "fools") {
                     return [
-                        "Analyst report: Current bussiness relation between Memes and spells is 'complicated'.",
+                        "Relatório de analista: A relação comercial atual entre Memes e feitiços é 'complicada'.",
                     ];
                 }
                 if (T && Game.season == "fools") {
                     return [
-                        "Likes and shares of Cookie Gods' social media accounts are at an all-time high.",
+                        "Curtidas e compartilhamentos das redes sociais dos Deuses dos Cookies estão no maior nível de todos os tempos.",
                     ];
                 }
                 if (
@@ -114,7 +114,7 @@ function registerMod(mod_id = "frozen_cookies") {
                     Game.season == "fools"
                 ) {
                     return [
-                        "Your next investment: " +
+                        "Seu próximo investimento: " +
                             nextPurchase().purchase.name +
                             ".",
                     ];
@@ -126,7 +126,7 @@ function registerMod(mod_id = "frozen_cookies") {
                     Game.season == "fools"
                 ) {
                     return [
-                        "Your next investment: " +
+                        "Seu próximo investimento: " +
                             Game.foolObjects[nextPurchase().purchase.name]
                                 .name +
                             ".",
@@ -144,11 +144,11 @@ function registerMod(mod_id = "frozen_cookies") {
     if (!FrozenCookies.loadedData) setOverrides();
     logEvent(
         "Load",
-        "Initial Load of Frozen Cookies v " +
+        "Carregamento inicial do Frozen Cookies v " +
             FrozenCookies.branch +
             "." +
             FrozenCookies.version +
-            ". (You should only ever see this once.)"
+            ". (Você só deveria ver isso uma vez.)"
     );
 }
 
@@ -246,9 +246,9 @@ function setOverrides(gameSaveData) {
         FrozenCookies.manaMax = preferenceParse("manaMax", 0);
         FrozenCookies.orbMax = preferenceParse("orbMax", 0);
 
-        // SMART ASCEND: load ROI threshold pref (ascendROIMinGrowth is covered by the generic
-        // preferenceValues loop above; ascendROIMinHC preference was removed - the min-HC floor
-        // is a hardcoded sanity check now, not user-configurable).
+        // SMART ASCEND: carrega pref de limite ROI (ascendROIMinGrowth é coberto pelo loop
+        // preferenceValues acima; preferência ascendROIMinHC foi removida - o piso mínimo de HC
+        // é uma verificação fixa agora, não configurável pelo usuário).
         FrozenCookies.ascendROIThreshold = preferenceParse("ascendROIThreshold", 1);
 
         if (!FrozenCookies.autoSweet && autoSweetAction.autobuyyes == 1) {
@@ -290,7 +290,7 @@ function setOverrides(gameSaveData) {
         FrozenCookies.prevLastHCTime = preferenceParse("prevLastHCTime", 0);
         FrozenCookies.maxHCPercent = preferenceParse("maxHCPercent", 0);
         if (Object.keys(FrozenCookies.loadedData).length > 0) {
-            logEvent("Load", "Restored Frozen Cookies settings from previous save");
+            logEvent("Load", "Configurações do Frozen Cookies restauradas do save anterior");
         }
     }
 
@@ -395,8 +395,8 @@ function saveFCData() {
     saveString.orbMax = FrozenCookies.orbMax;
     saveString.manBankMins = FrozenCookies.manBankMins;
     saveString.prevLastHCTime = FrozenCookies.prevLastHCTime;
-    // SMART ASCEND: persist ROI threshold (ascendROIMinGrowth already covered by the generic
-    // preferenceValues loop above).
+    // SMART ASCEND: persiste limite ROI (ascendROIMinGrowth já coberto pelo loop
+    // preferenceValues acima).
     saveString.ascendROIThreshold = FrozenCookies.ascendROIThreshold;
     saveString.saveVersion = FrozenCookies.version;
     return JSON.stringify(saveString);
@@ -521,8 +521,8 @@ function updateManBank(base) {
     userInputPrompt("Manual Bank!", 'How many minutes of base CpS should be kept at all times?', FrozenCookies[base], storeNumberCallback(base, 0));
 }
 
-// cyclePreference() lives in fc_button.js (loaded after this file, so its
-// definition is the one actually active) - removed the duplicate copy here.
+// cyclePreference() está em fc_button.js (carregado após este arquivo, então sua
+// definição é a que fica ativa) - cópia duplicada removida daqui.
 
 function toggleFrozen(setting) {
     if (!FrozenCookies[setting]) { FrozenCookies[setting] = 1; } else { FrozenCookies[setting] = 0; }
@@ -558,7 +558,7 @@ function autoHalloweenAction() {
     var living = liveWrinklers();
     if (living.length > 0 && Game.season != "easter" && Game.season != "halloween" && !haveAll("halloween")) {
         Game.UpgradesById[183].buy();
-        logEvent("autoHalloween", "Swapping to Halloween season to use wrinklers");
+        logEvent("autoHalloween", "Mudando para a estação de Halloween para usar wrinklers");
     }
 }
 
@@ -623,16 +623,16 @@ function recommendedSettingsAction() {
         FrozenCookies.FCshortcuts = 1; FrozenCookies.simulatedGCPercent = 1;
         FrozenCookies.showMissedCookies = 0; FrozenCookies.numberDisplay = 1; FrozenCookies.fancyui = 1;
         FrozenCookies.logging = 1; FrozenCookies.purchaseLog = 0; FrozenCookies.fpsModifier = 2; FrozenCookies.trackStats = 0;
-        logEvent("recommendedSettings", "Set all options to recommended values");
+        logEvent("recommendedSettings", "Todas as opções definidas para os valores recomendados");
         FrozenCookies.recommendedSettings = 0;
         Game.toSave = true;
         Game.toReload = true;
     }
 }
 
-// presetEarlyGameAction()/presetMidGameAction()/presetLateGameAction() replaced by the
-// autopilot system: src/core/autopilot.ts (stageSettings table) + src/game/autopilot-bot.ts
-// (applies settings automatically on stage change, no manual preset click or reload needed).
+// presetEarlyGameAction()/presetMidGameAction()/presetLateGameAction() substituídas pelo
+// sistema autopilot: src/core/autopilot.ts (tabela stageSettings) + src/game/autopilot-bot.ts
+// (aplica configurações automaticamente ao mudar de fase, sem clique manual ou reload).
 
 function generateProbabilities(upgradeMult, minBase, maxMult) {
     var cumProb = [];
@@ -707,10 +707,10 @@ function hasClickBuff() {
     return Game.hasBuff("Cursed finger") || clickBuffBonus() > 1;
 }
 
-// Shortest remaining time (in seconds) among currently active click-multiplier buffs
-// (same buffs clickBuffBonus() multiplies over). Used to avoid triggering buff-timed
-// actions (loans, Godzamok sell/rebuy) right as the buff is about to expire, where the
-// action's cost (interest, sell/rebuy spread) is paid without time left to benefit from it.
+// Menor tempo restante (em segundos) entre os buffs de multiplicador de clique ativos
+// (mesmos buffs que clickBuffBonus() multiplica). Usado para evitar disparar ações
+// temporizadas por buff (empréstimos, venda/recompra do Godzamok) quando o buff está
+// prestes a expirar, onde o custo da ação (juros, spread) é pago sem tempo restante.
 function clickBuffTimeRemaining() {
     var minTime = Number.POSITIVE_INFINITY;
     for (var i in Game.buffs) {
@@ -775,10 +775,10 @@ function cookieValue(bankAmount, wrathValue, wrinklerCount) {
     var wrinkler = wrinklerMod(wrinklerCount);
     var value = 0;
     value -= cookieInfo.clot.odds[wrathValue] * (wrinkler * cps + clickCps) * luckyMod * 66 * 0.5;
-    // FIX: was 77*6 (frenzy) and 6*665 (blood) - real game buffs are gainBuff('frenzy',77,7)
-    // (7x for 77s) and gainBuff('blood',6,666) (666x for 6s), confirmed live. cookieStats()
-    // just below already has the correct 77*7 / 666*6 - this sibling function had drifted out
-    // of sync, undercounting frenzy EV by ~14% and blood EV by a smaller but still wrong margin.
+    // CORREÇÃO: era 77*6 (frenzy) e 6*665 (blood) - buffs reais do jogo são gainBuff('frenzy',77,7)
+    // (7x por 77s) e gainBuff('blood',6,666) (666x por 6s), confirmado ao vivo. cookieStats()
+    // logo abaixo já tinha 77*7 / 666*6 correto - esta função irmã havia desincronizado,
+    // subestimando EV do frenzy em ~14% e EV do blood por uma margem menor mas incorreta.
     value += cookieInfo.frenzy.odds[wrathValue] * (wrinkler * cps + clickCps) * luckyMod * 77 * 7;
     value += cookieInfo.blood.odds[wrathValue] * (wrinkler * cps + clickCps) * luckyMod * 666 * 6;
     value += cookieInfo.chain.odds[wrathValue] * calculateChainValue(bankAmount, cps, 7 - wrathValue / 3);
@@ -1049,21 +1049,21 @@ function checkPrices(currentUpgrade) {
     return value;
 }
 
-// SMART EFFICIENCY: improved purchaseEfficiency with synergy boost.
+// SMART EFFICIENCY: purchaseEfficiency melhorada com boost de sinergia.
 //
-// Problem with the original formula: it treated all purchases equally, which meant
-// upgrades that multiply large buildings (synergies, tiered upgrades) were often
-// ranked behind the next cheap building. A synergy giving +100% to 200 farms is
-// worth vastly more than another farm, but the original 1.15*(cost/cps) term
-// penalized expensive upgrades uniformly regardless of how much CpS they added.
+// Problema com a fórmula original: tratava todas as compras igualmente, o que fazia
+// upgrades que multiplicam edifícios grandes (sinergias, upgrades em tier) serem
+// frequentemente ranqueados atrás do próximo edifício barato. Uma sinergia dando +100%
+// a 200 fazendas vale muito mais que outra fazenda, mas o termo original 1.15*(custo/cps)
+// penalizava upgrades caros uniformemente independente do CpS adicionado.
 //
-// Solution: when an upgrade's deltaCps represents a large fraction of current CpS
-// (i.e. it's a high-impact multiplier), we reduce the weight on the cost/cps term.
-// This makes the formula favour high-impact upgrades without changing building logic.
-// The synergyBoost factor is derived from deltaCps/currentCps so it auto-scales
-// with game progression — no hardcoded upgrade ID lists needed.
-// purchaseEfficiency() moved to src/core/efficiency.ts - window.purchaseEfficiency is
-// installed by src/game/legacy-bridge.ts with a matching call signature.
+// Solução: quando o deltaCps de um upgrade representa grande fração do CpS atual
+// (i.e. é um multiplicador de alto impacto), reduzimos o peso no termo custo/cps.
+// Isso faz a fórmula favorecer upgrades de alto impacto sem alterar lógica de edifícios.
+// O fator synergyBoost é derivado de deltaCps/currentCps e se auto-escala com
+// a progressão do jogo — sem listas de IDs de upgrade fixos no código.
+// purchaseEfficiency() movida para src/core/efficiency.ts - window.purchaseEfficiency é
+// instalada por src/game/legacy-bridge.ts com assinatura de chamada compatível.
 
 function recommendationList(recalculate) {
     if (recalculate) {
@@ -1165,7 +1165,7 @@ function buildingStats(recalculate) {
                 buildingToggle(current, existingAchievements);
                 var deltaCps = cpsNew - cpsOrig;
                 var baseDeltaCps = baseCpsNew - baseCpsOrig;
-                // Pass building context to purchaseEfficiency
+                // Passa contexto do edifício para purchaseEfficiency
                 var efficiency = purchaseEfficiency(current.getPrice(), deltaCps, baseDeltaCps, cpsOrig, { type: "building", id: current.id });
                 return { id: current.id, efficiency: efficiency, base_delta_cps: baseDeltaCps, delta_cps: deltaCps, cost: current.getPrice(), purchase: current, type: "building" };
             }).filter(function (a) { return a; });
@@ -1198,7 +1198,7 @@ function upgradeStats(recalculate) {
                     Game.elderWrath = existingWrath;
                     var deltaCps = cpsNew - cpsOrig;
                     var baseDeltaCps = baseCpsNew - baseCpsOrig;
-                    // Pass upgrade context to purchaseEfficiency for synergy boost
+                    // Passa contexto do upgrade para purchaseEfficiency para boost de sinergia
                     var efficiency = current.season && FrozenCookies.defaultSeasonToggle == 1 && current.season == seasons[FrozenCookies.defaultSeason]
                         ? cost / baseCpsOrig
                         : priceReduction > cost
@@ -1221,9 +1221,9 @@ function isUnavailable(upgrade, upgradeBlacklist) {
     if (App && upgrade.id == 816) return true;
     if (!App && upgrade.id == 817) return true;
 
-    // BUGFIX: The original chained upgrade.id == 182 && upgrade.id == 183 with AND
-    // made it impossible to block upgrades 183-209. Rewritten with correct OR logic
-    // so each season upgrade is independently checked against its own condition.
+    // BUGFIX: O encadeamento original upgrade.id == 182 && upgrade.id == 183 com AND
+    // tornava impossível bloquear upgrades 183-209. Reescrito com lógica OR correta
+    // para que cada upgrade de estação seja verificado independentemente.
     if (
         [182, 183, 184, 185, 209].includes(upgrade.id) &&
         Game.baseSeason &&
@@ -1343,7 +1343,7 @@ function unfinishedUpgradePrereqs(upgrade) {
                 if (recursiveUpgrade.unlocked) {
                     needed.push({ type: "upgrade", id: a });
                 } else if (!recursivePrereqs) {
-                    // Research is being done.
+                    // Pesquisa em andamento.
                 } else {
                     recursivePrereqs.forEach(function (a) {
                         if (!needed.some(function (b) { return b.id == a.id && b.type == a.type; })) needed.push(a);
@@ -1550,7 +1550,7 @@ function fcWin(what) {
             if (Game.Achievements[what].won == 0) {
                 var achname = Game.Achievements[what].shortName ? Game.Achievements[what].shortName : Game.Achievements[what].name;
                 Game.Achievements[what].won = 1;
-                if (!FrozenCookies.disabledPopups) { logEvent("Achievement", "Achievement unlocked :<br>" + Game.Achievements[what].name + "<br> ", true); }
+                if (!FrozenCookies.disabledPopups) { logEvent("Achievement", "Conquista desbloqueada:<br>" + Game.Achievements[what].name + "<br> ", true); }
                 if (FrozenCookies.showAchievements) {
                     Game.Notify("Achievement unlocked", '<div class="title" style="font-size:18px;margin-top:-2px;">' + achname + "</div>", Game.Achievements[what].icon);
                     if (App && Game.Achievements[what].vanilla) App.gotAchiev(Game.Achievements[what].id);
@@ -1609,11 +1609,11 @@ function wrinklerMod(num) {
 }
 
 function popValue(w) {
-    // FIX: was missing the Dragon Guts aura multiplier and the Scorn god bonus entirely -
-    // confirmed live against main.js's real wrinkler-pop handler (`toSuck*=1+Game.auraMult(
-    // 'Dragon Guts')*0.2` and the hasGod('scorn') tier bonus applied after Wrinklerspawn).
-    // Both real multipliers, both silently missing before - undercounted wrinkler value by up
-    // to 40% (both aura slots) plus up to another 15% (Scorn tier 1) whenever equipped.
+    // CORREÇÃO: estava faltando o multiplicador de aura Dragon Guts e o bônus do deus Scorn -
+    // confirmado ao vivo contra o handler real de pop de wrinkler em main.js (`toSuck*=1+Game.auraMult(
+    // 'Dragon Guts')*0.2` e o bônus de tier de hasGod('scorn') aplicado após Wrinklerspawn).
+    // Ambos multiplicadores reais, ambos silenciosamente ausentes antes - subestimava valor do
+    // wrinkler em até 40% (ambos slots de aura) mais até 15% (Scorn tier 1) quando equipados.
     var toSuck = 1.1;
     if (Game.Has("Sacrilegious corruption")) toSuck *= 1.05;
     toSuck *= 1 + Game.auraMult("Dragon Guts") * 0.2;
@@ -1706,10 +1706,10 @@ function autoGodzamokAction() {
         if (!Game.hasBuff("Devastation") && !Game.hasBuff("Cursed finger") && hasClickBuff() && clickBuffTimeRemaining() >= 5) {
             Game.Objects["Mine"].sell(countMine);
             Game.Objects["Factory"].sell(countFactory);
-            if (FrozenCookies.mineLimit) { safeBuy(Game.Objects["Mine"], FrozenCookies.mineMax); logEvent("AutoGodzamok", "Bought " + FrozenCookies.mineMax + " mines"); }
-            else { safeBuy(Game.Objects["Mine"], countMine); logEvent("AutoGodzamok", "Bought " + countMine + " mines"); }
-            if (FrozenCookies.factoryLimit) { safeBuy(Game.Objects["Factory"], FrozenCookies.factoryMax); logEvent("AutoGodzamok", "Bought " + FrozenCookies.factoryMax + " factories"); }
-            else { safeBuy(Game.Objects["Factory"], countFactory); logEvent("AutoGodzamok", "Bought " + countFactory + " factories"); }
+            if (FrozenCookies.mineLimit) { safeBuy(Game.Objects["Mine"], FrozenCookies.mineMax); logEvent("AutoGodzamok", "Comprou " + FrozenCookies.mineMax + " minas"); }
+            else { safeBuy(Game.Objects["Mine"], countMine); logEvent("AutoGodzamok", "Comprou " + countMine + " minas"); }
+            if (FrozenCookies.factoryLimit) { safeBuy(Game.Objects["Factory"], FrozenCookies.factoryMax); logEvent("AutoGodzamok", "Comprou " + FrozenCookies.factoryMax + " fábricas"); }
+            else { safeBuy(Game.Objects["Factory"], countFactory); logEvent("AutoGodzamok", "Comprou " + countFactory + " fábricas"); }
             FrozenCookies.autobuyCount += 1;
         }
     }
@@ -1729,18 +1729,18 @@ function fcClickCookie() {
     if (!Game.OnAscend && !Game.AscendTimer && !Game.specialTabHovered) Game.ClickCookie();
 }
 
-// gameStage()/ascendROIStats()/shouldAscendByROI() moved to src/core/ascend.ts -
-// window.gameStage/window.ascendROIStats/window.shouldAscendByROI are installed by
-// src/game/legacy-bridge.ts with matching call signatures.
+// gameStage()/ascendROIStats()/shouldAscendByROI() movidas para src/core/ascend.ts -
+// window.gameStage/window.ascendROIStats/window.shouldAscendByROI são instaladas por
+// src/game/legacy-bridge.ts com assinaturas de chamada compatíveis.
 
 function autoCookie() {
     if (!FrozenCookies.processing && !Game.OnAscend && !Game.AscendTimer) {
         FrozenCookies.processing = true;
         var itemBought = false;
 
-        // BUGFIX: wrap entire block in try/finally so processing lock is ALWAYS released.
-        // Previously, any uncaught exception inside autoCookie would leave processing=true
-        // permanently, silently stopping all automation with no error visible to the user.
+        // BUGFIX: envolve bloco inteiro em try/finally para o lock processing ser SEMPRE liberado.
+        // Anteriormente, qualquer exceção não capturada dentro de autoCookie deixava processing=true
+        // permanentemente, parando silenciosamente toda automação sem erro visível ao usuário.
         try {
             var currentHCAmount = Game.HowMuchPrestige(Game.cookiesEarned + Game.cookiesReset + wrinklerValue());
             if (Math.floor(FrozenCookies.lastHCAmount) < Math.floor(currentHCAmount)) {
@@ -1765,9 +1765,9 @@ function autoCookie() {
             }
             if (FrozenCookies.autoSL == 2) autoRigidel();
 
-            // IMPROVEMENT: Unified wrinkler pop logic — replaced two near-identical
-            // 20-line blocks with a single helper, eliminating the risk of the two
-            // blocks drifting out of sync in future edits.
+            // MELHORIA: Lógica de pop de wrinkler unificada — dois blocos quase idênticos
+            // de 20 linhas substituídos por um único helper, eliminando o risco de os dois
+            // blocos desincronizarem em edições futuras.
             function popWrinklerList(wrinklersToPop) {
                 var popCount = 0;
                 wrinklersToPop.forEach(function(w) {
@@ -1775,7 +1775,7 @@ function autoCookie() {
                     w.hp = 0;
                     popCount++;
                 });
-                if (popCount > 0) logEvent("Wrinkler", "Popped " + popCount + " wrinklers.");
+                if (popCount > 0) logEvent("Wrinkler", "Popou " + popCount + " wrinklers.");
             }
 
             if (FrozenCookies.autoWrinkler == 1) {
@@ -1783,12 +1783,13 @@ function autoCookie() {
                 popWrinklerList(_.filter(Game.wrinklers, function(w) { return _.contains(popList, w.id); }));
             }
             if (FrozenCookies.autoWrinkler == 2) {
-                // FIX: was `w.close === true` - `close` is a float in [0,1] the game grows
-                // toward 1 as a wrinkler visually closes in (confirmed live against main.js's
-                // wrinkler-tick code), never a boolean, so this filter always returned empty
-                // and INSTANTLY mode silently popped nothing. "Instantly" means pop any living
-                // wrinkler right away instead of waiting on the EFFICIENTLY mode's ROI calc -
-                // same alive-check as liveWrinklers() (phase>0), no waiting for growth/value.
+                // CORREÇÃO: era `w.close === true` - `close` é um float em [0,1] que o jogo
+                // incrementa até 1 enquanto um wrinkler fecha visualmente (confirmado ao vivo
+                // contra o código de tick de wrinkler em main.js), nunca booleano, então este
+                // filtro sempre retornava vazio e o modo INSTANTLY silenciosamente não popava nada.
+                // "Instantly" significa popar qualquer wrinkler vivo imediatamente em vez de
+                // aguardar o cálculo de ROI do modo EFFICIENTLY - mesmo alive-check de
+                // liveWrinklers() (phase>0), sem esperar crescimento/valor.
                 popWrinklerList(Game.wrinklers.filter(function(w) { return w.phase > 0; }));
             }
 
@@ -1816,7 +1817,7 @@ function autoCookie() {
                     nextPurchase().purchase.name != "Elder Pact"
                 ) {
                     document.getElementById("storeBuyAllButton").click();
-                    logEvent("Autobuy", "Bought all upgrades!");
+                    logEvent("Autobuy", "Comprou todos os upgrades!");
                 } else if (
                     recommendation.type == "building" && Game.buyBulk == 100 &&
                     ((FrozenCookies.autoSpell == 3 && recommendation.purchase.name == "You" && Game.Objects["You"].amount >= 299) ||
@@ -1848,7 +1849,7 @@ function autoCookie() {
                 if (FrozenCookies.trackStats == 5 && recommendation.type == "upgrade") { saveStats(); }
                 else if (FrozenCookies.trackStats == 6) { FrozenCookies.delayPurchaseCount += 1; }
                 if (FrozenCookies.purchaseLog == 1) {
-                    logEvent("Store", "Autobought " + recommendation.purchase.name + " for " + Beautify(recommendation.cost) + ", resulting in " + Beautify(recommendation.delta_cps) + " CPS.");
+                    logEvent("Store", "Comprou automaticamente " + recommendation.purchase.name + " por " + Beautify(recommendation.cost) + ", resultando em " + Beautify(recommendation.delta_cps) + " CPS.");
                 }
                 disabledPopups = true;
                 if (FrozenCookies.autobuyCount >= 10) { Game.Draw(); FrozenCookies.autobuyCount = 0; }
@@ -1856,7 +1857,7 @@ function autoCookie() {
                 itemBought = true;
             }
 
-            // Auto-ascend mode 1: fixed HC amount
+            // Modo de auto-ascend 1: quantidade fixa de HC
             if (
                 FrozenCookies.autoAscendToggle == 1 && FrozenCookies.autoAscend == 1 &&
                 !Game.OnAscend && !Game.AscendTimer && Game.prestige > 0 && FrozenCookies.HCAscendAmount > 0 &&
@@ -1869,7 +1870,7 @@ function autoCookie() {
                 }
             }
 
-            // Auto-ascend mode 2: prestige doubles
+            // Modo de auto-ascend 2: prestígio dobra
             if (
                 FrozenCookies.autoAscendToggle == 1 && FrozenCookies.autoAscend == 2 &&
                 !Game.OnAscend && !Game.AscendTimer && Game.prestige > 0 && FrozenCookies.HCAscendAmount > 0 &&
@@ -1882,9 +1883,9 @@ function autoCookie() {
                 }
             }
 
-            // SMART ASCEND: mode 3 (ROI-based) moved to src/game/ascend-bot.ts's ascendBotTick(),
-            // called from FCStart() alongside the other bot intervals - keeps the Game.Ascend
-            // trigger in exactly one place, avoiding a double-fire with the dispatcher below.
+            // SMART ASCEND: modo 3 (baseado em ROI) movido para ascendBotTick() em src/game/ascend-bot.ts,
+            // chamado de FCStart() junto com os outros intervalos de bot - mantém o gatilho
+            // Game.Ascend em exatamente um lugar, evitando disparo duplo com o dispatcher abaixo.
 
             var fps_amounts = ["15","24","30","48","60","72","88","100","120","144","200","240","300","5","10"];
             if (parseInt(fps_amounts[FrozenCookies["fpsModifier"]]) != Game.fps)
@@ -1905,19 +1906,19 @@ function autoCookie() {
             var currentFrenzy = cpsBonus() * clickBuffBonus();
             if (currentFrenzy != FrozenCookies.last_gc_state) {
                 if (FrozenCookies.last_gc_state != 1 && currentFrenzy == 1) {
-                    logEvent("GC", "Frenzy ended, cookie production x1");
+                    logEvent("GC", "Frenzy encerrado, produção de cookies x1");
                     if (FrozenCookies.hc_gain) {
-                        logEvent("HC", "Won " + FrozenCookies.hc_gain + " heavenly chips during Frenzy. Rate: " + (FrozenCookies.hc_gain * 1000) / (Date.now() - FrozenCookies.hc_gain_time) + " HC/s.");
+                        logEvent("HC", "Ganhou " + FrozenCookies.hc_gain + " heavenly chips durante o Frenzy. Taxa: " + (FrozenCookies.hc_gain * 1000) / (Date.now() - FrozenCookies.hc_gain_time) + " HC/s.");
                         FrozenCookies.hc_gain_time = Date.now(); FrozenCookies.hc_gain = 0;
                     }
                 } else {
                     if (FrozenCookies.last_gc_state != 1) {
-                        logEvent("GC", "Previous Frenzy x" + FrozenCookies.last_gc_state + "interrupted.");
+                        logEvent("GC", "Frenzy anterior x" + FrozenCookies.last_gc_state + " interrompido.");
                     } else if (FrozenCookies.hc_gain) {
-                        logEvent("HC", "Won " + FrozenCookies.hc_gain + " heavenly chips outside of Frenzy. Rate: " + (FrozenCookies.hc_gain * 1000) / (Date.now() - FrozenCookies.hc_gain_time) + " HC/s.");
+                        logEvent("HC", "Ganhou " + FrozenCookies.hc_gain + " heavenly chips fora do Frenzy. Taxa: " + (FrozenCookies.hc_gain * 1000) / (Date.now() - FrozenCookies.hc_gain_time) + " HC/s.");
                         FrozenCookies.hc_gain_time = Date.now(); FrozenCookies.hc_gain = 0;
                     }
-                    logEvent("GC", "Starting " + (hasClickBuff() ? "Clicking " : "") + "Frenzy x" + currentFrenzy);
+                    logEvent("GC", "Iniciando " + (hasClickBuff() ? "Clicking " : "") + "Frenzy x" + currentFrenzy);
                 }
                 if (FrozenCookies.frenzyTimes[FrozenCookies.last_gc_state] == null) FrozenCookies.frenzyTimes[FrozenCookies.last_gc_state] = 0;
                 FrozenCookies.frenzyTimes[FrozenCookies.last_gc_state] += Date.now() - FrozenCookies.last_gc_time;
@@ -1926,9 +1927,9 @@ function autoCookie() {
             }
 
         } catch(e) {
-            logEvent('autoCookie', 'Error caught: ' + e.message);
+            logEvent('autoCookie', 'Erro detectado: ' + e.message);
         } finally {
-            // Always release the lock and reschedule, even if an exception occurred
+            // Sempre libera o lock e reagenda, mesmo se uma exceção ocorreu
             FrozenCookies.processing = false;
             if (FrozenCookies.frequency) {
                 FrozenCookies.cookieBot = setTimeout(autoCookie, itemBought ? 0 : FrozenCookies.frequency);

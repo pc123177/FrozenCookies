@@ -12,14 +12,14 @@ function scientificNotation(value) {
     return value;
 }
 
-// Implemented much better in base mod so just call that for raw, long, and short
-// Used by FrozenCookies.numberDisplay in fcBeautify
+// Implementado muito melhor no mod base; apenas chama isso para raw, long e short
+// Usado por FrozenCookies.numberDisplay em fcBeautify
 var numberFormatters = [
     rawFormatter,
-    formatEveryThirdPower(formatLong), // 1: long: millions, billions etc.
-    formatEveryThirdPower(formatShort), // 2: short: M, B, T etc.
+    formatEveryThirdPower(formatLong), // 1: longo: milhões, bilhões etc.
+    formatEveryThirdPower(formatShort), // 2: curto: M, B, T etc.
     formatEveryThirdPower([
-        // 3: SI prefixes: M, G, T etc.
+        // 3: prefixos SI: M, G, T etc.
         "",
         " M",
         " G",
@@ -31,16 +31,16 @@ var numberFormatters = [
         " R",
         " Q",
     ]),
-    scientificNotation, // 4: scientific: 6.3e12 etc.
+    scientificNotation, // 4: notação científica: 6.3e12 etc.
 ];
 
 function fcBeautify(value) {
     var negative = value < 0;
     value = Math.abs(value);
-    // There are no SI prefixes larger than 1e30, so we'll use scientific notation
-    // The game will show Infinity otherwise, which is not useful
+    // Não há prefixos SI maiores que 1e30, então usamos notação científica
+    // O jogo mostraria Infinity caso contrário, o que não é útil
     if (FrozenCookies.numberDisplay === 3 && value >= 1e33) {
-        // Use scientificNotation (case 4)
+        // Usa scientificNotation (caso 4)
         var output = numberFormatters[4](value)
             .toString()
             .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -53,7 +53,7 @@ function fcBeautify(value) {
     return negative ? "-" + output : output;
 }
 
-// Runs numbers in upgrades and achievements through our beautify function
+// Passa números de melhorias e conquistas pela nossa função de embelezamento
 function beautifyUpgradesAndAchievements() {
     function beautifyFn(str) {
         return Beautify(parseInt(str.replace(/,/, ""), 10));
@@ -64,7 +64,7 @@ function beautifyUpgradesAndAchievements() {
         ach.desc = ach.desc.replace(numre, beautifyFn);
     });
 
-    // These might not have any numbers in them, but just in case...
+    // Pode não ter números, mas por precaução...
     Object.values(Game.UpgradesById).forEach(function (upg) {
         upg.desc = upg.desc.replace(numre, beautifyFn);
     });
@@ -72,9 +72,9 @@ function beautifyUpgradesAndAchievements() {
 
 function timeDisplay(seconds) {
     if (seconds === "---" || seconds === 0) {
-        return "Done!";
+        return "Pronto!";
     } else if (seconds == Number.POSITIVE_INFINITY) {
-        return "Never!";
+        return "Nunca!";
     }
     seconds = Math.floor(seconds);
     var years, days, hours, minutes;
@@ -94,7 +94,7 @@ function timeDisplay(seconds) {
     return (years + days + hours + minutes + seconds).trim();
 }
 
-// functionality for the infobox
+// funcionalidade da caixa de informações
 function drawCircles(t_d, x, y) {
     var maxRadius,
         heightOffset,
@@ -230,7 +230,7 @@ function buffDuration(buffName) {
 }
 
 function updateTimers() {
-    // update infobox calculations and assemble output -- called every draw tick
+    // atualiza cálculos da caixa de informações e monta a saída — chamado a cada tick de desenho
     var chainPurchase,
         bankPercent,
         purchasePercent,
@@ -260,7 +260,7 @@ function updateTimers() {
         cursed_finger_delay = buffDuration("Cursed finger") / maxCookieTime(),
         building_special_delay = hasBuildingSpecialBuff() / maxCookieTime(),
         cookie_storm_delay = buffDuration("Cookie storm") / maxCookieTime(),
-        // useless decimal_HC_complete = (Game.HowMuchPrestige(Game.cookiesEarned + Game.cookiesReset)%1),
+        // inútil decimal_HC_complete = (Game.HowMuchPrestige(Game.cookiesEarned + Game.cookiesReset)%1),
         bankTotal = delayAmount(),
         purchaseTotal = nextPurchase().cost,
         bankCompletion = bankTotal
@@ -296,7 +296,7 @@ function updateTimers() {
         t_draw.push({
             f_percent: chainCompletion,
             c1: "rgba(51, 51, 51, 1)",
-            name: "Chain to: " + decodeHtml(chainPurchase.name),
+            name: "Encadear para: " + decodeHtml(chainPurchase.name),
             display: timeDisplay(
                 divCps(
                     Math.max(
@@ -317,7 +317,7 @@ function updateTimers() {
             f_percent: purchaseCompletion,
             c1: "rgba(17, 17, 17, 1)",
             name:
-                "Next: " +
+                "Próximo: " +
                 decodeHtml(Game.foolObjects[nextPurchase().purchase.name].name),
             display: timeDisplay(
                 divCps(
@@ -330,7 +330,7 @@ function updateTimers() {
         t_draw.push({
             f_percent: purchaseCompletion,
             c1: "rgba(17, 17, 17, 1)",
-            name: "Next: " + decodeHtml(nextPurchase().purchase.name),
+            name: "Próximo: " + decodeHtml(nextPurchase().purchase.name),
             display: timeDisplay(
                 divCps(
                     Math.max(purchaseTotal + bankTotal - Game.cookies, 0),
@@ -344,7 +344,7 @@ function updateTimers() {
             t_draw.push({
                 f_percent: bankPercent,
                 c1: "rgba(252, 212, 0, 1)",
-                name: "Bank Completion",
+                name: "Conclusão do Banco",
                 display: timeDisplay(
                     divCps(Math.max(bankTotal - Game.cookies, 0), actualCps)
                 ),
@@ -356,20 +356,20 @@ function updateTimers() {
         t_draw.push({
             f_percent: gc_max_delay,
             c1: "rgba(255, 155, 0, 1)",
-            name: "GC Maximum (99%)",
+            name: "GC Máximo (99%)",
             display: timeDisplay((gc_max_delay * maxCookieTime()) / Game.fps),
         });
         t_draw.push({
             f_percent: gc_delay,
             c1: "rgba(255, 222, 95, 1)",
-            name: "GC Estimate (50%)",
+            name: "GC Estimativa (50%)",
             display: timeDisplay((gc_delay * maxCookieTime()) / Game.fps),
             overlay: true,
         });
         t_draw.push({
             f_percent: gc_min_delay,
             c1: "rgba(255, 235, 0, 1)",
-            name: "GC Minimum (1%)",
+            name: "GC Mínimo (1%)",
             display: timeDisplay((gc_min_delay * maxCookieTime()) / Game.fps),
             overlay: true,
         });
@@ -378,7 +378,7 @@ function updateTimers() {
         t_draw.push({
             f_percent: clot_delay,
             c1: "rgba(255, 54, 5, 1)",
-            name: "Clot (x" + Game.buffs["Clot"].multCpS + ") Time",
+            name: "Coágulo (x" + Game.buffs["Clot"].multCpS + ") Tempo",
             display: timeDisplay(buffDuration("Clot") / Game.fps),
         });
     }
@@ -387,9 +387,9 @@ function updateTimers() {
             f_percent: elder_frenzy_delay,
             c1: "rgba(79, 0, 7, 1)",
             name:
-                "Elder Frenzy (x" +
+                "Frenesi Ancestral (x" +
                 Game.buffs["Elder frenzy"].multCpS +
-                ") Time",
+                ") Tempo",
             display: timeDisplay(buffDuration("Elder frenzy") / Game.fps),
         });
     }
@@ -397,7 +397,7 @@ function updateTimers() {
         t_draw.push({
             f_percent: frenzy_delay,
             c1: "rgba(255, 222, 95, 1)",
-            name: "Frenzy (x" + Game.buffs["Frenzy"].multCpS + ") Time",
+            name: "Frenesi (x" + Game.buffs["Frenzy"].multCpS + ") Tempo",
             display: timeDisplay(buffDuration("Frenzy") / Game.fps),
         });
     }
@@ -406,9 +406,9 @@ function updateTimers() {
             f_percent: dragon_harvest_delay,
             c1: "rgba(206, 180, 49, 1)",
             name:
-                "Dragon Harvest (x" +
+                "Colheita do Dragão (x" +
                 Game.buffs["Dragon Harvest"].multCpS +
-                ") Time",
+                ") Tempo",
             display: timeDisplay(buffDuration("Dragon Harvest") / Game.fps),
         });
     }
@@ -417,9 +417,9 @@ function updateTimers() {
             f_percent: click_frenzy_delay,
             c1: "rgba(0, 196, 255, 1)",
             name:
-                "Click Frenzy (x" +
+                "Frenesi de Cliques (x" +
                 Game.buffs["Click frenzy"].multClick +
-                ") Time",
+                ") Tempo",
             display: timeDisplay(buffDuration("Click frenzy") / Game.fps),
         });
     }
@@ -428,9 +428,9 @@ function updateTimers() {
             f_percent: dragonflight_delay,
             c1: "rgba(183, 206, 49, 1)",
             name:
-                "Dragonflight (x" +
+                "Voo do Dragão (x" +
                 Game.buffs["Dragonflight"].multClick +
-                ") Time",
+                ") Tempo",
             display: timeDisplay(buffDuration("Dragonflight") / Game.fps),
         });
     }
@@ -438,7 +438,7 @@ function updateTimers() {
         t_draw.push({
             f_percent: cursed_finger_delay,
             c1: "rgba(23, 79, 1, 1)",
-            name: "Cursed Finger Time",
+            name: "Dedo Amaldiçoado Tempo",
             display: timeDisplay(buffDuration("Cursed finger") / Game.fps),
         });
     }
@@ -446,7 +446,7 @@ function updateTimers() {
         t_draw.push({
             f_percent: building_special_delay,
             c1: "rgba(218, 165, 32, 1)",
-            name: "Building Special (x" + buildingSpecialBuffValue() + ") Time",
+            name: "Especial de Construção (x" + buildingSpecialBuffValue() + ") Tempo",
             display: timeDisplay(hasBuildingSpecialBuff() / Game.fps),
         });
     }
@@ -454,16 +454,16 @@ function updateTimers() {
         t_draw.push({
             f_percent: cookie_storm_delay,
             c1: "rgba(0, 196, 255, 1)",
-            name: "Cookie Storm Time",
+            name: "Tempestade de Biscoitos Tempo",
             display: timeDisplay(buffDuration("Cookie storm") / Game.fps),
         });
     }
     height = $("#backgroundLeftCanvas").height() - 140;
     drawCircles(t_draw, 20, height);
 
-    // Calculate currentFrenzy before drawing it
+    // Calcula o frenesi atual antes de desenhá-lo
     var currentFrenzy = cpsBonus() * clickBuffBonus();
-    // Draw the current frenzy at the bottom of the canvas
+    // Desenha o frenesi atual na parte inferior do canvas
     if (FrozenCookies.fancyui && typeof c.drawText === "function") {
         c.removeLayer && c.removeLayer("fcCurrentFrenzyText");
         c.drawText({
@@ -474,7 +474,7 @@ function updateTimers() {
             fillStyle: "#fff",
             x: c.width() / 2,
             y: c.height() - 18,
-            text: "Frenzy: " + fcBeautify(currentFrenzy),
+            text: "Frenesi: " + fcBeautify(currentFrenzy),
             align: "center",
             baseline: "bottom",
         });

@@ -1,17 +1,17 @@
 import assert from "node:assert";
 import { nextBuildingToLevel } from "./lumpLeveling.ts";
 
-// no buildings owned
-assert.strictEqual(nextBuildingToLevel([], 100, 0), null, "no buildings -> null");
+// nenhum edifício possuído
+assert.strictEqual(nextBuildingToLevel([], 100, 0), null, "nenhum edifício -> null");
 
-// not enough lumps for anyone
+// açúcares insuficientes para qualquer um
 assert.strictEqual(
     nextBuildingToLevel([{ name: "Farm", amount: 5, level: 3 }], 2, 0),
     null,
-    "cost (level+1=4) > lumps (2) -> null"
+    "custo (level+1=4) > açúcares (2) -> null"
 );
 
-// unowned building ignored even if cheap
+// edifício não possuído ignorado mesmo se barato
 assert.strictEqual(
     nextBuildingToLevel(
         [
@@ -22,10 +22,10 @@ assert.strictEqual(
         0
     ),
     "Mine",
-    "amount=0 building skipped"
+    "edifício com amount=0 ignorado"
 );
 
-// cheapest (lowest level) owned building wins
+// edifício possuído mais barato (menor nível) vence
 assert.strictEqual(
     nextBuildingToLevel(
         [
@@ -37,19 +37,19 @@ assert.strictEqual(
         0
     ),
     "Mine",
-    "lowest level chosen first"
+    "menor nível escolhido primeiro"
 );
 
-// sugarBakingGuard reserve respected
+// reserva do sugarBakingGuard respeitada
 assert.strictEqual(
     nextBuildingToLevel([{ name: "Farm", amount: 3, level: 5 }], 105, 101),
     null,
-    "reserve leaves only 4 available, cost is 6 -> null"
+    "reserva deixa apenas 4 disponíveis, custo é 6 -> null"
 );
 assert.strictEqual(
     nextBuildingToLevel([{ name: "Farm", amount: 3, level: 4 }], 106, 101),
     "Farm",
-    "reserve leaves 5 available, cost is 5 -> Farm"
+    "reserva deixa 5 disponíveis, custo é 5 -> Farm"
 );
 
 console.log("lumpLeveling.selfcheck.ts: all assertions passed");

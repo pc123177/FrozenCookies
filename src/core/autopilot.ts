@@ -1,8 +1,8 @@
 import type { GameStageId } from "./types";
 
-// Subset of FrozenCookies.* settings the autopilot controls. Field names match the legacy
-// preference keys 1:1 (fc_preferences.js) so game/autopilot-bot.ts can apply this object
-// directly onto window.FrozenCookies without a translation layer.
+// Subconjunto das configurações FrozenCookies.* que o autopiloto controla. Nomes de campo coincidem
+// com as chaves de preferência legadas 1:1 (fc_preferences.js) para que game/autopilot-bot.ts possa
+// aplicar este objeto diretamente em window.FrozenCookies sem uma camada de tradução.
 export interface StageSettings {
     autoClick: number; cookieClickSpeed: number;
     autoFrenzy: number; frenzyClickSpeed: number;
@@ -66,16 +66,16 @@ const SHARED_BASE: StageSettings = {
     logging: 1, purchaseLog: 0, fpsModifier: 2, trackStats: 0,
 };
 
-// Stage-tuned settings tables, direct port of fc_main.js's preset*GameAction() functions
-// (this session, pre-autopilot) - same values, now a lookup table instead of 3
-// near-duplicate functions. Differences from the shared base only.
+// Tabelas de configurações ajustadas por estágio, porte direto das funções preset*GameAction() de
+// fc_main.js (esta sessão, pré-autopiloto) - mesmos valores, agora uma tabela de consulta em vez
+// de 3 funções quase duplicadas. Apenas diferenças em relação à base compartilhada.
 export const STAGE_SETTINGS: Record<GameStageId, StageSettings> = {
     early: {
         ...SHARED_BASE,
         cookieClickSpeed: 150,
-        ascendROIThreshold: 0, // cheap/fast early ascends compound fastest
-        ascendROIMinGrowth: 1, // +2% - prestige is small early, so any real HC gain clears
-        // this easily; just enough to skip a 0-value ascend that happened to have fast payback.
+        ascendROIThreshold: 0, // ascensões baratas/rápidas cedo compõem mais rápido
+        ascendROIMinGrowth: 1, // +2% - prestígio é pequeno cedo, então qualquer ganho real de HC passa
+        // facilmente; apenas suficiente para pular uma ascensão de valor zero que por acaso tinha retorno rápido.
     },
     mid: {
         ...SHARED_BASE,
@@ -86,16 +86,16 @@ export const STAGE_SETTINGS: Record<GameStageId, StageSettings> = {
         autoWorshipToggle: 1, autoWorship0: 2, autoWorship1: 8,
         towerLimit: 1, manaMax: 37, autoCasting: 3,
         minASFMult: 7777,
-        // FTHOF combo double-casts Force the Hand of Fate via a Wizard Tower sell/rebuy - real
-        // optimization the autopilot never turned on for any stage. Safe to enable here: it
-        // self-disables once Wizard tower.level > 10 (fc_spells.js autoFTHOFComboAction) and
-        // yields to auto100ConsistencyCombo automatically once that's active (same file).
+        // O combo FTHOF lança Force the Hand of Fate duas vezes via venda/recompra de Torres de Mago -
+        // otimização real que o autopiloto nunca ativou para nenhum estágio. Seguro de ativar aqui: ele
+        // se desativa quando Wizard tower.level > 10 (fc_spells.js autoFTHOFComboAction) e cede para
+        // auto100ConsistencyCombo automaticamente quando este fica ativo (mesmo arquivo).
         autoFTHOFCombo: 1,
     },
     late: {
         ...SHARED_BASE,
         mineLimit: 1, mineMax: 500, factoryLimit: 1, factoryMax: 500,
-        ascendROIThreshold: 3, // rebuildCost fix already weighs the real cost
+        ascendROIThreshold: 3, // a correção de rebuildCost já pondera o custo real
         ascendROIMinGrowth: 3, // +10%
         autoSL: 2, dragonsCurve: 2,
         sugarBakingGuard: 1, autoGS: 1, autoGodzamok: 1,
@@ -106,8 +106,8 @@ export const STAGE_SETTINGS: Record<GameStageId, StageSettings> = {
         autoDragon: 1, petDragon: 1, autoDragonToggle: 1,
         autoDragonAura0: 15, autoDragonAura1: 16,
         orbMax: 200,
-        // autoSweet stays 0 (SHARED_BASE) in every stage - README's explicit experimental-
-        // feature warning, never auto-enabled by the autopilot.
+        // autoSweet permanece 0 (SHARED_BASE) em todo estágio - aviso de funcionalidade experimental
+        // do README, nunca habilitado automaticamente pelo autopiloto.
     },
 };
 

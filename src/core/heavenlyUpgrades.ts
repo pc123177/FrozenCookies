@@ -5,11 +5,12 @@ export interface HeavenlyUpgradeInfo {
     bought: boolean;
 }
 
-// Picks ONE heavenly (prestige-pool) upgrade to buy: cheapest unlocked, unbought, affordable
-// upgrade. One at a time, not a full plan up front - buying an upgrade can unlock others
-// (the heavenly upgrade tree has prerequisites), so the caller re-scans live Game.Upgrades
-// state between purchases rather than trusting a plan computed before any buy happened.
-// Returns null when nothing affordable is left to buy.
+// Escolhe UMA melhoria celestial (do pool de prestígio) para comprar: a melhoria desbloqueada,
+// não comprada e mais barata que seja acessível. Uma por vez, não um plano completo antecipadamente -
+// comprar uma melhoria pode desbloquear outras (a árvore de melhorias celestiais tem pré-requisitos),
+// então o chamador re-escaneia o estado ao vivo de Game.Upgrades entre compras em vez de confiar
+// em um plano calculado antes de qualquer compra acontecer.
+// Retorna null quando não há nada acessível restante para comprar.
 export function nextHeavenlyUpgradeToBuy(
     upgrades: HeavenlyUpgradeInfo[],
     heavenlyChips: number

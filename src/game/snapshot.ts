@@ -1,8 +1,8 @@
 import type { GameSnapshot } from "../core/types";
 
-// The ONE place that touches Cookie Clicker's live Game/FrozenCookies globals to build the
-// plain-data GameSnapshot pure logic (src/core/) consumes. Keeping this narrow is what makes
-// core/ checkable in isolation (src/core/*.selfcheck.ts) without a live Game object.
+// O ÚNICO lugar que acessa os globais ao vivo Game/FrozenCookies do Cookie Clicker para construir o
+// GameSnapshot de dados simples que a lógica pura (src/core/) consome. Manter isso restrito é o que
+// permite verificar core/ de forma isolada (src/core/*.selfcheck.ts) sem um objeto Game ao vivo.
 export function buildGameSnapshot(): GameSnapshot {
     return {
         prestige: Game.prestige,

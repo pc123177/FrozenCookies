@@ -1,6 +1,8 @@
-// This variable builds a list of upgrades that have prerequisites.
-// With this list, the recommendation engine can include them even before the prerequisites are met.
-// (useful for determining chain strategies) or tracking what's left
+// Esta variável constrói uma lista de upgrades que têm pré-requisitos.
+// Com essa lista, o motor de recomendação pode incluí-los mesmo antes dos pré-requisitos serem atendidos.
+// (útil para determinar estratégias de cadeia) ou rastrear o que falta
+// Os comentários ao lado de cada entrada são os nomes reais dos upgrades no jogo (em inglês,
+// como aparecem no Cookie Clicker) - mantidos em inglês de propósito para facilitar conferência.
 var upgradeJson = {
     // Cursor tiered upgrades
       0: { buildings: [  1], upgrades: [], }, // Reinforced index finger

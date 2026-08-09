@@ -1,7 +1,7 @@
-// Minimal typed surface for the legacy globals src/game/ glue code reads from. These are
-// defined by legacy/*.js (still plain JS, loaded into the same bundle - see src/main.ts) and
-// by Cookie Clicker itself. Only what src/game/ actually touches is declared here; the
-// legacy files keep using the untyped `any` implicitly for everything else.
+// Superfície tipada mínima dos globais legados que o código de cola em src/game/ lê. Estes são
+// definidos por legacy/*.js (ainda JS puro, carregado no mesmo bundle - veja src/main.ts) e
+// pelo próprio Cookie Clicker. Somente o que src/game/ realmente utiliza é declarado aqui; os
+// arquivos legados continuam usando `any` sem tipagem implicitamente para todo o resto.
 
 interface CCBuilding {
     name: string;
@@ -69,7 +69,7 @@ interface FrozenCookiesState {
 
 declare const FrozenCookies: FrozenCookiesState;
 
-// Pure helpers still defined in legacy/fc_main.js (not yet migrated).
+// Helpers puros ainda definidos em legacy/fc_main.js (ainda não migrados).
 declare function wrinklerValue(): number;
 declare function chocolateValue(): number;
 declare function cpsBonus(): number;
